@@ -1,0 +1,51 @@
+﻿@model ReservationSystem_Server.Areas.Admin.Models.Reservation.CreateViewModel
+
+@{
+    ViewBag.Title = "Create Reservation";
+}
+
+<h2>Create Reservation</h2>
+<b>For sitting from @Model!.SittingStart to @Model.SittingEnd</b>
+<hr/>
+<a asp-action="Sitting" asp-route-id="@Model.SittingId" class="btn btn-outline-danger mb-2">Back to Sitting</a>
+
+<form method="post">
+    <div asp-validation-summary="All" class="alert alert-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="StartTime" class="form-label"></label>
+        <input type="text" class="form-control" disabled readonly value="@Model.StartTime.ToShortTimeString()"/>
+    </div>
+    <div class="form-group">
+        <label asp-for="Duration" class="form-label"></label>
+        <input asp-for="Duration" class="form-control"/>
+        <span asp-validation-for="Duration" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Origin" class="form-label"></label>
+        <select asp-for="Origin" asp-items="Model.AvailableOrigins" class="form-select">
+            <option value="">-- Please Select --</option>
+        </select>
+        <span asp-validation-for="Origin" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="NumGuests" class="form-label"></label>
+        <input asp-for="NumGuests" class="form-control"/>
+        <span asp-validation-for="NumGuests" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Notes" class="form-label"></label>
+        <textarea asp-for="Notes" rows="5" class="form-control" style="resize: none;"></textarea>
+        <span asp-validation-for="Notes" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Create Reservation</button>
+
+    <div class="visually-hidden invisible" aria-hidden="true">
+        <input type="hidden" asp-for="SittingId"/>
+        <input type="hidden" asp-for="SittingStart"/>
+        <input type="hidden" asp-for="SittingEnd"/>
+
+        <input type="hidden" asp-for="StartTime"/>
+    </div>
+</form>

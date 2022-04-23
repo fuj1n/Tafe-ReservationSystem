@@ -1,0 +1,17 @@
+﻿@model ReservationSystem_Server.Areas.Admin.Models.Reservation.SelectTimeViewModel
+
+@{
+    ViewBag.Title = "Select Time";
+}
+
+<h2>Select Start Time</h2>
+<b>For sitting from @Model!.SittingStart to @Model.SittingEnd</b>
+
+<div class="list-group list-group-horizontal-lg">
+    @foreach (DateTime timeSlot in Model.TimeSlots)
+    {
+        <a asp-action="Create" asp-route-sittingId="@Model.SittingId" asp-route-start="@timeSlot.Ticks" class="list-group-item list-group-item-action">
+            @timeSlot.ToShortTimeString()
+        </a>
+    }
+</div>

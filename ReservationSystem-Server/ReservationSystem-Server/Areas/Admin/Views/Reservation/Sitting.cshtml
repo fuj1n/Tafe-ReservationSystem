@@ -1,0 +1,33 @@
+﻿@using ReservationSystem_Server.Data
+@model ReservationSystem_Server.Data.Sitting
+
+@{
+    ViewBag.Title = "Reservations";
+}
+
+<h2>Reservations</h2>
+<b>For @Model!.SittingType.Description sitting on @Model.StartTime.ToShortDateString()</b>
+<b>From @Model.StartTime.ToShortTimeString() to @Model.EndTime.ToShortTimeString()</b>
+
+<hr/>
+
+<div class="mb-2">
+    <a asp-action="SelectTime" asp-route-sittingId="@Model.Id" class="btn btn-outline-success">Create Reservation</a>
+    <a asp-action="Index" class="btn btn-outline-primary">Back to Sittings</a>
+</div>
+
+<ul class="list-group">
+    @if (Model.Reservations.Count == 0)
+    {
+        <li class="list-group-item list-group-item-danger">No reservations</li>
+    }
+    else
+    {
+        @foreach (Reservation reservation in Model.Reservations)
+        {
+            <li class="list-group-item">
+                @reservation.ReservationOrigin.Description reservation at @reservation.StartTime.ToShortTimeString()
+            </li>
+        }
+    }
+</ul>

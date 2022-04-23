@@ -1,0 +1,26 @@
+﻿@model ReservationSystem_Server.Data.Reservation
+
+@{
+    ViewBag.Title = "Confirmation";
+}
+
+<h2>Confirmation</h2>
+<b>Successfully created a reservation</b>
+<dl>
+    <dt>Sitting</dt>
+    <dd>@Model!.Sitting.StartTime.ToShortDateString() @Model.Sitting.SittingType.Description 
+        from @Model.Sitting.StartTime.ToShortTimeString()
+        to @Model.Sitting.EndTime.ToShortTimeString()</dd>
+    
+    <dt>Start Time</dt>
+    <dd>@Model.StartTime.ToShortTimeString()</dd>
+    
+    <dt>Duration</dt>
+    <dd>@Model.Duration.TotalMinutes.ToString("F0") minutes</dd>
+    
+    <dt>Number of Guests</dt>
+    <dd>@Model.NumberOfPeople</dd>
+    
+    <dt>Notes</dt>
+    <dd>@Model.Notes</dd>
+</dl>
