@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using ReservationSystem_Server.Data.Visual;
 using ReservationSystem_Server.Utility.DataSeed;
 
 namespace ReservationSystem_Server.Data;
 
-public class ApplicationDbContext : IdentityDbContext
+public class ApplicationDbContext : VisualDbContext
 {
     public DbSet<Person> People => Set<Person>();
     public DbSet<Customer> Customers => Set<Customer>();

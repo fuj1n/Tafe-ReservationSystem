@@ -1,0 +1,13 @@
+﻿@model ReservationSystem_Server.Areas.Admin.Models.Reservation.UpdateStatusViewModel
+
+@{
+    ViewBag.Title = "Update Status";
+    Layout = "";
+}
+
+<form asp-action="UpdateStatus" method="post" id="modal-submit">
+    <select asp-for="StatusId" asp-items="Model!.Statuses" class="form-select"></select>
+    <div class="visually-hidden invisible" aria-hidden="true">
+        <input type="hidden" asp-for="ReservationId"/>
+    </div>
+</form>

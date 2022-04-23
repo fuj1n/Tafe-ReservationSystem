@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ReservationSystem_Server.Areas.Admin.Models.Reservation;
@@ -14,6 +15,7 @@ public class CreateViewModel
 
     public int Origin { get; set; }
     
+    [Range(0, 1000)]
     public int NumGuests { get; set; }
     
     [ValidateNever]

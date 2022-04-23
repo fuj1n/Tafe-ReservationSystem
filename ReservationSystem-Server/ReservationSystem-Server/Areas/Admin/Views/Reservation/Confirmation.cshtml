@@ -6,6 +6,8 @@
 
 <h2>Confirmation</h2>
 <b>Successfully created a reservation</b>
+<hr/>
+<a asp-action="Sitting" asp-route-id="@Model!.SittingId" class="btn btn-outline-primary mb-2">Back to Sitting</a>
 <dl>
     <dt>Sitting</dt>
     <dd>@Model!.Sitting.StartTime.ToShortDateString() @Model.Sitting.SittingType.Description 

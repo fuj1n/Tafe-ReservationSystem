@@ -31,13 +31,19 @@ public class ReservationController : Controller
             .Include(s => s.SittingType)
             .Include(s => s.Reservations).ThenInclude(r => r.ReservationOrigin)
             .Include(s => s.Reservations).ThenInclude(r => r.ReservationStatus)
+            .Include(s => s.Reservations).ThenInclude(r => r.Customer)
             .FirstOrDefaultAsync(s => s.Id == id);
         if (sitting == null)
         {
             return NotFound();
         }
         
-        return View(sitting);
+        return View(new SittingViewModel
+        {
+            Sitting = sitting,
+            ReservationStatusVisuals = await _context.ReservationStatusVisuals
+                .ToDictionaryAsync(v => v.Id, v => v)
+        });
     }
 
     public async Task<IActionResult> SelectTime(int sittingId)
@@ -129,6 +135,44 @@ public class ReservationController : Controller
             return NotFound();
         
         return View(reservation);
+    }
+
+    public async Task<IActionResult> UpdateStatus(int id)
+    {
+        Reservation? reservation = await _context.Reservations
+            .Include(r => r.Customer)
+            .FirstOrDefaultAsync(r => r.Id == id);
+        
+        if(reservation == null)
+            return NotFound();
+
+        UpdateStatusViewModel model = new()
+        {
+            ReservationId = id,
+            StatusId = reservation.ReservationStatusId,
+            ReservationDetails =
+                $"{reservation.Customer.FirstName} {reservation.Customer.LastName} at {reservation.StartTime.ToShortTimeString()}",
+            Statuses = new SelectList(await _context.ReservationStatuses.ToListAsync(),
+                nameof(ReservationStatus.Id), nameof(ReservationStatus.Description))
+        };
+        
+        return View(model);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> UpdateStatus(UpdateStatusViewModel model)
+    {
+        if (!ModelState.IsValid)
+            return Content(string.Join("<br/>", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)), "text/html");
+
+        Reservation? reservation = await _context.Reservations.SingleOrDefaultAsync(r => r.Id == model.ReservationId);
+        if(reservation == null)
+            return NotFound();
+        
+        reservation.ReservationStatusId = model.StatusId;
+        await _context.SaveChangesAsync();
+        
+        return RedirectToAction(nameof(Sitting), new {id = reservation.SittingId});
     }
     
     private List<DateTime> GetTimeSlots(Sitting sitting)
