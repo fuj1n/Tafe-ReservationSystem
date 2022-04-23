@@ -1,0 +1,18 @@
+﻿@model ReservationSystem_Server.Data.Reservation
+
+ <p>
+     Congratulation, your reservation has been saved
+ </p>
+
+ <p>
+    Sitting : @Model.Sitting.SittingType.Description
+    <br/>
+    Start Time : @Model.StartTime
+    <br/>
+    Duration : @Model.Duration
+    <br/>
+    Number of Guests : @Model.NumberOfPeople
+    <br/>
+    Notes : @Model.Notes
+ </p>
+

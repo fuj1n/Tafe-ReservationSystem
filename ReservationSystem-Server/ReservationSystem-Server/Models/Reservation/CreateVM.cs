@@ -1,4 +1,5 @@
 ﻿using ReservationSystem_Server.Data;
+using System.ComponentModel.DataAnnotations;
 
 namespace ReservationSystem_Server.Models.Reservation
 {
@@ -14,9 +15,11 @@ namespace ReservationSystem_Server.Models.Reservation
         public DateTime StartTime { get; set; }
         public TimeSpan Duration { get ; set; }
 
-        public int NoOfGuests { get; set; }
+        [Range(0,1000)]
+        public int NoOfPeople { get; set; }
 
         public string Notes { get; set; }
+
 
     }
 }
