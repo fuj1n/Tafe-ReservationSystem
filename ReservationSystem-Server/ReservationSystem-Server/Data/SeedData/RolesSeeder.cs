@@ -12,28 +12,32 @@ public static class RolesSeeder
         {
                 Id = "1337x01",
                 Name = "Admin",
-                NormalizedName = "ADMIN"
+                NormalizedName = "ADMIN",
+                ConcurrencyStamp = "1337x01"
         });
         
         roles.Add(new IdentityRole
         {
                 Id = "1337x02",
                 Name = "Manager",
-                NormalizedName = "MANAGER"
+                NormalizedName = "MANAGER",
+                ConcurrencyStamp = "1337x02"
         });
         
         roles.Add(new IdentityRole
         {
                 Id = "1337x03",
                 Name = "Employee",
-                NormalizedName = "EMPLOYEE"
+                NormalizedName = "EMPLOYEE",
+                ConcurrencyStamp = "1337x03"
         });
         
         roles.Add(new IdentityRole
         {
                 Id = "1337x04",
                 Name = "Member",
-                NormalizedName = "MEMBER"
+                NormalizedName = "MEMBER",
+                ConcurrencyStamp = "1337x04"
         });
     }
 }
