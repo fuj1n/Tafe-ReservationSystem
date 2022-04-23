@@ -1,0 +1,64 @@
+﻿@model IEnumerable<ReservationSystem_Server.Data.Sitting>
+
+@{
+    ViewData["Title"] = "Sittings";
+}
+
+<h1>Sittings</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.StartTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EndTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsClosed)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Capacity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SittingType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Restaurant)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsClosed)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Capacity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SittingType.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Restaurant.Id)
+            </td>
+            <td>
+           
+                <a asp-action="Create" asp-route-sittingId="@item.Id">Select</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
