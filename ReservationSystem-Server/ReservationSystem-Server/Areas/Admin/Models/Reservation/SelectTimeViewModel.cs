@@ -6,5 +6,5 @@ public class SelectTimeViewModel
     public DateTime SittingStart { get; set; }
     public DateTime SittingEnd { get; set; }
 
-    public List<DateTime> TimeSlots { get; set; } = null!;
+    public List<TimeSlot> TimeSlots { get; set; } = null!;
 }

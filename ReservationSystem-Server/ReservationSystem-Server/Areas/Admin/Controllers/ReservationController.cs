@@ -32,6 +32,7 @@ public class ReservationController : Controller
             .Include(s => s.Reservations).ThenInclude(r => r.ReservationOrigin)
             .Include(s => s.Reservations).ThenInclude(r => r.ReservationStatus)
             .Include(s => s.Reservations).ThenInclude(r => r.Customer)
+            .Include(s => s.Reservations).ThenInclude(r => r.Tables)
             .FirstOrDefaultAsync(s => s.Id == id);
         if (sitting == null)
         {
@@ -46,27 +47,7 @@ public class ReservationController : Controller
         });
     }
 
-    public async Task<IActionResult> SelectTime(int sittingId)
-    {
-        Sitting? sitting = await _context.Sittings
-            .FirstOrDefaultAsync(s => s.Id == sittingId);
-        if (sitting == null)
-        {
-            return NotFound();
-        }
-        
-        SelectTimeViewModel model = new()
-        {
-            SittingId = sittingId,
-            SittingStart = sitting.StartTime,
-            SittingEnd = sitting.EndTime,
-            TimeSlots = GetTimeSlots(sitting)
-        };
-
-        return View(model);
-    }
-
-    public async Task<IActionResult> Create(int sittingId, long start)
+    public async Task<IActionResult> Create(int sittingId)
     {
         Sitting? sitting = await _context.Sittings
             .FirstOrDefaultAsync(s => s.Id == sittingId);
@@ -82,10 +63,10 @@ public class ReservationController : Controller
             SittingStart = sitting.StartTime,
             SittingEnd = sitting.EndTime,
             
-            StartTime = new DateTime(start),
+            StartTime = sitting.StartTime,
             
-            AvailableOrigins = new SelectList(await _context.ReservationOrigins.ToListAsync(), 
-                nameof(ReservationOrigin.Id), nameof(ReservationOrigin.Description))
+            AvailableOrigins = await GetAvailableOriginsAsync(),
+            TimeSlots = GetTimeSlots(sitting)
         };
         
         return View(model);
@@ -95,8 +76,11 @@ public class ReservationController : Controller
     public async Task<IActionResult> Create(CreateViewModel model)
     {
         if (!ModelState.IsValid)
+        {
+            model.AvailableOrigins = await GetAvailableOriginsAsync();
             return View(model);
-        
+        }
+
         Sitting? sitting = await _context.Sittings
             .FirstOrDefaultAsync(s => s.Id == model.SittingId);
 
@@ -122,8 +106,72 @@ public class ReservationController : Controller
         
         return RedirectToAction(nameof(Confirmation), new {id = reservation.Id});
     }
+
+    public async Task<IActionResult> Edit(int id)
+    {
+        Reservation? reservation = await _context.Reservations
+            .Include(r => r.Sitting)
+            .Include(r => r.ReservationOrigin)
+            .FirstOrDefaultAsync(r => r.Id == id);
+
+        if (reservation == null)
+            return NotFound();
+
+        EditViewModel model = new()
+        {
+            SittingId = reservation.SittingId,
+            ReservationId = reservation.Id,
+            
+            SittingStart = reservation.Sitting.StartTime,
+            SittingEnd = reservation.Sitting.EndTime,
+            StartTime = reservation.StartTime,
+            Duration = reservation.Duration,
+            NumGuests = reservation.NumberOfPeople,
+            Origin = reservation.ReservationOriginId,
+            Notes = reservation.Notes,
+            
+            AvailableOrigins = await GetAvailableOriginsAsync(),
+            TimeSlots = GetTimeSlots(reservation.Sitting)
+        };
+
+        return View(model);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Edit(EditViewModel model)
+    {
+        Sitting? sitting = await _context.Sittings
+            .FirstOrDefaultAsync(s => s.Id == model.SittingId);
+        if(sitting == null)
+            return NotFound();
+        
+        if(!ModelState.IsValid)
+        {
+            model.AvailableOrigins = await GetAvailableOriginsAsync();
+            model.TimeSlots = GetTimeSlots(sitting);
+            return View(model);
+        }
+        
+        Reservation? reservation = await _context.Reservations
+            .Include(r => r.Sitting)
+            .Include(r => r.ReservationOrigin)
+            .FirstOrDefaultAsync(r => r.Id == model.ReservationId);
+        
+        if(reservation == null)
+            return NotFound();
+
+        reservation.StartTime = model.StartTime;
+        reservation.Duration = model.Duration;
+        reservation.ReservationOriginId = model.Origin;
+        reservation.NumberOfPeople = model.NumGuests;
+        reservation.Notes = model.Notes;
+
+        await _context.SaveChangesAsync();
+        
+        return RedirectToAction(nameof(Confirmation), new {id = reservation.Id, edit = true});
+    }
     
-    public IActionResult Confirmation(int id)
+    public IActionResult Confirmation(int id, bool? edit)
     {
         Reservation? reservation = _context.Reservations
             .Include(r => r.Sitting)
@@ -133,6 +181,8 @@ public class ReservationController : Controller
 
         if (reservation == null)
             return NotFound();
+
+        ViewBag.IsEdit = edit is true;
         
         return View(reservation);
     }
@@ -174,19 +224,80 @@ public class ReservationController : Controller
         
         return RedirectToAction(nameof(Sitting), new {id = reservation.SittingId});
     }
-    
-    private List<DateTime> GetTimeSlots(Sitting sitting)
+
+    public async Task<IActionResult> AssignTables(int id)
     {
-        List<DateTime> timeSlots = new();
+        Reservation? reservation = await _context.Reservations
+            .Include(r => r.Sitting).ThenInclude(s => s.Restaurant)
+            .ThenInclude(r => r.Areas).ThenInclude(a => a.Tables)
+            .Include(r => r.Tables)
+            .FirstOrDefaultAsync(r => r.Id == id);
+        
+        if(reservation == null)
+            return NotFound();
+        
+        AssignTablesViewModel model = new()
+        {
+            ReservationId = id,
+            SittingId = reservation.SittingId,
+            Tables = reservation.Sitting.Restaurant.Areas.SelectMany(a => a.Tables).OrderBy(t => t.Id)
+                .Select(t => new AssignTablesViewModel.Table {
+                Id = t.Id,
+                Name = t.Name,
+                IsAssigned = reservation.Tables.Any(rt => rt.Id == t.Id)
+            }).ToList()
+        };
+        
+        return View(model);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> AssignTables(AssignTablesViewModel model)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+        
+        Reservation? reservation = await _context.Reservations
+            .Include(r => r.Tables)
+            .FirstOrDefaultAsync(r => r.Id == model.ReservationId);
+
+        if (reservation == null)
+            return NotFound();
+        
+        reservation.Tables.Clear();
+        reservation.Tables.AddRange(model.Tables
+            .Where(t => t.IsAssigned)
+            .Select(t => _context.Tables.First(tbl => tbl.Id == t.Id)));
+        
+        await _context.SaveChangesAsync();
+        return RedirectToAction("Sitting", new {id=reservation.SittingId});
+    }
+
+    private List<TimeSlot> GetTimeSlots(Sitting sitting)
+    {
+        List<TimeSlot> timeSlots = new();
         
         TimeSpan sittingDuration = sitting.EndTime - sitting.StartTime;
         
         //TODO: configurable time slot length
         for (TimeSpan time = new(0); time < sittingDuration; time += _timeSlotLength)
         {
-            timeSlots.Add(sitting.StartTime + time);
+            DateTime slotTime = sitting.StartTime + time;
+            
+            timeSlots.Add(new TimeSlot
+            {
+                Time = slotTime,
+                Display = slotTime.ToShortTimeString()
+            });
         }
 
         return timeSlots;
+    }
+    
+    private async Task<SelectList> GetAvailableOriginsAsync()
+    {
+        return new SelectList(await _context.ReservationOrigins.ToListAsync(), 
+            nameof(ReservationOrigin.Id), 
+            nameof(ReservationOrigin.Description));
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ReservationSystem_Server.Areas.Admin.Models.Reservation;
@@ -18,8 +17,8 @@ public class CreateViewModel
     [Range(0, 1000)]
     public int NumGuests { get; set; }
     
-    [ValidateNever]
-    public string Notes { get; set; } = "";
+    public string? Notes { get; set; }
     
     public SelectList? AvailableOrigins { get; set; }
+    public List<TimeSlot>? TimeSlots { get; set; }
 }

@@ -1,12 +1,12 @@
 ﻿@using ReservationSystem_Server.Areas.Admin.Models.Reservation
 @using Microsoft.AspNetCore.Mvc.TagHelpers
-@model ReservationSystem_Server.Areas.Admin.Models.Reservation.CreateViewModel
+@model ReservationSystem_Server.Areas.Admin.Models.Reservation.EditViewModel
 
 @{
-    ViewBag.Title = "Create Reservation";
+    ViewBag.Title = "Edit Reservation";
 }
 
-<h2>Create Reservation</h2>
+<h2>Edit Reservation</h2>
 <b>For sitting from @Model!.SittingStart to @Model.SittingEnd</b>
 <hr/>
 <a asp-action="Sitting" asp-route-id="@Model.SittingId" class="btn btn-outline-danger mb-2">Back to Sitting</a>
@@ -55,13 +55,15 @@
         <span asp-validation-for="Notes" class="text-danger"></span>
     </div>
 
-    <button type="submit" class="btn btn-primary mt-2">Create Reservation</button>
+    <button type="submit" class="btn btn-primary mt-2">Edit Reservation</button>
 
     <div class="visually-hidden invisible" aria-hidden="true">
         <input type="hidden" asp-for="SittingId"/>
         <input type="hidden" asp-for="SittingStart"/>
         <input type="hidden" asp-for="SittingEnd"/>
 
+        <input type="hidden" asp-for="ReservationId"/>
+        
         <input type="hidden" asp-for="StartTime"/>
     </div>
 </form>
