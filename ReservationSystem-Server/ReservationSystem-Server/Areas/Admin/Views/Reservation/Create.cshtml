@@ -18,6 +18,7 @@
 
     @{ ViewData["TimeSlots"] = Model.TimeSlots; }
     <partial name="_TimePicker" for="StartTime"/>
+    
     <div class="form-group">
         <label asp-for="Duration" class="form-label"></label>
         <input asp-for="Duration" class="form-control"/>
