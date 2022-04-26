@@ -144,6 +144,11 @@ namespace ReservationSystem_Server.Areas.Identity.Pages.Account
                     var userId = await _userManager.GetUserIdAsync(user);
                     
                     // Begin extension code
+                    if (!string.IsNullOrWhiteSpace(Input.PhoneNumber))
+                    {
+                        await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
+                    }
+                    
                     Customer customer = await _customerManager.GetOrCreateCustomerAsync(Input.FirstName, Input.LastName,
                         Input.Email, Input.PhoneNumber);
                     customer.UserId = userId;
