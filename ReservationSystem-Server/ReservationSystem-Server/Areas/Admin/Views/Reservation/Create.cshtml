@@ -3,14 +3,17 @@
 
 @{
     ViewBag.Title = "Create Reservation";
+    Layout = "";
 }
 
-<h2>Create Reservation</h2>
-<b>For sitting from @Model!.SittingStart to @Model.SittingEnd</b>
-<hr/>
-<a asp-action="Sitting" asp-route-id="@Model.SittingId" class="btn btn-outline-danger mb-2">Back to Sitting</a>
+<span class="d-none" id="modal-name">Create Reservation</span>
+<span class="d-none" id="modal-size">lg</span>
 
-<form method="post">
+<b>Sitting from @Model!.SittingStart to @Model.SittingEnd</b>
+<hr/>
+@* <a asp-action="Sitting" asp-route-id="@Model.SittingId" class="btn btn-outline-danger mb-2">Back to Sitting</a> *@
+
+<form asp-action="Create" method="post" id="modal-submit">
     <div asp-validation-summary="All" class="alert alert-danger"></div>
 
     @{ ViewData["TimeSlots"] = Model.TimeSlots; }
@@ -59,8 +62,6 @@
         <textarea asp-for="Notes" rows="5" class="form-control" style="resize: none;"></textarea>
         <span asp-validation-for="Notes" class="text-danger"></span>
     </div>
-
-    <button type="submit" class="btn btn-primary mt-2">Create Reservation</button>
 
     <div class="visually-hidden invisible" aria-hidden="true">
         <input type="hidden" asp-for="SittingId"/>

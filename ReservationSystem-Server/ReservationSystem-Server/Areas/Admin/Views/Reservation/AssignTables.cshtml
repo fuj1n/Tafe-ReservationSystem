@@ -3,13 +3,15 @@
 
 @{
     ViewBag.Title = "Assign Tables";
+    Layout = "";
 }
 
-<h2>Assign Tables</h2>
-<hr/>
-<a asp-action="Sitting" asp-route-id="@Model!.SittingId" class="btn btn-outline-danger mb-2">Back to Sitting</a>
+@* <a asp-action="Sitting" asp-route-id="@Model!.SittingId" class="btn btn-outline-danger mb-2">Back to Sitting</a> *@
 
-<form method="post">
+<span class="d-none" id="modal-name">Assign Tables</span>
+<span class="d-none" id="modal-size">lg</span>
+
+<form asp-action="AssignTables" method="post" id="modal-submit">
     <div class="list-group list-group-horizontal-lg flex-wrap">
         @for (int i = 0; i < Model!.Tables.Count; i++)
         {
@@ -20,8 +22,6 @@
             </label>
         }
     </div>
-    
-    <button type="submit" class="btn btn-outline-primary mt-2">Submit</button>
     
     <div class="visually-hidden invisible" aria-hidden="true">
         <input type="hidden" asp-for="ReservationId"/>

@@ -2,9 +2,11 @@
 
 @{
     ViewBag.Title = "Confirmation";
+    Layout = "";
 }
 
-<h2>Confirmation</h2>
+<span class="d-none" id="modal-name">Confirmation</span>
+
 @{
     string verb = "created";
     if (ViewBag.IsEdit)
@@ -14,7 +16,7 @@
 }
 <b>Successfully @verb a reservation</b>
 <hr/>
-<a asp-action="Sitting" asp-route-id="@Model!.SittingId" class="btn btn-outline-primary mb-2">Back to Sitting</a>
+@* <a asp-action="Sitting" asp-route-id="@Model!.SittingId" class="btn btn-outline-primary mb-2">Back to Sitting</a> *@
 <dl>
     <dt>Sitting</dt>
     <dd>@Model!.Sitting.StartTime.ToShortDateString() @Model.Sitting.SittingType.Description 

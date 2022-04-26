@@ -16,7 +16,7 @@
 <hr/>
 
 <div class="mb-2">
-    <a asp-action="Create" asp-route-sittingId="@Model.Id" class="btn btn-outline-success">Create Reservation</a>
+    <a asp-action="Create" asp-route-sittingId="@Model.Id" class="btn btn-outline-success modal-for">Create Reservation</a>
     <a asp-action="Index" class="btn btn-outline-primary">Back to Sittings</a>
 </div>
 
@@ -31,7 +31,8 @@
         {
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 <span>
-                    <a class="list-group-item-action reservation-title" data-id="@reservation.Id" style="cursor: pointer">
+                    <a asp-action="Details" asp-route-id="@reservation.Id" 
+                       class="list-group-item-action reservation-title modal-for" style="cursor: pointer">
                         @reservation.Customer.FirstName @reservation.Customer.LastName - 
                         @reservation.StartTime.ToShortTimeString() to 
                         @reservation.EndTime.ToShortTimeString()
@@ -47,73 +48,18 @@
                     string badgeClass = statusVisuals.GetValueOrDefault(reservation.ReservationStatusId)?.HtmlBadgeClass ?? "bg-primary";
                 }
                 <span>
-                    <span class="badge @badgeClass rounded-pill user-select-none reservation-status" style="width: 100px; cursor: pointer;" data-id="@reservation.Id">
+                    <a asp-action="UpdateStatus" asp-route-id="@reservation.Id" 
+                       class="badge @badgeClass rounded-pill user-select-none modal-for nav-link text-light" style="width: 100px; cursor: pointer;">
                         @reservation.ReservationStatus.Description &gt;
-                    </span>
-                    <a class="btn btn-sm btn-outline-primary rounded-pill" asp-action="Edit" asp-route-id="@reservation.Id">Edit</a>
-                    <a class="btn btn-sm btn-outline-info rounded-pill" asp-action="AssignTables" asp-route-id="@reservation.Id">Assign</a>
+                    </a>
+                    <a asp-action="Edit" asp-route-id="@reservation.Id"
+                       class="btn btn-sm btn-outline-primary rounded-pill modal-for">Edit</a>
+                    <a asp-action="AssignTables" asp-route-id="@reservation.Id"
+                       class="btn btn-sm btn-outline-info rounded-pill modal-for">Assign</a>
                 </span>
             </li>
         }
     }
 </ul>
 
-<div class="modal fade" id="modal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modal-title"></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" id="modal-body">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="btn-save">Save changes</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-@section Scripts
-{
-    <script>
-        $(() => {
-            function openModal(actionName, action, submit) {
-                fetch(action)
-                    .then(response => response.text())
-                    .then(html => {
-                        $('#modal-body').html(html);
-                        $('#modal').modal('show');
-                        $('#modal-title').text(actionName);
-                        
-                        const submitBtn = $('#btn-save');
-                        submitBtn.off('click');
-                        
-                        if (submit) {
-                            submitBtn.on('click', submit);
-                            submitBtn.removeClass('d-none');
-                        } else {
-                            submitBtn.addClass('d-none');
-                        }
-                    });
-            }
-            
-            $('.reservation-status').click(function () {
-                const reservationId = $(this).attr('data-id');
-                
-                openModal('Update Status', "@Url.Action("UpdateStatus")" + `/${reservationId}`, 
-                    () => {
-                        $('#modal-submit').submit();
-                        $('#modal').modal('hide');
-                    });
-            });
-            
-            $('.reservation-title').click(function () {
-                const reservationId = $(this).attr('data-id');
-                
-                openModal('Reservation Details', "@Url.Action("Details")" + `/${reservationId}`);
-            });
-        });
-    </script>
-}
+<partial name="_ModalSystem" />

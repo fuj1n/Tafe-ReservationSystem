@@ -5,6 +5,8 @@
     Layout = "";
 }
 
+<span class="d-none" id="modal-name">Update Status</span>
+
 <form asp-action="UpdateStatus" method="post" id="modal-submit">
     <select asp-for="StatusId" asp-items="Model!.Statuses" class="form-select"></select>
     <div class="visually-hidden invisible" aria-hidden="true">

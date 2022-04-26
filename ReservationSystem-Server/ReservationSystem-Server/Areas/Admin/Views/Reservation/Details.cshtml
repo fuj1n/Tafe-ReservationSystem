@@ -11,6 +11,8 @@
     Dictionary<int, ReservationStatusVisual> statusVisuals = await ReservationUtility.GetReservationStatusVisualsAsync();
 }
 
+<span class="d-none" id="modal-name">Reservation Details</span>
+
 <dl>
     <dt>Sitting</dt>
     <dd>@Model!.Sitting.SittingType.Description on @Model.Sitting.StartTime.ToShortDateString() 
@@ -73,6 +75,7 @@
     {
         <dd class="text-danger">No tables assigned</dd>
     }
-    <a asp-action="AssignTables" asp-route-id="@Model.Id" class="btn btn-info">Assign Tables</a>
-
+    
+    <a asp-action="AssignTables" asp-route-id="@Model.Id" 
+       class="btn btn-info w-100 modal-for">Assign Tables</a>
 </dl>
