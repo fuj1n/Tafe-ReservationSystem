@@ -88,7 +88,7 @@ public class ReservationController : Controller
         {
             return NotFound();
         }
-        
+
         Reservation reservation = new()
         {
             SittingId = model.SittingId,
