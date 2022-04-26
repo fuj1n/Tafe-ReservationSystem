@@ -26,13 +26,19 @@ public class CustomerManager
         IdentityUser idUser = await _userManager.GetUserAsync(user);
 
         if (idUser == null)
-        {
             return null;
-        }
 
-        return await _context.Customers.FirstOrDefaultAsync(c => c.UserId == idUser.Id);
+        return await FindCustomerAsync(idUser);
     }
 
+    /**
+     * Finds the customer based on the given user
+     */
+    public async Task<Customer?> FindCustomerAsync(IdentityUser user)
+    {
+        return await _context.Customers.FirstOrDefaultAsync(c => c.UserId == user.Id);
+    }
+    
     /**
      * Finds a customer based on email, phone number or both
      * <param name="email">The email of the user (or null)</param>
@@ -70,16 +76,21 @@ public class CustomerManager
             };
 
             _context.Customers.Add(customer);
-            await _context.SaveChangesAsync();
+            await SaveChangesAsync();
         }
         else
         {
             // Update first and last name in the event that they were changed
             customer.FirstName = firstName;
             customer.LastName = lastName;
-            await _context.SaveChangesAsync();
+            await SaveChangesAsync();
         }
 
         return customer;
+    }
+
+    public async Task<int> SaveChangesAsync()
+    {
+        return await _context.SaveChangesAsync();
     }
 }
