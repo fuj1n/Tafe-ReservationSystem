@@ -374,7 +374,7 @@ namespace ReservationSystem_Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("People");
+                    b.ToTable("People", (string)null);
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("Person");
                 });
@@ -421,7 +421,7 @@ namespace ReservationSystem_Server.Migrations
 
                     b.HasIndex("SittingId");
 
-                    b.ToTable("Reservations");
+                    b.ToTable("Reservations", (string)null);
                 });
 
             modelBuilder.Entity("ReservationSystem_Server.Data.ReservationOrigin", b =>
@@ -438,7 +438,7 @@ namespace ReservationSystem_Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ReservationOrigins");
+                    b.ToTable("ReservationOrigins", (string)null);
 
                     b.HasData(
                         new
@@ -482,7 +482,7 @@ namespace ReservationSystem_Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ReservationStatuses");
+                    b.ToTable("ReservationStatuses", (string)null);
 
                     b.HasData(
                         new
@@ -538,7 +538,7 @@ namespace ReservationSystem_Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Restaurants");
+                    b.ToTable("Restaurants", (string)null);
 
                     b.HasData(
                         new
@@ -570,7 +570,7 @@ namespace ReservationSystem_Server.Migrations
 
                     b.HasIndex("RestaurantId");
 
-                    b.ToTable("RestaurantAreas");
+                    b.ToTable("RestaurantAreas", (string)null);
 
                     b.HasData(
                         new
@@ -625,7 +625,7 @@ namespace ReservationSystem_Server.Migrations
 
                     b.HasIndex("SittingTypeId");
 
-                    b.ToTable("Sittings");
+                    b.ToTable("Sittings", (string)null);
 
                     b.HasData(
                         new
@@ -674,7 +674,7 @@ namespace ReservationSystem_Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SittingTypes");
+                    b.ToTable("SittingTypes", (string)null);
 
                     b.HasData(
                         new
@@ -716,7 +716,7 @@ namespace ReservationSystem_Server.Migrations
 
                     b.HasIndex("AreaId");
 
-                    b.ToTable("Tables");
+                    b.ToTable("Tables", (string)null);
 
                     b.HasData(
                         new
@@ -942,7 +942,7 @@ namespace ReservationSystem_Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ReservationStatusVisuals");
+                    b.ToTable("ReservationStatusVisuals", (string)null);
 
                     b.HasData(
                         new
@@ -984,7 +984,7 @@ namespace ReservationSystem_Server.Migrations
 
                     b.HasIndex("TablesId");
 
-                    b.ToTable("ReservationTable");
+                    b.ToTable("ReservationTable", (string)null);
                 });
 
             modelBuilder.Entity("ReservationSystem_Server.Data.Customer", b =>

@@ -6,7 +6,7 @@
 }
 
 <h2>Reservations</h2>
-<b>For @Model!.Sitting.SittingType.Description sitting on @Model.Sitting.StartTime.ToShortDateString()</b>
+<b>For @Model.Sitting.SittingType.Description sitting on @Model.Sitting.StartTime.ToShortDateString()</b>
 <b>From @Model.Sitting.StartTime.ToShortTimeString() to @Model.Sitting.EndTime.ToShortTimeString()</b>
 
 <hr/>
@@ -71,7 +71,7 @@
         $('.reservation-status').click(function () {
             const reservationId = $(this).attr('data-id');
             
-            fetch('../UpdateStatus/' + reservationId)
+            fetch("@Url.Action("UpdateStatus")" + `/${reservationId}`)
                 .then(response => response.text())
                 .then(html => {
                     $('#update-status-body').html(html);

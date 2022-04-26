@@ -1,4 +1,6 @@
-﻿namespace ReservationSystem_Server.Areas.Admin.Models.Reservation;
+﻿using ReservationSystem_Server.Models;
+
+namespace ReservationSystem_Server.Areas.Admin.Models.Reservation;
 
 public class SelectTimeViewModel
 {
@@ -6,5 +8,5 @@ public class SelectTimeViewModel
     public DateTime SittingStart { get; set; }
     public DateTime SittingEnd { get; set; }
 
-    public List<TimeSlot> TimeSlots { get; set; } = null!;
+    public List<DateTime> TimeSlots { get; set; } = null!;
 }

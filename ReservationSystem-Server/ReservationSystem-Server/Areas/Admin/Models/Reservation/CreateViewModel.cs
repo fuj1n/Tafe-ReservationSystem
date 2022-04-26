@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using ReservationSystem_Server.Models;
 
 namespace ReservationSystem_Server.Areas.Admin.Models.Reservation;
 
@@ -20,5 +21,5 @@ public class CreateViewModel
     public string? Notes { get; set; }
     
     public SelectList? AvailableOrigins { get; set; }
-    public List<TimeSlot>? TimeSlots { get; set; }
+    public List<DateTime>? TimeSlots { get; set; }
 }
