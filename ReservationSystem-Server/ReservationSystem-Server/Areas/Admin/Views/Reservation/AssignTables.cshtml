@@ -1,0 +1,36 @@
+﻿@using ReservationSystem_Server.Areas.Admin.Models.Reservation
+@model ReservationSystem_Server.Areas.Admin.Models.Reservation.AssignTablesViewModel
+
+@{
+    ViewBag.Title = "Assign Tables";
+}
+
+<h2>Assign Tables</h2>
+<hr/>
+<a asp-action="Sitting" asp-route-id="@Model!.SittingId" class="btn btn-outline-danger mb-2">Back to Sitting</a>
+
+<form method="post">
+    <div class="list-group list-group-horizontal-lg flex-wrap">
+        @for (int i = 0; i < Model!.Tables.Count; i++)
+        {
+            AssignTablesViewModel.Table table = Model.Tables[i];
+            <label class="list-group-item border-start" style="width: 100px;">
+                <input class="form-check-input me-1" type="checkbox" asp-for="Tables[i].IsAssigned" />
+                @table.Name
+            </label>
+        }
+    </div>
+    
+    <button type="submit" class="btn btn-outline-primary mt-2">Submit</button>
+    
+    <div class="visually-hidden invisible" aria-hidden="true">
+        <input type="hidden" asp-for="ReservationId"/>
+        <input type="hidden" asp-for="SittingId"/>
+        
+        @for (int i = 0; i < Model.Tables.Count; i++)
+        {
+            <input type="hidden" asp-for="Tables[i].Id"/>
+            <input type="hidden" asp-for="Tables[i].Name"/>
+        }
+    </div>
+</form>

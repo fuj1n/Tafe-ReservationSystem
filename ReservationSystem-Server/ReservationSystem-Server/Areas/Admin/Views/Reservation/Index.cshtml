@@ -1,0 +1,30 @@
+﻿@using ReservationSystem_Server.Data
+@model List<Sitting>
+
+@{
+    ViewBag.Title = "Reservations";
+}
+
+<h2>Sittings</h2>
+
+<div class="list-group">
+    @{ DateOnly lastDate = new(); }
+    @foreach (Sitting sitting in Model!)
+    {
+        DateOnly thisDate = DateOnly.FromDateTime(sitting.StartTime);
+
+        @if (lastDate != thisDate)
+        {
+            lastDate = thisDate;
+            <span class="list-group-item list-group-item-info fw-bold">
+                @thisDate.ToShortDateString()
+            </span>
+        }
+        
+        <a class="list-group-item list-group-item-action" asp-action="Sitting" asp-route-id="@sitting.Id">
+            @sitting.SittingType.Description
+            from @sitting.StartTime.ToShortTimeString()
+            to @sitting.EndTime.ToShortTimeString()
+        </a>
+    }
+</div>

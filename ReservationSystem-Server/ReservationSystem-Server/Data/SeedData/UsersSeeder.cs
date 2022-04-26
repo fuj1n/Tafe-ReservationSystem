@@ -16,7 +16,8 @@ public static class UsersSeeder
                 NormalizedEmail = userName.ToUpper(),
                 PasswordHash = pass,
                 SecurityStamp = sec,
-                EmailConfirmed = true
+                EmailConfirmed = true,
+                ConcurrencyStamp = id
         };
     }
 
