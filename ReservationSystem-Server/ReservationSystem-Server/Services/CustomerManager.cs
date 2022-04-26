@@ -59,6 +59,9 @@ public class CustomerManager
      */
     public async Task<Customer> GetOrCreateCustomerAsync(string firstName, string lastName, string? email, string? phoneNumber)
     {
+        if(string.IsNullOrWhiteSpace(email) && string.IsNullOrWhiteSpace(phoneNumber))
+            throw new ArgumentException("Either email or phone number must be provided");
+        
         email = email?.ToUpperInvariant();
         phoneNumber = phoneNumber?.ToUpperInvariant();
 

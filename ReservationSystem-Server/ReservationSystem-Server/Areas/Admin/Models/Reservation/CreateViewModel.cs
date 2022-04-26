@@ -19,6 +19,11 @@ public class CreateViewModel
     public int NumGuests { get; set; }
     
     public string? Notes { get; set; }
+
+    public string FirstName { get; set; } = null!;
+    public string LastName { get; set; } = null!;
+    public string? Email { get; set; }
+    public string? Phone { get; set; }
     
     public SelectList? AvailableOrigins { get; set; }
     public List<DateTime>? TimeSlots { get; set; }

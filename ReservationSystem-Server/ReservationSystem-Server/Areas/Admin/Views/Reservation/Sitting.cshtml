@@ -1,33 +1,41 @@
 ﻿@using ReservationSystem_Server.Data
-@model ReservationSystem_Server.Areas.Admin.Models.Reservation.SittingViewModel
+@using ReservationSystem_Server.Data.Visual
+@using ReservationSystem_Server.Services
+@model Sitting
+@inject ReservationUtility ReservationUtility
 
 @{
     ViewBag.Title = "Reservations";
+    Dictionary<int, ReservationStatusVisual> statusVisuals = await ReservationUtility.GetReservationStatusVisualsAsync();
 }
 
 <h2>Reservations</h2>
-<b>For @Model!.Sitting.SittingType.Description sitting on @Model.Sitting.StartTime.ToShortDateString()</b>
-<b>From @Model.Sitting.StartTime.ToShortTimeString() to @Model.Sitting.EndTime.ToShortTimeString()</b>
+<b>For @Model!.SittingType.Description sitting on @Model.StartTime.ToShortDateString()</b>
+<b>From @Model.StartTime.ToShortTimeString() to @Model.EndTime.ToShortTimeString()</b>
 
 <hr/>
 
 <div class="mb-2">
-    <a asp-action="Create" asp-route-sittingId="@Model.Sitting.Id" class="btn btn-outline-success">Create Reservation</a>
+    <a asp-action="Create" asp-route-sittingId="@Model.Id" class="btn btn-outline-success">Create Reservation</a>
     <a asp-action="Index" class="btn btn-outline-primary">Back to Sittings</a>
 </div>
 
 <ul class="list-group">
-    @if (Model.Sitting.Reservations.Count == 0)
+    @if (Model.Reservations.Count == 0)
     {
         <li class="list-group-item list-group-item-danger">No reservations</li>
     }
     else
     {
-        @foreach (Reservation reservation in Model.Sitting.Reservations)
+        @foreach (Reservation reservation in Model.Reservations)
         {
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 <span>
-                    @reservation.Customer.FirstName @reservation.Customer.LastName - @reservation.StartTime.ToShortTimeString() to @reservation.EndTime.ToShortTimeString()
+                    <a class="list-group-item-action reservation-title" data-id="@reservation.Id" style="cursor: pointer">
+                        @reservation.Customer.FirstName @reservation.Customer.LastName - 
+                        @reservation.StartTime.ToShortTimeString() to 
+                        @reservation.EndTime.ToShortTimeString()
+                    </a>
                     <span class="badge rounded-pill bg-primary">
                         @reservation.Tables.Count table(s)
                     </span>
@@ -35,7 +43,9 @@
                         @reservation.ReservationOrigin.Description
                     </span>
                 </span>
-                @{ string badgeClass = Model.ReservationStatusVisuals[reservation.ReservationStatusId]?.HtmlBadgeClass ?? "bg-primary"; }
+                @{
+                    string badgeClass = statusVisuals.GetValueOrDefault(reservation.ReservationStatusId)?.HtmlBadgeClass ?? "bg-primary";
+                }
                 <span>
                     <span class="badge @badgeClass rounded-pill user-select-none reservation-status" style="width: 100px; cursor: pointer;" data-id="@reservation.Id">
                         @reservation.ReservationStatus.Description &gt;
@@ -48,14 +58,14 @@
     }
 </ul>
 
-<div class="modal fade" id="update-status" tabindex="-1">
-    <div class="modal-dialog">
+<div class="modal fade" id="modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Update Status</h5>
+                <h5 class="modal-title" id="modal-title"></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" id="update-status-body">
+            <div class="modal-body" id="modal-body">
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -68,20 +78,42 @@
 @section Scripts
 {
     <script>
-        $('.reservation-status').click(function () {
-            const reservationId = $(this).attr('data-id');
+        $(() => {
+            function openModal(actionName, action, submit) {
+                fetch(action)
+                    .then(response => response.text())
+                    .then(html => {
+                        $('#modal-body').html(html);
+                        $('#modal').modal('show');
+                        $('#modal-title').text(actionName);
+                        
+                        const submitBtn = $('#btn-save');
+                        submitBtn.off('click');
+                        
+                        if (submit) {
+                            submitBtn.on('click', submit);
+                            submitBtn.removeClass('d-none');
+                        } else {
+                            submitBtn.addClass('d-none');
+                        }
+                    });
+            }
             
-            fetch("@Url.Action("UpdateStatus")" + `/${reservationId}`)
-                .then(response => response.text())
-                .then(html => {
-                    $('#update-status-body').html(html);
-                    $('#update-status').modal('show');
-                });
-        });
-        
-        $('#btn-save').click(function () {
-            $('#modal-submit').submit();
-            $('#update-status').modal('hide');
+            $('.reservation-status').click(function () {
+                const reservationId = $(this).attr('data-id');
+                
+                openModal('Update Status', "@Url.Action("UpdateStatus")" + `/${reservationId}`, 
+                    () => {
+                        $('#modal-submit').submit();
+                        $('#modal').modal('hide');
+                    });
+            });
+            
+            $('.reservation-title').click(function () {
+                const reservationId = $(this).attr('data-id');
+                
+                openModal('Reservation Details', "@Url.Action("Details")" + `/${reservationId}`);
+            });
         });
     </script>
 }

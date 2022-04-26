@@ -45,14 +45,27 @@ public class ReservationController : Controller
             return NotFound();
         }
         
-        return View(new SittingViewModel
-        {
-            Sitting = sitting,
-            ReservationStatusVisuals = await _context.ReservationStatusVisuals
-                .ToDictionaryAsync(v => v.Id, v => v)
-        });
+        return View(sitting);
     }
 
+    public async Task<IActionResult> Details(int id)
+    {
+        Reservation? reservation = await _context.Reservations
+            .Include(r => r.ReservationOrigin)
+            .Include(r => r.ReservationStatus)
+            .Include(r => r.Sitting).ThenInclude(s => s.SittingType)
+            .Include(r => r.Customer)
+            .Include(r => r.Tables)
+            .FirstOrDefaultAsync(r => r.Id == id);
+        
+        if (reservation == null)
+        {
+            return NotFound();
+        }
+
+        return View(reservation);
+    }
+    
     public async Task<IActionResult> Create(int sittingId)
     {
         Sitting? sitting = await _context.Sittings
@@ -81,6 +94,11 @@ public class ReservationController : Controller
     [HttpPost]
     public async Task<IActionResult> Create(CreateViewModel model)
     {
+        if(string.IsNullOrWhiteSpace(model.Email) && string.IsNullOrWhiteSpace(model.Phone))
+        {
+            ModelState.AddModelError("", "Email or phone number is required");
+        }
+
         if (!ModelState.IsValid)
         {
             model.AvailableOrigins = await GetAvailableOriginsAsync();
@@ -95,8 +113,8 @@ public class ReservationController : Controller
             return NotFound();
         }
 
-        Customer customer = await _customerManager.GetOrCreateCustomerAsync("John", "Doe",
-                "jd@example.com", "0412345678");
+        Customer customer = await _customerManager.GetOrCreateCustomerAsync(model.FirstName, model.LastName,
+                model.Email, model.Phone);
         
         Reservation reservation = new()
         {
@@ -121,6 +139,7 @@ public class ReservationController : Controller
         Reservation? reservation = await _context.Reservations
             .Include(r => r.Sitting)
             .Include(r => r.ReservationOrigin)
+            .Include(c => c.Customer)
             .FirstOrDefaultAsync(r => r.Id == id);
 
         if (reservation == null)
@@ -137,6 +156,12 @@ public class ReservationController : Controller
             Duration = reservation.Duration,
             NumGuests = reservation.NumberOfPeople,
             Origin = reservation.ReservationOriginId,
+            
+            FirstName = reservation.Customer.FirstName,
+            LastName = reservation.Customer.LastName,
+            Email = reservation.Customer.Email,
+            Phone = reservation.Customer.PhoneNumber,
+            
             Notes = reservation.Notes,
             
             AvailableOrigins = await GetAvailableOriginsAsync(),
@@ -149,6 +174,11 @@ public class ReservationController : Controller
     [HttpPost]
     public async Task<IActionResult> Edit(EditViewModel model)
     {
+        if(string.IsNullOrWhiteSpace(model.Email) && string.IsNullOrWhiteSpace(model.Phone))
+        {
+            ModelState.AddModelError("", "Email or phone number is required");
+        }
+
         Sitting? sitting = await _context.Sittings
             .FirstOrDefaultAsync(s => s.Id == model.SittingId);
         if(sitting == null)
@@ -174,6 +204,10 @@ public class ReservationController : Controller
         reservation.ReservationOriginId = model.Origin;
         reservation.NumberOfPeople = model.NumGuests;
         reservation.Notes = model.Notes;
+
+        Customer customer =
+            await _customerManager.GetOrCreateCustomerAsync(model.FirstName, model.LastName, model.Email, model.Phone);
+        reservation.CustomerId = customer.Id;
 
         await _context.SaveChangesAsync();
         

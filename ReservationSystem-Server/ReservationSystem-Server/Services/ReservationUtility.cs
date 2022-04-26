@@ -1,4 +1,7 @@
 ﻿using JetBrains.Annotations;
+using Microsoft.EntityFrameworkCore;
+using ReservationSystem_Server.Data;
+using ReservationSystem_Server.Data.Visual;
 using ReservationSystem_Server.Models;
 
 namespace ReservationSystem_Server.Services;
@@ -6,6 +9,13 @@ namespace ReservationSystem_Server.Services;
 [PublicAPI]
 public class ReservationUtility
 {
+    private readonly ApplicationDbContext _context;
+    
+    public ReservationUtility(ApplicationDbContext context)
+    {
+        _context = context;
+    }
+    
     /**
      * Gets all time slots between <paramref name="startTime"/> and <paramref name="endTime"/>
      * in <paramref name="slotLength"/> increments
@@ -23,5 +33,11 @@ public class ReservationUtility
         }
 
         return timeSlots;
+    }
+
+    public async Task<Dictionary<int, ReservationStatusVisual>> GetReservationStatusVisualsAsync()
+    {
+        return await _context.ReservationStatusVisuals
+            .ToDictionaryAsync(v => v.Id, v => v);
     }
 }

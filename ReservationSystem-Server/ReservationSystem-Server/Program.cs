@@ -16,7 +16,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
 builder.Services.AddScoped<CustomerManager>();
-builder.Services.AddSingleton<ReservationUtility>();
+builder.Services.AddScoped<ReservationUtility>();
 
 // builder.Services.AddScoped<IActionContextAccessor, ActionContextAccessor>();
 // builder.Services.AddScoped<IUrlHelper>(x =>
