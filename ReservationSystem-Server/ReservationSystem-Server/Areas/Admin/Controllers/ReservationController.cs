@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ReservationSystem_Server.Areas.Admin.Models.Reservation;
 using ReservationSystem_Server.Data;
+using ReservationSystem_Server.Services;
 
 namespace ReservationSystem_Server.Areas.Admin.Controllers;
 
@@ -12,11 +13,16 @@ namespace ReservationSystem_Server.Areas.Admin.Controllers;
 public class ReservationController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly CustomerManager _customerManager;
+    private readonly ReservationUtility _utility;
+    
     private readonly TimeSpan _timeSlotLength = TimeSpan.FromMinutes(30);
 
-    public ReservationController(ApplicationDbContext context)
+    public ReservationController(ApplicationDbContext context, CustomerManager customerManager, ReservationUtility utility)
     {
         _context = context;
+        _customerManager = customerManager;
+        _utility = utility;
     }
     
     public async Task<IActionResult> Index()
@@ -66,7 +72,7 @@ public class ReservationController : Controller
             StartTime = sitting.StartTime,
             
             AvailableOrigins = await GetAvailableOriginsAsync(),
-            TimeSlots = GetTimeSlots(sitting)
+            TimeSlots = _utility.GetTimeSlots(sitting.StartTime, sitting.EndTime, _timeSlotLength)
         };
         
         return View(model);
@@ -89,6 +95,9 @@ public class ReservationController : Controller
             return NotFound();
         }
 
+        Customer customer = await _customerManager.GetOrCreateCustomerAsync("John", "Doe",
+                "jd@example.com", "0412345678");
+        
         Reservation reservation = new()
         {
             SittingId = model.SittingId,
@@ -98,7 +107,7 @@ public class ReservationController : Controller
             ReservationOriginId = model.Origin,
             Notes = model.Notes,
             ReservationStatusId = 1,
-            CustomerId = 1
+            CustomerId = customer.Id
         };
         
         _context.Reservations.Add(reservation);
@@ -131,7 +140,7 @@ public class ReservationController : Controller
             Notes = reservation.Notes,
             
             AvailableOrigins = await GetAvailableOriginsAsync(),
-            TimeSlots = GetTimeSlots(reservation.Sitting)
+            TimeSlots = _utility.GetTimeSlots(reservation.Sitting.StartTime, reservation.Sitting.EndTime, _timeSlotLength)
         };
 
         return View(model);
@@ -148,7 +157,7 @@ public class ReservationController : Controller
         if(!ModelState.IsValid)
         {
             model.AvailableOrigins = await GetAvailableOriginsAsync();
-            model.TimeSlots = GetTimeSlots(sitting);
+            model.TimeSlots = _utility.GetTimeSlots(sitting.StartTime, sitting.EndTime, _timeSlotLength);
             return View(model);
         }
         
@@ -273,27 +282,6 @@ public class ReservationController : Controller
         return RedirectToAction("Sitting", new {id=reservation.SittingId});
     }
 
-    private List<TimeSlot> GetTimeSlots(Sitting sitting)
-    {
-        List<TimeSlot> timeSlots = new();
-        
-        TimeSpan sittingDuration = sitting.EndTime - sitting.StartTime;
-        
-        //TODO: configurable time slot length
-        for (TimeSpan time = new(0); time < sittingDuration; time += _timeSlotLength)
-        {
-            DateTime slotTime = sitting.StartTime + time;
-            
-            timeSlots.Add(new TimeSlot
-            {
-                Time = slotTime,
-                Display = slotTime.ToShortTimeString()
-            });
-        }
-
-        return timeSlots;
-    }
-    
     private async Task<SelectList> GetAvailableOriginsAsync()
     {
         return new SelectList(await _context.ReservationOrigins.ToListAsync(), 

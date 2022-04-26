@@ -1,22 +1,22 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using ReservationSystem_Server.Data;
+using ReservationSystem_Server.Services;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
         .AddRoles<IdentityRole>()
         .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
+
+builder.Services.AddScoped<CustomerManager>();
+builder.Services.AddSingleton<ReservationUtility>();
 
 // builder.Services.AddScoped<IActionContextAccessor, ActionContextAccessor>();
 // builder.Services.AddScoped<IUrlHelper>(x =>

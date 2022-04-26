@@ -39,7 +39,9 @@ public class ApplicationDbContext : VisualDbContext
         builder.Entity<Reservation>().HasOne(r => r.ReservationStatus)
             .WithMany().OnDelete(DeleteBehavior.Restrict);
 
-
+        builder.Entity<Customer>().HasOne(c => c.User)
+            .WithOne().OnDelete(DeleteBehavior.SetNull);
+        
         builder.Entity<RestaurantArea>().HasOne(r => r.Restaurant)
             .WithMany(r => r.Areas).OnDelete(DeleteBehavior.Restrict);
 
