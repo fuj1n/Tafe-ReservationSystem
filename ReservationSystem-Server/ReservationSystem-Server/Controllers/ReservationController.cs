@@ -19,7 +19,7 @@ namespace ReservationSystem_Server.Controllers
 
         public async Task<IActionResult> Sittings()
         {
-            var sittings = await _context.Sittings.ToListAsync();
+            var sittings = await _context.Sittings.Include(s=>s.SittingType).Where(s=>s.IsClosed == false && s.StartTime>DateTime.Now).ToListAsync();
 
             return View(sittings);
         }

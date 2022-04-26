@@ -5,7 +5,6 @@ namespace ReservationSystem_Server.Models.Reservation
 {
     public class CreateVM
     {
-        //start time, durationno. of guests, Notes/Add req
         public int SittingId { get; set; }
         public DateTime SittingStartTime { get; set; }   
         public DateTime SittingEndTime { get; set; }   
@@ -19,7 +18,6 @@ namespace ReservationSystem_Server.Models.Reservation
         public int NoOfPeople { get; set; }
 
         public string Notes { get; set; }
-
 
     }
 }
