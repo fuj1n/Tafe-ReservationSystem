@@ -1,0 +1,43 @@
+﻿@model List<ReservationSystem_Server.Data.Sitting>
+
+@{
+    ViewData["Title"] = "Sittings";
+}
+
+<a asp-action="Create">Create</a>
+<table class="table">
+    <thead><tr>
+        <th>Type</th>
+        <th>Start Time</th>
+        <th>End Time</th>
+        <th>Capacity</th>
+        <th>Is Closed</th>
+        <th></th>
+        <th></th>
+    </tr></thead>
+    <tbody>
+        @foreach (var sitting in Model!)
+        {
+            <tr>
+                <td>@sitting.SittingType.Description </td>
+                <td>@sitting.StartTime</td>
+                <td>@sitting.EndTime</td>
+                <td>@sitting.Capacity</td>
+                <td>@sitting.IsClosed</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@sitting.Id">Edit</a>
+                </td>
+                <td>
+                    @if (!sitting.IsClosed)
+                    {
+                        <a asp-action="Close" asp-route-id="@sitting.Id" >Close</a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Close</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

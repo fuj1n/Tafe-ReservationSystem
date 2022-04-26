@@ -1,0 +1,25 @@
+﻿@model ReservationSystem_Server.Areas.Admin.Models.Sitting.CreateVM
+
+@{
+    ViewData["Title"] = "Edit Sitting";
+}
+
+<form method="post">
+    <div>
+        <label asp-for="StartTime"></label>
+        <input asp-for="StartTime" />
+    </div>
+    <div>
+        <label asp-for="EndTime"></label>
+        <input asp-for="EndTime" />
+    </div>
+    <div>
+        <label asp-for="Capacity"></label>
+        <input asp-for="Capacity" />
+    </div>
+    <div>
+        <label asp-for="SittingType"></label>
+        <select asp-for="SittingType" asp-items="Model!.SittingTypes" ></select>
+    </div>
+    <input type="submit" value="Confirm"/>
+</form>
