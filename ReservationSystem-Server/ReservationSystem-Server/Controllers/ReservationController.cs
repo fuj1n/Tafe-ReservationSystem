@@ -14,7 +14,7 @@ namespace ReservationSystem_Server.Controllers
         }
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("Sittings");
         }
 
         public async Task<IActionResult> Sittings()
