@@ -72,10 +72,14 @@ function _openModal(modal, url, retries = 0) {
         });
 }
 
-function bindModal(selector, url) {
-    $(selector).on('click', function () {
+function bindModalToElement(item, url) {
+    item.on('click', function () {
         openModal(url.replace('{id}', $(this).data('id')));
     });
+}
+
+function bindModal(selector, url) {
+    bindModalToElement($(selector), url);
 }
 
 function autoBindModals() {
@@ -88,9 +92,7 @@ function autoBindModals() {
         
         item.removeClass('modal-for');
 
-        item.on('click', function () {
-            openModal(url);
-        });
+        bindModalToElement(item, url);
     });
 }
 

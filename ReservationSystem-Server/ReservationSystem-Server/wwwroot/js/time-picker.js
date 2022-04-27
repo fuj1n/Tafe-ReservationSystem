@@ -8,7 +8,7 @@
         $('#time-display').removeClass('visually-hidden');
         $('#time-select').addClass('visually-hidden');
 
-        $('#time-display input').val($(this).attr('data-display'));
-        $('#time-picker-val').val($(this).attr('data-time'));
+        $('#time-display input').val($(this).data('display'));
+        $('#time-picker-val').val($(this).data('time'));
     });
 });
