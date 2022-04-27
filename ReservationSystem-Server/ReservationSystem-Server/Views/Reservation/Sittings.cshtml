@@ -1,0 +1,56 @@
+﻿@model IEnumerable<ReservationSystem_Server.Data.Sitting>
+
+@{
+    ViewData["Title"] = "Sittings";
+}
+
+<h1>Sittings</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Start Time
+            </th>
+            <th>
+                End Time
+            </th>
+         
+            <th>
+                Capacity
+            </th>
+            <th>
+                Sitting Type
+            </th>
+          
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EndTime)
+                </td>
+               
+                <td>
+                    @Html.DisplayFor(modelItem => item.Capacity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SittingType.Description)
+                </td>
+              
+                <td>
+
+                    <a asp-action="Create" asp-route-sittingId="@item.Id">Select</a>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
