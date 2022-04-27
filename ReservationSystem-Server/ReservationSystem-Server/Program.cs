@@ -2,17 +2,29 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ReservationSystem_Server.Data;
 using ReservationSystem_Server.Services;
+using ReservationSystem_Server.Utility;
+
+string[] stringsToTry =
+{
+    "DefaultConnection",
+    "DefaultConnectionExpress"
+};
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
-string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+string? connectionString =
+    DatabaseFinder.GetFirstAvailable(stringsToTry.Select(builder.Configuration.GetConnectionString));
+
+if (connectionString == null)
+    throw new InvalidOperationException("Could not find the right connection string.");
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseSqlServer(connectionString));
+    options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
-        .AddRoles<IdentityRole>()
-        .AddEntityFrameworkStores<ApplicationDbContext>();
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
 builder.Services.AddScoped<CustomerManager>();
@@ -48,11 +60,11 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
-        "area",
-        "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+    "area",
+    "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 app.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}");
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 
 app.Run();
