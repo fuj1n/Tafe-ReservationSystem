@@ -1,25 +1,33 @@
-﻿@model ReservationSystem_Server.Areas.Admin.Models.Sitting.CreateVM
+﻿@model ReservationSystem_Server.Areas.Admin.Models.Sitting.EditVM
 
 @{
     ViewData["Title"] = "Edit Sitting";
 }
 
 <form method="post">
+    <div asp-validation-summary="All" class="alert alert-danger"></div>
     <div class="form-group">
         <label asp-for="StartTime" class="form-label"></label>
         <input asp-for="StartTime" class="form-control" />
+        <span asp-validation-for="StartTime" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="EndTime" class="form-label"></label>
         <input asp-for="EndTime" class="form-control" />
+        <span asp-validation-for="EndTime" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="Capacity" class="form-label"></label>
-        <input asp-for="Capacity" class="form-control" />
+        <input asp-for="Capacity" class="form-control" min="0"/>
+        <span asp-validation-for="Capacity" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="SittingType" class="form-label"></label>
-        <select asp-for="SittingType" asp-items="Model!.SittingTypes" class="form-select"></select>
+        <select asp-for="SittingType" asp-items="Model!.SittingTypes" class="form-select">
+            <option value="">--- Please Select ---</option>
+        </select>
+        <span asp-validation-for="SittingType" class="text-danger"></span>
     </div>
-    <input type="submit" value="Confirm" />
+    <input class="btn btn-outline-success mt-2" type="submit" value="Confirm" />
+    <a class="btn btn-outline-primary mt-2" asp-action="Index">Back</a>
 </form>
