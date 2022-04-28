@@ -2,40 +2,77 @@
 @*//type of views model*@
 
 <form method="post">
-    <div class="form-group">
-        
-            <label class="form-label">Sitting Type</label>
-            <br/>
-            <input asp-for=SittingType class="form-control" readonly disabled />     
-    </div>
-    
-     <div class="form-group">
-        
-            <label class="form-label">No. of Guests</label>
-            <input asp-for=NoOfPeople class="form-control" min="0" /> 
-    </div>
+    <div asp-validation-summary="All" class="alert alert-danger"></div>
 
-     <div class="form-group">
-        
-            <label class="form-label">Start Time</label>
-            <input asp-for=StartTime class="form-control" />
+    <div>
+        <b>Sitting from: @Model.SittingStartTime to @Model.SittingEndTime</b>
     </div>
 
     <div class="form-group">
-        
-            <label class="form-label">Duration</label>
-            <br/>
-            <input asp-for=Duration class="form-control" readonly/>
+
+        <label class="form-label">Sitting Type</label>
+        <br />
+        <input asp-for=SittingType class="form-control" readonly disabled />
+        <span asp-validation-for="SittingType" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        
-            <label class="form-label">Notes/Requests</label>
-             <input asp-for=Notes class="form-control" />
-    </div>
-    
-    <br/>
 
-     <input type="submit" value="Submit" />
+        <label class="form-label">No. of Guests</label>
+        <input asp-for=NoOfPeople class="form-control" min="0"/>
+        <span asp-validation-for="NoOfPeople" class="text-danger"></span>
+    </div>
+
+    @{
+        ViewData["TimeSlots"] = Model.TimeSlots;
+    }
+    <partial name="_TimePicker" for="StartTime" />
+
+    <div class="form-group">
+
+        <label class="form-label">Duration</label>
+        <br />
+        <input asp-for=Duration class="form-control" readonly />
+        <span asp-validation-for="Duration" class="text-danger"></span>
+    </div>
+    <hr />
+    <div class="form-group">
+        <label class="form-label">First Name</label>
+        <input asp-for=FirstName class="form-control" />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label class="form-label">Last Name</label>
+        <input asp-for=LastName class="form-control" />
+        <span asp-validation-for="LastName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label class="form-label">Email</label>
+        <input asp-for=Email class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label class="form-label">Phone Number</label>
+        <input asp-for=PhoneNumber class="form-control" />
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+    </div>
+
+    <hr />
+
+    <div class="form-group">
+
+        <label class="form-label">Notes/Requests</label>
+        <input asp-for=Notes class="form-control" />
+        <span asp-validation-for="Notes" class="text-danger"></span>
+    </div>
+
+    <div class="visually-hidden invisible" aria-hidden="true">
+        <input type="hidden" asp-for="SittingId"/>
+        <input type="hidden" asp-for="SittingStartTime"/>
+        <input type="hidden" asp-for="SittingEndTime"/>
+        <input type="hidden" asp-for="SittingType"/>
+    </div>
+
+    <input type="submit" class="btn btn-outline-success mt-3" value="Submit" />
 
 </form>

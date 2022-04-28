@@ -17,7 +17,18 @@ namespace ReservationSystem_Server.Models.Reservation
         [Range(0,1000)]
         public int NoOfPeople { get; set; }
 
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+
+        [EmailAddress]
+        public string? Email { get; set; }
+
+        [Phone]
+        public string? PhoneNumber { get; set; }
+
         public string Notes { get; set; }
+
+        public List<DateTime> TimeSlots { get; set; }
 
     }
 }

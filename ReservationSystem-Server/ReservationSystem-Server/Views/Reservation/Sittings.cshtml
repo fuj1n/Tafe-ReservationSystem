@@ -6,51 +6,32 @@
 
 <h1>Sittings</h1>
 
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Start Time
-            </th>
-            <th>
-                End Time
-            </th>
-         
-            <th>
-                Capacity
-            </th>
-            <th>
-                Sitting Type
-            </th>
-          
-
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+<div class="list-group">
+    @{
+        DateOnly lastDate = new DateOnly(); /*creates a new date that is 01/01/0001*/
+    }
+    @foreach (var sitting in Model)
+    {
+        DateOnly thisDate = DateOnly.FromDateTime(sitting.StartTime); //assign Date of StartTime to thisDate
+        if (lastDate != thisDate)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.StartTime)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.EndTime)
-                </td>
-               
-                <td>
-                    @Html.DisplayFor(modelItem => item.Capacity)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.SittingType.Description)
-                </td>
-              
-                <td>
-
-                    <a asp-action="Create" asp-route-sittingId="@item.Id">Select</a>
-
-                </td>
-            </tr>
+            lastDate = thisDate;
+            <span class="list-group-item list-group-item-info fw-bold">
+                @thisDate.ToShortDateString()
+            </span>
         }
-    </tbody>
-</table>
+        <a class="list-group-item list-group-item-action" , asp-action="Create" , asp-route-sittingId="@sitting.Id">
+            @sitting.SittingType.Description
+            from @sitting.StartTime.ToShortTimeString()
+            to @sitting.EndTime.ToShortTimeString()
+        </a>
+
+
+
+
+    }
+
+
+</div>
+
+
