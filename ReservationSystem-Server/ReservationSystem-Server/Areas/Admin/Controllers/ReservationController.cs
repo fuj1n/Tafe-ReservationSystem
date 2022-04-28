@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +16,7 @@ public class ReservationController : Controller
     private readonly ApplicationDbContext _context;
     private readonly CustomerManager _customerManager;
     private readonly ReservationUtility _utility;
-    
+
     private readonly TimeSpan _timeSlotLength = TimeSpan.FromMinutes(30);
 
     public ReservationController(ApplicationDbContext context, CustomerManager customerManager, ReservationUtility utility)
@@ -25,10 +26,12 @@ public class ReservationController : Controller
         _utility = utility;
     }
     
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(bool pastSittings)
     {
-        // TODO: only future sittings
-        return View(await _context.Sittings.Include(s => s.SittingType).ToListAsync());
+        ViewData["PastSittings"] = pastSittings;
+        return View(await _context.Sittings.Include(s => s.SittingType).OrderBy(s => s.StartTime)
+                .Where(s => pastSittings || s.StartTime > DateTime.Now)
+                .ToListAsync());
     }
 
     public async Task<IActionResult> Sitting(int id)

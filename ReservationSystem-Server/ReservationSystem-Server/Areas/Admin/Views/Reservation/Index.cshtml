@@ -3,9 +3,19 @@
 
 @{
     ViewBag.Title = "Reservations";
+    bool pastSittings = ViewData["PastSittings"] as bool? ?? false;
 }
 
-<h2>Sittings</h2>
+<div class="d-flex justify-content-between align-items-center">
+    <h2>Sittings</h2>
+    <form method="get">
+        <div class="d-flex form-check form-switch align-items-center gap-2">
+            <input class="form-check-input" type="checkbox" asp-for="@pastSittings" 
+                   onchange="window.setTimeout(() => this.form.submit(), 250)"/>
+            <label class="form-check-label" asp-for="@pastSittings">Show past sittings</label>
+        </div>
+    </form>
+</div>
 
 <div class="list-group">
     @{ DateOnly lastDate = new(); }
@@ -20,7 +30,7 @@
                 @thisDate.ToShortDateString()
             </span>
         }
-        
+
         <a class="list-group-item list-group-item-action" asp-action="Sitting" asp-route-id="@sitting.Id">
             @sitting.SittingType.Description
             from @sitting.StartTime.ToShortTimeString()
