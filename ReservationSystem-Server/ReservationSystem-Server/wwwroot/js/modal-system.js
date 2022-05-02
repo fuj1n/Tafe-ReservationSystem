@@ -1,4 +1,11 @@
-﻿function openModal(url) {
+﻿function openError(message) {
+    $('#modal-body').html(`<p style="color: red">Error: ${message}</p>`);
+    $('#modal-title').text('Error');
+    $('.modal-dialog').removeClass().addClass('modal-dialog modal-dialog-scrollable');
+    $('#modal').modal('show');
+}
+
+function openModal(url) {
     if(!url) {
         console.error("No url provided");
         return;
@@ -20,14 +27,21 @@
 }
 
 function _openModal(modal, url, retries = 0) {
+    const isUrlAbsolute = new RegExp('^(?:[a-z]+:)?//', 'i');
+    
     const submitBtn = $('#btn-save');
     submitBtn.off('click');
     submitBtn.addClass('d-none');
     
-    fetch(url)
+    if(isUrlAbsolute.test(url)) {
+        openError('Cross-origin urls are not permitted');
+        return;
+    }
+    
+    fetch(url, { mode: 'same-origin'})
         .then(response => {
             if(!response.ok) {
-                throw response;
+                throw new Error(`${response.status} ${response.statusText}`);
             }
             
             return response.text()
@@ -37,7 +51,9 @@ function _openModal(modal, url, retries = 0) {
             $('#modal-title').text($('#modal-name').text());
 
             const modalSize = `modal-${$('#modal-size').text()}`;
-            $('.modal-dialog').removeClass().addClass('modal-dialog modal-dialog-scrollable').addClass(modalSize);
+            $('.modal-dialog').removeClass()
+                .addClass('modal-dialog modal-dialog-scrollable')
+                .addClass(modalSize);
 
             const action = $('#modal-action');
             const submittable = $('#modal-submit');
@@ -64,10 +80,7 @@ function _openModal(modal, url, retries = 0) {
             if(retries < 3) {
                 _openModal(modal, url, retries + 1);
             } else {
-                $('#modal-body').text(`Error: ${error.status} ${error.statusText}`);
-                $('#modal-title').text('Error');
-                $('.modal-dialog').removeClass().addClass('modal-dialog modal-dialog-scrollable');
-                modal.modal('show');
+                openError(`${error.message}`);
             }
         });
 }
