@@ -15,6 +15,11 @@ public static class UserRoleSeeder
         });
         userRoles.Add(new IdentityUserRole<string>
         {
+                UserId = "13da5cd2-2c3b-475f-82a6-f79b704b4ff7", // a@e.com
+                RoleId = "1337x03" // Employee
+        });
+        userRoles.Add(new IdentityUserRole<string>
+        {
                 UserId = "4957f11c-e346-4abf-bc30-323e92eec3e8", // m@e.com
                 RoleId = "1337x02" // Manager
         });
