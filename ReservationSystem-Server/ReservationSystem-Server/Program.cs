@@ -6,11 +6,12 @@ using ReservationSystem_Server.Utility;
 
 string[] stringsToTry =
 {
+    "DefaultConnectionExpress",
     "DefaultConnection",
-    "DefaultConnectionExpress"
 };
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
 // Add services to the container.
 string? connectionString =
     DatabaseFinder.GetFirstAvailable(stringsToTry.Select(builder.Configuration.GetConnectionString));
@@ -39,10 +40,13 @@ builder.Services.AddScoped<ReservationUtility>();
 
 WebApplication app = builder.Build();
 
+// On error, show an error page rather than using the browser one
+app.UseStatusCodePagesWithReExecute("/Error", "?statusCode={0}");
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseMigrationsEndPoint();
+    app.UseDeveloperExceptionPage();
 }
 else
 {

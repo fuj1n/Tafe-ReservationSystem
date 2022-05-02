@@ -1,0 +1,10 @@
+﻿@model StatusCodeErrorViewModel
+
+@{
+    ViewBag.Title = "Error - 404 Not Found";
+}
+
+<div class="text-center">
+    <h1 class="display-4">@Model!.StatusCode - @Model.ErrorMessage</h1>
+    <p class="display-6">Resource "@Model.ErrorUrl" could not be located</p>
+</div>
