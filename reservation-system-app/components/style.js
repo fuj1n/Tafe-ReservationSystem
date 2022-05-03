@@ -29,34 +29,12 @@ const baseStyle = {
     },
     dropdownInput: {
         ...inputStyle,
-        flexDirection: 'row'
+        paddingVertical: 0
     },
-    dropdownContainer: {
-        borderRadius: 5
-    },
-    dropdownDropdown: {
-        backgroundColor: '#fff',
-        borderWidth: 1,
-        borderStyle: 'solid',
-        borderColor: '#ced4da',
-        borderRadius: 4,
+    // only applies to web as other platforms use native picker
+    dropdownWebInputStyle: {
+        borderWidth: 0,
         paddingVertical: 12
-    },
-    dropdownPlaceholder: {
-        color: '#6c757d'
-    },
-    dropdownItem: {
-        paddingVertical: 6,
-        paddingHorizontal: 6
-    },
-    dropdownSelectedItem: {
-        flexDirection: 'row',
-        backgroundColor: '#f8f9fa',
-    },
-    dropdownItemSeparator: {
-        borderColor: '#ced4da',
-        borderBottomWidth: 1,
-        marginHorizontal: 6
     }
 };
 

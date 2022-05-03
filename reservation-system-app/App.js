@@ -42,8 +42,8 @@ export default function App() {
                 <Text style={styles.containerItem}>Open up App.js to start working on your app!</Text>
                 <TextInput label="This is a text box:" style={styles.containerItem} placeholder="Enter text here..."/>
 
-                <Dropdown label="This is a dropdown:" items={dropdownItems} value={dropdownValue} setValue={setDropdownValue} zIndex={200}/>
-                <Dropdown label="This is a dropdown 2:" items={dropdownItems} value={dropdownValue} setValue={setDropdownValue} zIndex={100}/>
+                <Dropdown label="This is a dropdown:" items={dropdownItems} selectedValue={dropdownValue} onValueChange={setDropdownValue}/>
+                <Dropdown label="This is a dropdown 2:" items={dropdownItems} selectedValue={dropdownValue} onValueChange={setDropdownValue}/>
 
                 <Button style={styles.containerItem} variant="primary">Primary</Button>
                 <Button style={styles.containerItem} variant="secondary">Secondary</Button>

@@ -1,21 +1,27 @@
-import DropDownPicker from 'react-native-dropdown-picker';
 import style from "./style";
 import {Text, View} from "react-native";
-import {useState} from "react";
+import {Picker} from "@react-native-picker/picker";
 
 export default function Dropdown(props) {
-    const {label, zIndex = 100} = props;
-    const [open, setOpen] = useState(false);
+    const {label, items, children} = props;
+
+    let itemsDom;
+    if(children) {
+        itemsDom = children;
+    } else {
+        itemsDom = items.map((item, index) => {
+            return <Picker.Item key={index} {...item}/>
+        });
+    }
 
     return (
-        <View style={[style.inputContainer, {zIndex: zIndex}]}>
+        <View style={style.inputContainer}>
             {label && <Text style={style.inputLabel}>{label}</Text>}
-            <DropDownPicker open={open} setOpen={setOpen} {...props}
-                            style={style.dropdownInput} placeholderStyle={style.dropdownPlaceholder}
-                            containerStyle={style.dropdownContainer} dropDownContainerStyle={style.dropdownDropdown}
-                            listItemContainerStyle={style.dropdownItem}
-                            selectedItemContainerStyle={style.dropdownSelectedItem}
-                            itemSeparatorStyle={style.dropdownItemSeparator} itemSeparator={true}/>
+            <View style={style.dropdownInput}>
+                <Picker {...props} style={style.dropdownWebInputStyle} mode="dropdown">
+                    {itemsDom}
+                </Picker>
+            </View>
         </View>
     );
 }
