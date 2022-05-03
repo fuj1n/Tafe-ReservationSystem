@@ -3,7 +3,7 @@ import {Text, View} from "react-native";
 import {Picker} from "@react-native-picker/picker";
 
 export default function Dropdown(props) {
-    const {label, items, children} = props;
+    const {label, items, children, style: userStyle} = props;
 
     let itemsDom;
     if(children) {
@@ -15,7 +15,7 @@ export default function Dropdown(props) {
     }
 
     return (
-        <View style={style.inputContainer}>
+        <View style={[style.inputContainer, userStyle]}>
             {label && <Text style={style.inputLabel}>{label}</Text>}
             <View style={style.dropdownInput}>
                 <Picker {...props} style={style.dropdownWebInputStyle} mode="dropdown">
@@ -25,3 +25,5 @@ export default function Dropdown(props) {
         </View>
     );
 }
+
+export const DropdownItem = Picker.Item;

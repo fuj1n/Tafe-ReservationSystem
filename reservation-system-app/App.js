@@ -1,11 +1,8 @@
 import {StatusBar} from 'expo-status-bar';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View, ActivityIndicator, ScrollView} from 'react-native';
 import login, {LoginContext, LoginInfo} from './services';
 import {useEffect, useState} from "react";
-import {ActivityIndicator} from "react-native";
-import Button from "./components/button";
-import TextInput from "./components/textInput";
-import Dropdown from "./components/dropdown";
+import {Button, TextInput, Dropdown, StyledText} from "./components";
 
 export default function App() {
     const [loginInfo, setLoginInfo] = useState(new LoginInfo());
@@ -16,7 +13,19 @@ export default function App() {
         {label: "Apple", value: "1"},
         {label: "Banana", value: "2"},
         {label: "Orange", value: "3"},
-    ]
+    ];
+
+    const variants = [
+        "no variant",
+        "primary",
+        "secondary",
+        "success",
+        "danger",
+        "warning",
+        "info",
+        "light",
+        "dark"
+    ];
 
     useEffect(async () => {
         const loginInfo = await login.getLogin();
@@ -38,21 +47,23 @@ export default function App() {
 
     return (
         <LoginContext.Provider value={{loginInfo, setLoginInfo}}>
-            <View style={styles.container}>
-                <Text style={styles.containerItem}>Open up App.js to start working on your app!</Text>
-                <TextInput label="This is a text box:" style={styles.containerItem} placeholder="Enter text here..."/>
+            <View style={styles.root}>
+                <ScrollView contentContainerStyle={styles.container}>
+                    <StyledText style={styles.containerItem} variant="primary">Open up App.js to start working on your
+                        app!</StyledText>
+                    <TextInput label="This is a text box:" style={styles.containerItem}
+                               placeholder="Enter text here..."/>
 
-                <Dropdown label="This is a dropdown:" items={dropdownItems} selectedValue={dropdownValue} onValueChange={setDropdownValue}/>
-                <Dropdown label="This is a dropdown 2:" items={dropdownItems} selectedValue={dropdownValue} onValueChange={setDropdownValue}/>
+                    <Dropdown label="This is a dropdown:" items={dropdownItems} selectedValue={dropdownValue}
+                              onValueChange={setDropdownValue}/>
+                    <Dropdown style={styles.containerItem} label="This is a dropdown 2:" items={dropdownItems}
+                              selectedValue={dropdownValue} onValueChange={setDropdownValue}/>
 
-                <Button style={styles.containerItem} variant="primary">Primary</Button>
-                <Button style={styles.containerItem} variant="secondary">Secondary</Button>
-                <Button style={styles.containerItem} variant="success">Success</Button>
-                <Button style={styles.containerItem} variant="danger">Danger</Button>
-                <Button style={styles.containerItem} variant="warning">Warning</Button>
-                <Button style={styles.containerItem} variant="info">Info</Button>
-                <Button style={styles.containerItem} variant="dark">Dark</Button>
-                <Button style={styles.containerItem} variant="light">Light</Button>
+                    {variants.map((variant, index) => (
+                        <Button key={index} style={styles.containerItem} variant={variant}>{variant}</Button>))}
+                    {variants.map((variant, index) => (
+                        <StyledText key={index} style={styles.containerItem} variant={variant}>{variant}</StyledText>))}
+                </ScrollView>
             </View>
             <StatusBar style="auto"/>
         </LoginContext.Provider>
@@ -60,8 +71,11 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-    container: {
+    root: {
         flex: 1,
+        marginTop: 50
+    },
+    container: {
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',

@@ -145,6 +145,28 @@ const generators = {
         };
 
         return output;
+    },
+    text: (name, variant, state) => {
+        let output = {};
+
+        if(state) {
+            return {};
+        }
+
+        if (!variant) {
+            output.text = {
+                fontWeight: '400',
+                color: '#212529'
+            }
+
+            return output;
+        }
+
+        output[`text${name}`] = {
+            color: variant.color ?? 'transparent'
+        }
+
+        return output;
     }
 };
 
@@ -172,7 +194,16 @@ const style = StyleSheet.create({
     }
 );
 
+/**
+ * @param component {string} - The style component
+ * @param variant {string} - The style variant
+ * @param [hover] {string} - the current hover state (optional)
+ */
 export function getVariant(component, variant, hover) {
+    if(!variant) {
+        return style[component];
+    }
+
     // Capitalize first letter to match style naming
     variant = variant.charAt(0).toUpperCase() + variant.slice(1);
     return style[`${component}${variant}${hover ? 'Hover' : ''}`];
