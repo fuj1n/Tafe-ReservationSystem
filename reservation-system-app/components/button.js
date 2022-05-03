@@ -5,8 +5,8 @@ import {useRef, useState} from "react";
 import {useHover} from "@react-native-aria/interactions";
 
 /**
- * @param props {{value: string?, children: string?, variant: string?, onPress: () => void,
- * onLongPress: () => void?, disabled: boolean, style: object?, textStyle: object?}}
+ * @param props {{value: string, children: string, variant: string, onPress: () => void,
+ * onLongPress: () => void, disabled: boolean, style: object?, textStyle: object}}
  */
 export default function Button(props) {
     const {value, children, onPress, onLongPress, disabled} = props;

@@ -4,6 +4,7 @@ import login, {LoginContext, LoginInfo} from './services';
 import {useEffect, useState} from "react";
 import {ActivityIndicator} from "react-native";
 import Button from "./components/button";
+import TextInput from "./components/textInput";
 
 export default function App() {
     const [loginInfo, setLoginInfo] = useState(new LoginInfo());
@@ -30,17 +31,18 @@ export default function App() {
     return (
         <LoginContext.Provider value={{loginInfo, setLoginInfo}}>
             <View style={styles.container}>
-                <Text>Open up App.js to start working on your app!</Text>
-                <StatusBar style="auto"/>
-                <Button variant="primary">Primary</Button>
-                <Button variant="secondary">Secondary</Button>
-                <Button variant="success">Success</Button>
-                <Button variant="danger">Danger</Button>
-                <Button variant="warning">Warning</Button>
-                <Button variant="info">Info</Button>
-                <Button variant="dark">Dark</Button>
-                <Button variant="light">Light</Button>
+                <Text style={styles.containerItem}>Open up App.js to start working on your app!</Text>
+                <TextInput label="This is a text box:" style={styles.containerItem} placeholder="Enter text here..."/>
+                <Button style={styles.containerItem} variant="primary">Primary</Button>
+                <Button style={styles.containerItem} variant="secondary">Secondary</Button>
+                <Button style={styles.containerItem} variant="success">Success</Button>
+                <Button style={styles.containerItem} variant="danger">Danger</Button>
+                <Button style={styles.containerItem} variant="warning">Warning</Button>
+                <Button style={styles.containerItem} variant="info">Info</Button>
+                <Button style={styles.containerItem} variant="dark">Dark</Button>
+                <Button style={styles.containerItem} variant="light">Light</Button>
             </View>
+            <StatusBar style="auto"/>
         </LoginContext.Provider>
     );
 }
@@ -52,4 +54,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    containerItem: {
+        marginBottom: 5
+    }
 });

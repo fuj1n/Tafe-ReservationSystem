@@ -1,5 +1,30 @@
 import {Platform, StyleSheet} from "react-native";
 
+const baseStyle = {
+    textInputContainer: {
+        marginHorizontal: 12,
+        fontWeight: '400',
+        lineHeight: 1.5,
+        color: '#212529',
+        alignSelf: 'stretch'
+    },
+    textInput: {
+        paddingHorizontal: 6,
+        paddingVertical: 12,
+        fontWeight: '400',
+        lineHeight: 1.5,
+        color: '#212529',
+        backgroundColor: '#fff',
+        borderWidth: 1,
+        borderStyle: 'solid',
+        borderColor: '#ced4da',
+        borderRadius: 4
+    },
+    textInputLabel: {
+        marginBottom: 4
+    },
+};
+
 const variants = {
     none: null, // used for default generator
     Primary: {
@@ -77,9 +102,6 @@ const generators = {
         if (!variant) {
             output.button = {
                 borderRadius: 4,
-                padding: 10,
-                marginRight: 10,
-                marginBottom: 10,
                 alignItems: 'center',
                 justifyContent: 'center',
                 paddingHorizontal: 6,
@@ -93,7 +115,7 @@ const generators = {
             };
 
             // line height is handled weird outside of web
-            if(Platform.OS !== 'web') {
+            if (Platform.OS !== 'web') {
                 output.buttonText.paddingTop = 14 / 4;
             }
 
@@ -115,23 +137,26 @@ const generators = {
 
 // This is ugly, but it does a lot of work for how little code it is
 // Runs all generators for each variant and state
-const style = StyleSheet.create(
-    Object.entries(variants).reduce((acc, [name, variant]) => {
-        return {
-            ...acc,
-            ...states.reduce((acc, state) => {
-                return {
-                    ...acc,
-                    ...Object.values(generators).reduce((acc, generator) => {
-                        return {
-                            ...acc,
-                            ...generator(name, variant && state !== '' ? variant[state] : variant, state)
-                        };
-                    }, {})
-                };
-            }, {})
-        };
-    }, {})
+// Though I would normally prefer to have something like this pre-compiled
+const style = StyleSheet.create({
+        ...baseStyle
+        , ...Object.entries(variants).reduce((acc, [name, variant]) => {
+            return {
+                ...acc,
+                ...states.reduce((acc, state) => {
+                    return {
+                        ...acc,
+                        ...Object.values(generators).reduce((acc, generator) => {
+                            return {
+                                ...acc,
+                                ...generator(name, variant && state !== '' ? variant[state] : variant, state)
+                            };
+                        }, {}) // end generator reduce
+                    };
+                }, {}) // end state reduce
+            };
+        }, {}) // end variant reduce
+    }
 );
 
 export function getVariant(component, variant, hover) {
