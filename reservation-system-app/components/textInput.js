@@ -10,8 +10,8 @@ export default function TextInput(props) {
     const {label} = props;
 
     return (
-        <View style={style.textInputContainer}>
-            {label && <Text style={style.textInputLabel}>{label}</Text>}
+        <View style={style.inputContainer}>
+            {label && <Text style={style.inputLabel}>{label}</Text>}
             <NativeTextInput placeholderTextColor="#6c757d" {...props} style={[style.textInput, props.style]}/>
         </View>
     );

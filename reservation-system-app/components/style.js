@@ -1,28 +1,63 @@
 import {Platform, StyleSheet} from "react-native";
 
+const inputStyle = {
+    paddingHorizontal: 6,
+    paddingVertical: 12,
+    fontWeight: '400',
+    lineHeight: 1.5,
+    color: '#212529',
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderColor: '#ced4da',
+    borderRadius: 4
+};
+
 const baseStyle = {
-    textInputContainer: {
+    inputContainer: {
         marginHorizontal: 12,
         fontWeight: '400',
         lineHeight: 1.5,
         color: '#212529',
-        alignSelf: 'stretch'
+        alignSelf: 'stretch',
+    },
+    inputLabel: {
+        marginBottom: 4
     },
     textInput: {
-        paddingHorizontal: 6,
-        paddingVertical: 12,
-        fontWeight: '400',
-        lineHeight: 1.5,
-        color: '#212529',
+        ...inputStyle
+    },
+    dropdownInput: {
+        ...inputStyle,
+        flexDirection: 'row'
+    },
+    dropdownContainer: {
+        borderRadius: 5
+    },
+    dropdownDropdown: {
         backgroundColor: '#fff',
         borderWidth: 1,
         borderStyle: 'solid',
         borderColor: '#ced4da',
-        borderRadius: 4
+        borderRadius: 4,
+        paddingVertical: 12
     },
-    textInputLabel: {
-        marginBottom: 4
+    dropdownPlaceholder: {
+        color: '#6c757d'
     },
+    dropdownItem: {
+        paddingVertical: 6,
+        paddingHorizontal: 6
+    },
+    dropdownSelectedItem: {
+        flexDirection: 'row',
+        backgroundColor: '#f8f9fa',
+    },
+    dropdownItemSeparator: {
+        borderColor: '#ced4da',
+        borderBottomWidth: 1,
+        marginHorizontal: 6
+    }
 };
 
 const variants = {
