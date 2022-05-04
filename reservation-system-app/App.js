@@ -1,7 +1,9 @@
+import 'react-native-gesture-handler';
+
 import {StatusBar} from 'expo-status-bar';
 import {StyleSheet, View, ActivityIndicator} from 'react-native';
 import {useEffect, useState} from "react";
-import {createNativeStackNavigator} from "@react-navigation/native-stack";
+import {createDrawerNavigator} from "@react-navigation/drawer";
 import login, {LoginContext, LoginInfo} from './services';
 import {TestPalette} from "./pages";
 import {NavigationContainer} from "@react-navigation/native";
@@ -9,7 +11,7 @@ import {NavigationContainer} from "@react-navigation/native";
 export default function App() {
     const [loginInfo, setLoginInfo] = useState(new LoginInfo());
     const [isLoading, setIsLoading] = useState(true);
-    const Stack = createNativeStackNavigator();
+    const Drawer = createDrawerNavigator();
 
     useEffect(async () => {
         const loginInfo = await login.getLogin();
@@ -33,9 +35,9 @@ export default function App() {
         <NavigationContainer>
             <LoginContext.Provider value={{loginInfo, setLoginInfo}}>
                 <View style={styles.root}>
-                    <Stack.Navigator initialRouteName="Test">
-                        <Stack.Screen name="Test" component={TestPalette}/>
-                    </Stack.Navigator>
+                    <Drawer.Navigator initialRouteName="Home">
+                        <Drawer.Screen name="Test" component={TestPalette}/>
+                    </Drawer.Navigator>
                 </View>
             </LoginContext.Provider>
             <StatusBar style="auto"/>
