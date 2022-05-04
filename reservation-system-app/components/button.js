@@ -1,8 +1,6 @@
-import {Platform} from "react-native";
 import {Text, View, StyleSheet} from "react-native";
 import style, {getVariant} from "./style";
-import {useRef, useState} from "react";
-import {useHover} from "@react-native-aria/interactions";
+import {useState} from "react";
 import {RectButton} from "react-native-gesture-handler";
 
 /**
@@ -11,17 +9,7 @@ import {RectButton} from "react-native-gesture-handler";
  */
 export default function Button(props) {
     const {value, children} = props;
-    const [pressed, setPressed] = useState(false);
-
-    let hovered = pressed;
-    let hoverRef = undefined;
-
-    // Simulate press in browser
-    if(Platform.OS === 'web') {
-        hoverRef = useRef();
-        const {isHovered} = useHover({}, hoverRef);
-        hovered = hovered || isHovered;
-    }
+    const [active, setActive] = useState(false);
 
     const variant = props.variant ?? "primary";
 
@@ -34,10 +22,10 @@ export default function Button(props) {
     const ripple = StyleSheet.flatten(getVariant('button', variant, true))?.backgroundColor;
 
     return (
-        <RectButton ref={hoverRef} onActiveStateChange={setPressed}
+        <RectButton onActiveStateChange={setActive}
             {...props} style={props.style} rippleColor={ripple}>
-            <View style={[style.button, getVariant('button', variant, hovered)]}>
-                <Text style={[style.buttonText, getVariant('buttonText', variant, hovered), props.textStyle]}>{text}</Text>
+            <View style={[style.button, getVariant('button', variant, active)]}>
+                <Text style={[style.buttonText, getVariant('buttonText', variant, active), props.textStyle]}>{text}</Text>
             </View>
         </RectButton>
     );
