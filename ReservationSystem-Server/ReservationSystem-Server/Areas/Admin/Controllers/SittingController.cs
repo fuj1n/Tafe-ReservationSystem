@@ -16,18 +16,26 @@ namespace ReservationSystem_Server.Areas.Admin.Controllers
         {
             _context = context;
         }
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(bool pastSittings)
         {
-            var sittings = await _context.Sittings.Include(s => s.SittingType).Where(s => s.StartTime > DateTime.Now).ToListAsync();
+            ViewBag.pastSittings = pastSittings;
+            var sittings = await _context.Sittings.Include(s => s.SittingType).OrderBy(s => s.StartTime)
+                .Where(s => pastSittings || s.StartTime > DateTime.Now).ToListAsync();
             return View(sittings);
         }
 
         public async Task<IActionResult> Create()
         {
+            // taken from https://stackoverflow.com/questions/1004698/how-to-truncate-milliseconds-off-of-a-net-datetime
+            DateTime dt = DateTime.Now;
+            dt = new DateTime(dt.Ticks -
+                (dt.Ticks % TimeSpan.TicksPerMinute),
+                dt.Kind);
+
             var vm = new CreateVM()
             {
-                StartTime = DateTime.Now,
-                EndTime = DateTime.Now,
+                StartTime = dt,
+                EndTime = dt,
                 SittingTypes = new SelectList(await _context.SittingTypes.ToListAsync(), "Id", "Description")
             };
             return View(vm);
@@ -36,6 +44,21 @@ namespace ReservationSystem_Server.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateVM vm)
         {
+            if(vm.StartTime < DateTime.Now)
+            {
+                ModelState.AddModelError("StartTime", "Start Time must be in the future");
+            }
+
+            if(vm.EndTime <= vm.StartTime)
+            {
+                ModelState.AddModelError("EndTime", "End Time must be after Start Time");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                vm.SittingTypes = new SelectList(await _context.SittingTypes.ToListAsync(), "Id", "Description");
+                return View(vm);
+            }
             var sitting = new Sitting
             {
                 StartTime = vm.StartTime,
@@ -72,6 +95,22 @@ namespace ReservationSystem_Server.Areas.Admin.Controllers
             if (sitting == null)
             {
                 return NotFound();
+            }
+
+            if (vm.StartTime < DateTime.Now)
+            {
+                ModelState.AddModelError("StartTime", "Start Time must be in the future");
+            }
+
+            if (vm.EndTime <= vm.StartTime)
+            {
+                ModelState.AddModelError("EndTime", "End Time must be after Start Time");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                vm.SittingTypes = new SelectList(await _context.SittingTypes.ToListAsync(), "Id", "Description");
+                return View(vm);
             }
             sitting.StartTime = vm.StartTime;
             sitting.EndTime = vm.EndTime;
