@@ -4,7 +4,7 @@ import {Text, View} from "react-native";
 
 /**
  * @param props {{label: string, value: string, placeholder: string, onChangeText: function, editable: boolean,
- * placeholder: string, keyboardType: string, keyboardType: string, autoComplete: string, secureTextEntry: boolean}}
+ * placeholder: string, keyboardType: string, autoComplete: string, secureTextEntry: boolean}}
  */
 export default function TextInput(props) {
     const {label} = props;

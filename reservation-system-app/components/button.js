@@ -5,7 +5,7 @@ import {RectButton} from "react-native-gesture-handler";
 
 /**
  * @param props {{value: string, children: string, variant: string, onPress: () => void,
- * onLongPress: () => void, disabled: boolean, style: object?, textStyle: object}}
+ * disabled: boolean, style: object?, btnStyle: object?, textStyle: object}}
  */
 export default function Button(props) {
     const {value, children} = props;
@@ -24,7 +24,7 @@ export default function Button(props) {
     return (
         <RectButton onActiveStateChange={setActive}
             {...props} style={props.style} rippleColor={ripple}>
-            <View style={[style.button, getVariant('button', variant, active)]}>
+            <View style={[style.button, getVariant('button', variant, active), props.btnStyle]}>
                 <Text style={[style.buttonText, getVariant('buttonText', variant, active), props.textStyle]}>{text}</Text>
             </View>
         </RectButton>
