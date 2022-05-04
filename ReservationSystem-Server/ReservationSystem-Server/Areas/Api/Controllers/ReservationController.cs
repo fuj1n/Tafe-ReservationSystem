@@ -1,13 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ReservationSystem_Server.Areas.Api.Models.Reservation;
 using ReservationSystem_Server.Data;
-using ReservationSystem_Server.Models.Reservation.Api;
 using ReservationSystem_Server.Services;
 
-namespace ReservationSystem_Server.Controllers.Api
+namespace ReservationSystem_Server.Areas.Api.Controllers
 {
     [ApiController]
     [Route("/api/v1/[controller]")]
+    [Area("Api")]
     public class ReservationController : Controller
     {
         private readonly ApplicationDbContext _context;

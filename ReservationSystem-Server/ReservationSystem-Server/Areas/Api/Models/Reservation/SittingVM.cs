@@ -1,4 +1,4 @@
-﻿namespace ReservationSystem_Server.Models.Reservation.Api
+﻿namespace ReservationSystem_Server.Areas.Api.Models.Reservation
 {
     public class SittingVM
     {

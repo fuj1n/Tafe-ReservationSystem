@@ -1,10 +1,9 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using NuGet.Protocol;
 using ReservationSystem_Server.Data;
 
-namespace ReservationSystem_Server.Controllers;
+namespace ReservationSystem_Server.Areas.Api.Controllers;
 
 #if DEBUG // Only for development, don't really want random users to be able to make themselves admin otherwise
 [ApiController]
