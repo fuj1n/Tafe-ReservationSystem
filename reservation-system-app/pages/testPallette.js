@@ -1,7 +1,7 @@
 import {useRef, useState} from "react";
 import {ScrollView} from "react-native";
 import {useScrollToTop} from "@react-navigation/native";
-import {Button, Dropdown, StyledText, TextInput} from "../components";
+import {Button, DatePicker, Dropdown, StyledText, TextInput, TimeSlotPicker} from "../components";
 import styles from "./styles";
 
 export default function TestPalette() {
@@ -20,6 +20,19 @@ export default function TestPalette() {
         {label: "Matthew", value: "2"},
         {label: "Wencong", value: "3"},
     ];
+
+    const timeSlots = [
+        new Date(2022, 5, 4, 9),
+        new Date(2022, 5, 4, 9, 30),
+        new Date(2022, 5, 4, 10),
+        new Date(2022, 5, 4, 10, 30),
+        new Date(2022, 5, 4, 11),
+        new Date(2022, 5, 4, 11, 30),
+        new Date(2022, 5, 4, 12),
+    ];
+    const [timeSlot, setTimeSlot] = useState(timeSlots[0]);
+
+    const [date, setDate] = useState(new Date(2022, 5, 4, 9));
 
     const variants = [
         "no variant",
@@ -47,6 +60,11 @@ export default function TestPalette() {
                       onValueChange={setDropdownValue}/>
             <Dropdown style={styles.containerItem} label="This is a dropdown 2:" items={dropdownTwoItems}
                       selectedValue={dropdownTwoValue} onValueChange={setDropdownTwoValue}/>
+
+            <TimeSlotPicker label="This is a time slot picker:" style={styles.containerItem} value={timeSlot}
+                            setValue={setTimeSlot} timeSlots={timeSlots}/>
+
+            <DatePicker label="This is a date picker:" style={styles.containerItem} value={date} setValue={setDate}/>
 
             {variants.map((variant, index) => (
                 <Button key={index} style={styles.containerItem} variant={variant}>{variant}</Button>))}

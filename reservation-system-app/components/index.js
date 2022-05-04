@@ -4,3 +4,6 @@ export {default as StyledText} from './styledText';
 
 export {default as Dropdown} from './dropdown';
 export * from './dropdown';
+
+export {default as TimeSlotPicker} from './timeSlotPicker';
+export {default as DatePicker} from './datePicker';
