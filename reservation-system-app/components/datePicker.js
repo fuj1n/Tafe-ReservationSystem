@@ -15,7 +15,7 @@ export default function TimeSlotPicker(props) {
     }
 
     return (
-        <View style={style.inputContainer}>
+        <View style={[style.inputContainer, props.style]}>
             {label && <Text style={style.inputLabel}>{label}</Text>}
             <NativeTextInput placeholderTextColor="#6c757d" {...props} style={[style.textInput]} value={props.value?.toString()} onChangeText={onChange}/>
         </View>

@@ -6,7 +6,7 @@ import {useEffect, useState} from "react";
 import {createDrawerNavigator} from "@react-navigation/drawer";
 import login, {LoginContext, LoginInfo} from './services';
 import {TestPalette} from "./pages";
-import {NavigationContainer} from "@react-navigation/native";
+import {getFocusedRouteNameFromRoute, NavigationContainer} from "@react-navigation/native";
 
 export default function App() {
     const [loginInfo, setLoginInfo] = useState(new LoginInfo());
@@ -31,12 +31,24 @@ export default function App() {
         );
     }
 
+    // Disables the root navigator's header if the child navigator is not on the first page
+    function showHeader({route}) {
+        const child = route[Object.getOwnPropertySymbols(route)[0]];
+        const routeName = getFocusedRouteNameFromRoute(route);
+
+        if(!child || !routeName || child.routeNames[0] === routeName) {
+            return {};
+        }
+
+        return {headerShown: false};
+    }
+
     return (
         <NavigationContainer>
             <LoginContext.Provider value={{loginInfo, setLoginInfo}}>
                 <View style={styles.root}>
-                    <Drawer.Navigator initialRouteName="Home">
-                        <Drawer.Screen name="Test" component={TestPalette}/>
+                    <Drawer.Navigator initialRouteName="Home" screenOptions={showHeader}>
+                        <Drawer.Screen name="TestPalette" options={{title: "Test Palette"}} component={TestPalette}/>
                     </Drawer.Navigator>
                 </View>
             </LoginContext.Provider>

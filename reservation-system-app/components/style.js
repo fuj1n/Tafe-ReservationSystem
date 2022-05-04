@@ -15,7 +15,6 @@ const inputStyle = {
 
 const baseStyle = {
     inputContainer: {
-        marginHorizontal: 12,
         fontWeight: '400',
         lineHeight: 1.5,
         color: '#212529',

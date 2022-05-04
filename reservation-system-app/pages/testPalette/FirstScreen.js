@@ -1,10 +1,12 @@
-import {useRef, useState} from "react";
-import {ScrollView} from "react-native";
 import {useScrollToTop} from "@react-navigation/native";
-import {Button, DatePicker, Dropdown, StyledText, TextInput, TimeSlotPicker} from "../components";
-import styles from "./styles";
+import {ScrollView} from "react-native";
+import styles from "../styles";
+import {Button, DatePicker, Dropdown, StyledText, TextInput, TimeSlotPicker} from "../../components";
+import {useRef, useState} from "react";
 
-export default function TestPalette() {
+export default function FirstScreen(props) {
+    const {navigation} = props;
+
     const [dropdownValue, setDropdownValue] = useState("");
     const [dropdownTwoValue, setDropdownTwoValue] = useState("");
 
@@ -50,9 +52,10 @@ export default function TestPalette() {
     useScrollToTop(ref);
 
     return (
-        <ScrollView contentContainerStyle={styles.container} ref={ref}>
+        <ScrollView style={styles.scrollView} contentContainerStyle={styles.container} ref={ref}>
             <StyledText style={styles.containerItem} variant="primary">Open up App.js to start working on your
                 app!</StyledText>
+            <Button variant="primary" onPress={() => navigation.navigate("SecondScreen")}>Go to second screen</Button>
             <TextInput label="This is a text box:" style={styles.containerItem}
                        placeholder="Enter text here..."/>
 
