@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
  * The endpoint URL for the API
  * @type {string}
  */
-const endpoint = "https://localhost:7193/api/v1/";
+const endpoint = "https://localhost:7264/api/v1/";
 
 /**
  * The login state
