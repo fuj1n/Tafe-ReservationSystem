@@ -5,7 +5,7 @@ import {StyleSheet, View, ActivityIndicator} from 'react-native';
 import {useEffect, useState} from "react";
 import {createDrawerNavigator} from "@react-navigation/drawer";
 import login, {LoginContext, LoginInfo} from './services';
-import {TestPalette} from "./pages";
+import {LoginPage, TestPalette} from "./pages";
 import {getFocusedRouteNameFromRoute, NavigationContainer} from "@react-navigation/native";
 
 export default function App() {
@@ -49,6 +49,7 @@ export default function App() {
                 <View style={styles.root}>
                     <Drawer.Navigator initialRouteName="Home" screenOptions={showHeader}>
                         <Drawer.Screen name="TestPalette" options={{title: "Test Palette"}} component={TestPalette}/>
+                        <Drawer.Screen name="Login" options={{title: "Login"}} component={LoginPage}/>
                     </Drawer.Navigator>
                 </View>
             </LoginContext.Provider>
