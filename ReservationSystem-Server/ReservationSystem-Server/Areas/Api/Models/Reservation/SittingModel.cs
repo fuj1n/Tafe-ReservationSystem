@@ -1,6 +1,6 @@
 ﻿namespace ReservationSystem_Server.Areas.Api.Models.Reservation
 {
-    public class SittingVM
+    public class SittingModel
     {
         public int Id { get; set; }
 
