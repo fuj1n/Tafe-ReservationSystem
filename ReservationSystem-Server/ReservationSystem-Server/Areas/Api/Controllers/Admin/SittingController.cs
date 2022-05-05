@@ -14,13 +14,9 @@ namespace ReservationSystem_Server.Areas.Api.Controllers.Admin
     public class SittingController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly ReservationUtility _utility;
-        private readonly CustomerManager _customerManager;
-        public SittingController(ApplicationDbContext context, ReservationUtility utility, CustomerManager customerManager)
+        public SittingController(ApplicationDbContext context)
         {
             _context = context;
-            _utility = utility;
-            _customerManager = customerManager;
         }
 
         [HttpGet("sittings")]
@@ -36,7 +32,12 @@ namespace ReservationSystem_Server.Areas.Api.Controllers.Admin
         public async Task<IActionResult> Close(int id)
         {
             var sitting = await _context.Sittings.FirstOrDefaultAsync(s => s.Id == id);
-            sitting!.IsClosed = true;
+            if (sitting == null)
+            {
+                return NotFound();
+            }
+
+            sitting.IsClosed = true;
             await _context.SaveChangesAsync();
             return Ok();
         }
@@ -51,15 +52,7 @@ namespace ReservationSystem_Server.Areas.Api.Controllers.Admin
         [HttpPost("create")]
         public async Task<IActionResult> Create(CreateVM vm)
         {
-            if (vm.StartTime < DateTime.Now)
-            {
-                ModelState.AddModelError("StartTime", "Start Time must be in the future");
-            }
-
-            if (vm.EndTime <= vm.StartTime)
-            {
-                ModelState.AddModelError("EndTime", "End Time must be after Start Time");
-            }
+            vm.Validate(ModelState);
 
             if (!ModelState.IsValid)
             {
@@ -70,7 +63,7 @@ namespace ReservationSystem_Server.Areas.Api.Controllers.Admin
                 StartTime = vm.StartTime,
                 EndTime = vm.EndTime,
                 Capacity = vm.Capacity,
-                SittingTypeId = vm.SittingType,
+                SittingTypeId = vm.SittingTypeId,
                 RestaurantId = 1
             };
 
@@ -88,15 +81,7 @@ namespace ReservationSystem_Server.Areas.Api.Controllers.Admin
                 return NotFound();
             }
 
-            if (vm.StartTime < DateTime.Now)
-            {
-                ModelState.AddModelError("StartTime", "Start Time must be in the future");
-            }
-
-            if (vm.EndTime <= vm.StartTime)
-            {
-                ModelState.AddModelError("EndTime", "End Time must be after Start Time");
-            }
+            vm.Validate(ModelState);
 
             if (!ModelState.IsValid)
             {
@@ -105,7 +90,7 @@ namespace ReservationSystem_Server.Areas.Api.Controllers.Admin
             sitting.StartTime = vm.StartTime;
             sitting.EndTime = vm.EndTime;
             sitting.Capacity = vm.Capacity;
-            sitting.SittingTypeId = vm.SittingType;
+            sitting.SittingTypeId = vm.SittingTypeId;
 
             await _context.SaveChangesAsync();
             return Ok(sitting);
