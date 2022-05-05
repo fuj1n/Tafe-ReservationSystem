@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
@@ -15,5 +16,18 @@ namespace ReservationSystem_Server.Areas.Admin.Models.Sitting
         [Required(ErrorMessage = "Please select a sitting type")]
         public int SittingType { get; set; }
         public SelectList? SittingTypes { get; set; }
+
+        public void Validate(ModelStateDictionary state)
+        {
+            if (StartTime < DateTime.Now)
+            {
+                state.AddModelError("StartTime", "Start Time must be in the future");
+            }
+
+            if (EndTime <= StartTime)
+            {
+                state.AddModelError("EndTime", "End Time must be after Start Time");
+            }
+        }
     }
 }
