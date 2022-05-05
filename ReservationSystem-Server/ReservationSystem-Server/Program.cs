@@ -77,8 +77,14 @@ builder.Services.AddAuthentication(o =>
 
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
+builder.Services.AddSwaggerGen(o =>
+{
+    o.CustomSchemaIds(type => type.ToString());
+});
+
 builder.Services.AddScoped<CustomerManager>();
 builder.Services.AddScoped<ReservationUtility>();
+builder.Services.AddScoped<SittingUtility>();
 
 // builder.Services.AddScoped<IActionContextAccessor, ActionContextAccessor>();
 // builder.Services.AddScoped<IUrlHelper>(x =>
@@ -88,6 +94,12 @@ builder.Services.AddScoped<ReservationUtility>();
 // });
 
 WebApplication app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(o => o.SwaggerEndpoint("/swagger/v1/swagger.json", "Reservation API v1"));
+}
 
 //TODO: Make CORS a per-controller option that is off by default.
 app.UseCors(configure =>
