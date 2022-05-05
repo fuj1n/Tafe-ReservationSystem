@@ -49,16 +49,8 @@ namespace ReservationSystem_Server.Areas.Admin.Controllers
                 ModelState.AddModelError("StartTime", "Start Time must be in the future");
             }
 
-            if(vm.EndTime <= vm.StartTime)
-            {
-                ModelState.AddModelError("EndTime", "End Time must be after Start Time");
-            }
+            vm.Validate(ModelState);
 
-            if (!ModelState.IsValid)
-            {
-                vm.SittingTypes = new SelectList(await _context.SittingTypes.ToListAsync(), "Id", "Description");
-                return View(vm);
-            }
             var sitting = new Sitting
             {
                 StartTime = vm.StartTime,
@@ -70,7 +62,7 @@ namespace ReservationSystem_Server.Areas.Admin.Controllers
 
             await _context.Sittings.AddAsync(sitting);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Edit(int id)
@@ -88,7 +80,7 @@ namespace ReservationSystem_Server.Areas.Admin.Controllers
             return View(vm);
         }
 
-        [HttpPost]
+        [HttpPut]
         public async Task<IActionResult> Edit(EditVM vm)
         {
             var sitting = await _context.Sittings.FirstOrDefaultAsync(s => s.Id == vm.Id);
@@ -97,15 +89,7 @@ namespace ReservationSystem_Server.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            if (vm.StartTime < DateTime.Now)
-            {
-                ModelState.AddModelError("StartTime", "Start Time must be in the future");
-            }
-
-            if (vm.EndTime <= vm.StartTime)
-            {
-                ModelState.AddModelError("EndTime", "End Time must be after Start Time");
-            }
+            vm.Validate(ModelState);
 
             if (!ModelState.IsValid)
             {
@@ -118,15 +102,17 @@ namespace ReservationSystem_Server.Areas.Admin.Controllers
             sitting.SittingTypeId = vm.SittingType;
 
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
 
         }
+
+        [HttpPut]
         public async Task<IActionResult> Close(int id)
         {
             var sitting = await _context.Sittings.FirstOrDefaultAsync(s => s.Id == id);
             sitting!.IsClosed = true;
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
     }
 }
