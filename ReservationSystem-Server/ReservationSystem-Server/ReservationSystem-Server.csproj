@@ -7,10 +7,7 @@
         <UserSecretsId>aspnet-ReservationSystem_Server-9685BBE3-45F5-456C-9DAF-9E4D2E81D280</UserSecretsId>
         <RootNamespace>ReservationSystem_Server</RootNamespace>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    </PropertyGroup>
-
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <NoWarn>1701;1702;1591</NoWarn>
+        <NoWarn>$(NoWarn);1591</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>

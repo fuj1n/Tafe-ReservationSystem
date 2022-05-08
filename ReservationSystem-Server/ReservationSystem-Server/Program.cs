@@ -1,9 +1,15 @@
+using System.Reflection;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
+using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Models;
+using ReservationSystem_Server.Areas.Api.Models;
+using ReservationSystem_Server.Configuration;
 using ReservationSystem_Server.Data;
 using ReservationSystem_Server.Services;
 using ReservationSystem_Server.Utility;
@@ -75,11 +81,32 @@ builder.Services.AddAuthentication(o =>
             };
         });
 
-builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
+builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation().AddJsonOptions(o =>
+{
+    o.JsonSerializerOptions.Converters.Add(new TimeSpanConverter());
+});
 
 builder.Services.AddSwaggerGen(o =>
 {
-    o.CustomSchemaIds(type => type.ToString());
+    o.CustomSchemaIds(type => type.ToString().Replace('+', '_'));
+    o.OperationFilter<ContentTypeOperationFilter>();
+
+    // Set the comments path for the Swagger JSON and UI.
+    string xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    o.IncludeXmlComments(xmlPath);
+
+    o.MapType<TimeSpan>(() => new OpenApiSchema { Type = "string", Example = new OpenApiString("00:30:00") });
+    o.MapType<LinkModel>(() => new OpenApiSchema
+    {
+        Example = new OpenApiObject
+        {
+            ["href"] = new OpenApiString("objects/values/1"),
+            ["rel"] = new OpenApiString("self"),
+            ["method"] = new OpenApiString("GET")
+        }
+    });
+    o.MapType<EmptyResult>(() => new OpenApiSchema { Type = "null", Example = new OpenApiNull() });
 });
 
 builder.Services.AddScoped<CustomerManager>();
@@ -98,7 +125,11 @@ WebApplication app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(o => o.SwaggerEndpoint("/swagger/v1/swagger.json", "Reservation API v1"));
+    app.UseSwaggerUI(o =>
+    {
+        o.EnableTryItOutByDefault();
+        o.SwaggerEndpoint("/swagger/v1/swagger.json", "Reservation API v1");
+    });
 }
 
 //TODO: Make CORS a per-controller option that is off by default.
