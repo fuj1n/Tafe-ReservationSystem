@@ -87,7 +87,7 @@ public class ReservationController : Controller
             
             StartTime = sitting.StartTime,
             
-            AvailableOrigins = await GetAvailableOriginsAsync(),
+            AvailableOrigins = await _utility.GetOriginsAsSelectListAsync(),
             TimeSlots = _utility.GetTimeSlots(sitting.StartTime, sitting.EndTime, _timeSlotLength)
         };
         
@@ -104,7 +104,7 @@ public class ReservationController : Controller
 
         if (!ModelState.IsValid)
         {
-            model.AvailableOrigins = await GetAvailableOriginsAsync();
+            model.AvailableOrigins = await _utility.GetOriginsAsSelectListAsync();
             return View(model);
         }
 
@@ -167,7 +167,7 @@ public class ReservationController : Controller
             
             Notes = reservation.Notes,
             
-            AvailableOrigins = await GetAvailableOriginsAsync(),
+            AvailableOrigins = await _utility.GetOriginsAsSelectListAsync(),
             TimeSlots = _utility.GetTimeSlots(reservation.Sitting.StartTime, reservation.Sitting.EndTime, _timeSlotLength)
         };
 
@@ -189,7 +189,7 @@ public class ReservationController : Controller
         
         if(!ModelState.IsValid)
         {
-            model.AvailableOrigins = await GetAvailableOriginsAsync();
+            model.AvailableOrigins = await _utility.GetOriginsAsSelectListAsync();
             model.TimeSlots = _utility.GetTimeSlots(sitting.StartTime, sitting.EndTime, _timeSlotLength);
             return View(model);
         }
@@ -317,13 +317,6 @@ public class ReservationController : Controller
         
         await _context.SaveChangesAsync();
         return RedirectToAction("Sitting", new {id=reservation.SittingId});
-    }
-
-    private async Task<SelectList> GetAvailableOriginsAsync()
-    {
-        return new SelectList(await _context.ReservationOrigins.ToListAsync(), 
-            nameof(ReservationOrigin.Id), 
-            nameof(ReservationOrigin.Description));
     }
 
     private string ConfirmationUrl(int id, bool edit = false)
