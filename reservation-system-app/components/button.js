@@ -14,7 +14,7 @@ export default function Button(props) {
     const variant = props.variant ?? "primary";
 
     let text = value;
-    if(typeof(children) === 'string') {
+    if(children) {
         text = children;
     }
 

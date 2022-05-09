@@ -34,7 +34,7 @@ namespace ReservationSystem_Server.Areas.Api.Controllers
                                 IsClosed = s.IsClosed,
                                 Capacity = s.Capacity,
                                 SittingType = s.SittingType.Description
-                            }).ToListAsync();
+                            }).OrderBy(s=>s.StartTime).ToListAsync();
 
 
             return Ok(sittings);
