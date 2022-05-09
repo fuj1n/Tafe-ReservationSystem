@@ -1,5 +1,5 @@
 ﻿function openError(message) {
-    $('#modal-body').html(`<p style="color: red">Error: ${message}</p>`);
+    $('#modal-body').html(`<p class="text-danger">Error: ${message}</p>`);
     $('#modal-title').text('Error');
     $('.modal-dialog').removeClass().addClass('modal-dialog modal-dialog-scrollable');
     $('#modal').modal('show');
