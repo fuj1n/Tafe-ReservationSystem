@@ -154,6 +154,10 @@ public class ReservationUtility
     /// Gets all time slots between <paramref name="startTime"/> and <paramref name="endTime"/>
     /// in <paramref name="slotLength"/> increments
     /// </summary>
+    /// <remarks>
+    /// Doesn't check that <paramref name="endTime"/> is after <paramref name="startTime"/>,
+    /// so in those situations, an empty list will be returned
+    /// </remarks>
     /// <param name="startTime">The left bound of the calculation</param>
     /// <param name="endTime">The right bound of the calculation</param>
     /// <param name="slotLength">The step distance for the calculation</param>

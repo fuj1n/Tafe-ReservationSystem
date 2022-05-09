@@ -61,8 +61,8 @@ export default function FirstScreen(props) {
 
             <Dropdown label="This is a dropdown:" items={dropdownOneItems} selectedValue={dropdownValue}
                       onValueChange={setDropdownValue}/>
-            <Dropdown style={styles.containerItem} label="This is a dropdown forced into iOS mode:" items={dropdownTwoItems}
-                      selectedValue={dropdownTwoValue} onValueChange={setDropdownTwoValue} forceIosMode={true}/>
+            <Dropdown style={styles.containerItem} label="This is a dropdown #2:" items={dropdownTwoItems}
+                      selectedValue={dropdownTwoValue} onValueChange={setDropdownTwoValue}/>
 
             <TimeSlotPicker label="This is a time slot picker:" style={styles.containerItem} value={timeSlot}
                             setValue={setTimeSlot} timeSlots={timeSlots}/>
