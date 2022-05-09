@@ -6,7 +6,15 @@ import {useEffect, useState} from "react";
 import {createDrawerNavigator} from "@react-navigation/drawer";
 import login, {LoginContext, LoginInfo} from './services';
 import {LoginPage, TestPalette} from "./pages";
-import {getFocusedRouteNameFromRoute, NavigationContainer} from "@react-navigation/native";
+import {getFocusedRouteNameFromRoute, NavigationContainer, DefaultTheme} from "@react-navigation/native";
+
+const navTheme = {
+    ...DefaultTheme,
+    colors: {
+        ...DefaultTheme.colors,
+        background: 'transparent'
+    }
+};
 
 export default function App() {
     const [loginInfo, setLoginInfo] = useState(new LoginInfo());
@@ -44,7 +52,7 @@ export default function App() {
     }
 
     return (
-        <NavigationContainer>
+        <NavigationContainer theme={navTheme}>
             <LoginContext.Provider value={{loginInfo, setLoginInfo}}>
                 <View style={styles.root}>
                     <Drawer.Navigator initialRouteName="Home" screenOptions={showHeader}>
