@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using ReservationSystem_Server.Areas.Api.Models.Sitting;
 using ReservationSystem_Server.Data;
 using ReservationSystem_Server.Services;
@@ -10,15 +9,15 @@ namespace ReservationSystem_Server.Areas.Api.Controllers;
 [Route(ApiInfo.Endpoint + "[controller]")]
 public class SittingsController : Controller
 {
-    private readonly SittingUtility _utility;
+    private readonly SittingUtility _sittingUtility;
     private readonly ReservationUtility _reservationUtility;
     
     //TODO configurable from sitting
     private static readonly TimeSpan TimeSlotLength = TimeSpan.FromMinutes(30);
 
-    public SittingsController(SittingUtility utility, ReservationUtility reservationUtility)
+    public SittingsController(SittingUtility sittingUtility, ReservationUtility reservationUtility)
     {
-        _utility = utility;
+        _sittingUtility = sittingUtility;
         _reservationUtility = reservationUtility;
     }
 
@@ -34,8 +33,8 @@ public class SittingsController : Controller
     [ProducesResponseType(typeof(SittingModel[]), StatusCodes.Status200OK)]
     public async Task<IActionResult> Get()
     {
-        SittingModel[] sittings = await _utility.GetSittings().Select(s => new SittingModel().FromSitting(s))
-            .ToArrayAsync();
+        SittingModel[] sittings =
+            (await _sittingUtility.GetSittingsAsync()).Select(s => new SittingModel().FromSitting(s)).ToArray();
 
         return Ok(sittings);
     }
@@ -55,9 +54,9 @@ public class SittingsController : Controller
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Get(int id)
     {
-        Sitting? sitting = await _utility.GetSittingAsync(id);
+        Sitting? sitting = await _sittingUtility.GetSittingAsync(id);
 
-        if (sitting == null || !IsAvailable(sitting))
+        if (sitting == null || !_sittingUtility.EvaluateAvailability(sitting))
         {
             return NotFound();
         }
@@ -80,18 +79,13 @@ public class SittingsController : Controller
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetTimeSlots(int id)
     {
-        Sitting? sitting = await _utility.GetSittingAsync(id);
+        Sitting? sitting = await _sittingUtility.GetSittingAsync(id);
 
-        if (sitting == null || !IsAvailable(sitting))
+        if (sitting == null || !_sittingUtility.EvaluateAvailability(sitting))
         {
             return NotFound();
         }
 
         return Ok(_reservationUtility.GetTimeSlots(sitting.StartTime, sitting.EndTime, TimeSlotLength));
-    }
-    
-    private static bool IsAvailable(Sitting sitting)
-    {
-        return !sitting.IsClosed && sitting.EndTime > DateTime.Now;
     }
 }

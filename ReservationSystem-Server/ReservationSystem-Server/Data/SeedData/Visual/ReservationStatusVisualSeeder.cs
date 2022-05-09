@@ -1,5 +1,5 @@
 ﻿using ReservationSystem_Server.Data.Visual;
-using ReservationSystem_Server.Utility.DataSeed;
+using ReservationSystem_Server.Helper.DataSeed;
 
 namespace ReservationSystem_Server.Data.SeedData.Visual;
 
