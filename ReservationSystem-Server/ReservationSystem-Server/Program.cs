@@ -11,8 +11,8 @@ using Microsoft.OpenApi.Models;
 using ReservationSystem_Server.Areas.Api.Models;
 using ReservationSystem_Server.Configuration;
 using ReservationSystem_Server.Data;
+using ReservationSystem_Server.Helper;
 using ReservationSystem_Server.Services;
-using ReservationSystem_Server.Utility;
 
 string[] stringsToTry =
 {

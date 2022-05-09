@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using ReservationSystem_Server.Areas.Api.Models.Reservation.Admin;
 using ReservationSystem_Server.Data;
 using ReservationSystem_Server.Services;
@@ -14,15 +13,14 @@ namespace ReservationSystem_Server.Areas.Api.Controllers.Admin;
 [Route("api/v1/admin/[controller]")]
 public class ReservationController : Controller
 {
-    private readonly ApplicationDbContext _context;
-    private readonly ReservationUtility _utility;
+    private readonly ReservationUtility _reservationUtility;
     private readonly SittingUtility _sittingUtility;
     private readonly CustomerManager _customerManager;
 
-    public ReservationController(ApplicationDbContext context, ReservationUtility utility, SittingUtility sittingUtility, CustomerManager customerManager)
+    public ReservationController(ReservationUtility reservationUtility, SittingUtility sittingUtility,
+        CustomerManager customerManager)
     {
-        _context = context;
-        _utility = utility;
+        _reservationUtility = reservationUtility;
         _sittingUtility = sittingUtility;
         _customerManager = customerManager;
     }
@@ -38,12 +36,12 @@ public class ReservationController : Controller
     [ProducesResponseType(typeof(SittingModel[]), StatusCodes.Status200OK)]
     public async Task<IActionResult> Get(bool includePast = false, bool includeClosed = false)
     {
-        SittingModel[] sittings = await _sittingUtility.GetSittings(includePast, includeClosed)
-            .Select(s => new SittingModel().FromSitting(s)).ToArrayAsync();
+        SittingModel[] sittings = (await _sittingUtility.GetSittingsAsync(includePast, includeClosed))
+            .Select(s => new SittingModel().FromSitting(s)).ToArray();
 
         return Ok(sittings);
     }
-    
+
     /// <summary>
     /// Get a sitting by id
     /// </summary>
@@ -61,7 +59,7 @@ public class ReservationController : Controller
         {
             return NotFound();
         }
-        
+
         return Ok(new SittingModel().FromSitting(sitting));
     }
 
@@ -76,46 +74,36 @@ public class ReservationController : Controller
     [ProducesResponseType(typeof(Dictionary<string, string[]>), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create(CreateModel model)
     {
-        if (await _sittingUtility.GetSittingAsync(model.SittingId) == null)
-        {
-            ModelState.AddModelError(nameof(model.SittingId), "Sitting does not exist");
-        }
-
-        if (await _utility.GetOriginAsync(model.ReservationOriginId) == null)
-        {
-            ModelState.AddModelError(nameof(model.ReservationOriginId), "Origin does not exist");
-        }
-
         model.Validate(ModelState);
-        
-        if (ModelState.IsValid)
+
+        Reservation reservation = new()
         {
-            Customer customer = await _customerManager.GetOrCreateCustomerAsync(
-                model.Customer.FirstName, model.Customer.LastName, model.Customer.Email, model.Customer.PhoneNumber);
+            SittingId = model.SittingId,
 
-            Reservation reservation = new()
-            {
-                SittingId = model.SittingId,
-                CustomerId = customer.Id,
-                
-                StartTime = model.StartTime,
-                Duration = model.Duration,
-                
-                ReservationOriginId = model.ReservationOriginId,
-                ReservationStatusId = 1,
-                
-                NumberOfPeople = model.NumberOfGuests,
-                Notes = model.Notes
-            };
-            
-            _context.Reservations.Add(reservation);
-            await _context.SaveChangesAsync();
+            StartTime = model.StartTime,
+            Duration = model.Duration,
 
-            return CreatedAtAction(nameof(Create), ReservationModel.FromReservation(reservation));
+            ReservationOriginId = model.ReservationOriginId,
+            ReservationStatusId = 1,
+
+            NumberOfPeople = model.NumberOfGuests,
+            Notes = model.Notes
+        };
+
+        await _reservationUtility.ValidateReservationAsync(reservation, ModelState, true);
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
         }
 
-        // If we get here, something went wrong
-        return BadRequest(ModelState);
+        Customer customer = await _customerManager.GetOrCreateCustomerAsync(
+            model.Customer.FirstName, model.Customer.LastName, model.Customer.Email, model.Customer.PhoneNumber);
+        reservation.CustomerId = customer.Id;
+
+        await _reservationUtility.CreateReservationAsync(reservation);
+
+        return CreatedAtAction(nameof(Create), ReservationModel.FromReservation(reservation));
     }
 
     /// <summary>
@@ -132,50 +120,46 @@ public class ReservationController : Controller
     [ProducesResponseType(typeof(EmptyResult), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Edit(int id, CreateModel model)
     {
-        if (await _sittingUtility.GetSittingAsync(model.SittingId) == null)
-        {
-            ModelState.AddModelError(nameof(model.SittingId), "Sitting does not exist");
-        }
+        Reservation? reservation = await _reservationUtility.GetReservationAsync(id);
 
-        if (await _utility.GetOriginAsync(model.ReservationOriginId) == null)
-        {
-            ModelState.AddModelError(nameof(model.ReservationOriginId), "Origin does not exist");
-        }
-        
-        Reservation? reservation = await _context.Reservations.FindAsync(id);
-        
-        if(reservation == null)
+        if (reservation == null)
         {
             return NotFound();
         }
-        
-        if(reservation.SittingId != model.SittingId)
+
+        if (reservation.SittingId != model.SittingId)
         {
             ModelState.AddModelError(nameof(model.SittingId), "Sitting does not match reservation");
         }
-        
+
         model.Validate(ModelState);
 
-        if (ModelState.IsValid)
+        Reservation updated = new()
         {
-            Customer customer = await _customerManager.GetOrCreateCustomerAsync(
-                model.Customer.FirstName, model.Customer.LastName, model.Customer.Email, model.Customer.PhoneNumber);
-            
-            reservation.StartTime = model.StartTime;
-            reservation.Duration = model.Duration;
-            reservation.ReservationOriginId = model.ReservationOriginId;
-            reservation.NumberOfPeople = model.NumberOfGuests;
-            reservation.Notes = model.Notes;
-            reservation.CustomerId = customer.Id;
-            
-            await _context.SaveChangesAsync();
-            return Ok(ReservationModel.FromReservation(reservation));
-        }
-        
-        // If we get here, something went wrong
-        return BadRequest(ModelState);
+            SittingId = model.SittingId,
+
+            StartTime = model.StartTime,
+            Duration = model.Duration,
+
+            ReservationOriginId = model.ReservationOriginId,
+            ReservationStatusId = 1,
+
+            NumberOfPeople = model.NumberOfGuests,
+            Notes = model.Notes
+        };
+        await _reservationUtility.ValidateReservationAsync(updated, ModelState, false);
+
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        Customer customer = await _customerManager.GetOrCreateCustomerAsync(
+            model.Customer.FirstName, model.Customer.LastName, model.Customer.Email, model.Customer.PhoneNumber);
+
+        updated.CustomerId = customer.Id;
+        await _reservationUtility.EditReservationAsync(updated);
+
+        return Ok(ReservationModel.FromReservation(reservation));
     }
-    
+
     /// <summary>
     /// Retrieves all reservation origins
     /// </summary>
@@ -184,9 +168,9 @@ public class ReservationController : Controller
     [ProducesResponseType(typeof(ReservationOrigin[]), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetOrigins()
     {
-        return Ok(await _utility.GetOriginsAsync());
+        return Ok(await _reservationUtility.GetOriginsAsync());
     }
-    
+
     /// <summary>
     /// Retrieves reservation origin by id
     /// </summary>
@@ -194,16 +178,47 @@ public class ReservationController : Controller
     /// <response code="200">Returns the reservation origin</response>
     /// <response code="404">If the reservation origin does not exist</response>
     [HttpGet("origins/{id:int}")]
-    [ProducesResponseType(typeof(ReservationOrigin[]), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ReservationOrigin), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetOrigin(int id)
     {
-        ReservationOrigin? origin = await _utility.GetOriginAsync(id);
+        ReservationOrigin? origin = await _reservationUtility.GetOriginAsync(id);
         if (origin == null)
         {
             return NotFound();
         }
 
         return Ok(origin);
+    }
+
+    /// <summary>
+    /// Retrieves all reservation statuses
+    /// </summary>
+    /// <response code="200">Returns all reservation statuses</response>
+    [HttpGet("statuses")]
+    [ProducesResponseType(typeof(ReservationStatus[]), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetStatuses()
+    {
+        return Ok(await _reservationUtility.GetStatusesAsync());
+    }
+
+    /// <summary>
+    /// Retrieves reservation status by id
+    /// </summary>
+    /// <param name="id">The id of the reservation status to return</param>
+    /// <response code="200">Returns the reservation status</response>
+    /// <response code="404">If the reservation status does not exist</response>
+    [HttpGet("statuses/{id:int}")]
+    [ProducesResponseType(typeof(ReservationStatus), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetStatus(int id)
+    {
+        ReservationStatus? status = await _reservationUtility.GetStatusAsync(id);
+        if (status == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(status);
     }
 }

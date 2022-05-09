@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using ReservationSystem_Server.Data;
+using ReservationSystem_Server.Helper;
 
 namespace ReservationSystem_Server.Services;
 
@@ -20,10 +21,15 @@ public class SittingUtility
     /// </summary>
     /// <param name="pastSittings">Whether past sittings are included</param>
     /// <param name="closedSittings">Whether closed sittings are included</param>
-    /// <returns></returns>
-    public IQueryable<Sitting> GetSittings(bool pastSittings = false, bool closedSittings = false)
+    /// <param name="filter">The query to inject before the where clause (usually used for includes)</param>
+    /// <returns>An array of sittings that meets the provided criteria</returns>
+    public async Task<Sitting[]> GetSittingsAsync(bool pastSittings = false, bool closedSittings = false,
+        Func<IQueryable<Sitting>, IQueryable<Sitting>>? filter = null)
     {
-        return _context.Sittings.Where(s => EvaluateAvailability(s, pastSittings, closedSittings));
+        return await _context.Sittings.ApplyFilter(filter)
+            .OrderBy(s => s.StartTime)
+            .Where(s => (pastSittings || s.EndTime >= DateTime.Now) && (closedSittings || !s.IsClosed)) // Inline as can't call method from query
+            .ToArrayAsync();
     }
 
     /// <summary>
@@ -34,13 +40,7 @@ public class SittingUtility
     /// <returns></returns>
     public async Task<Sitting?> GetSittingAsync(int id, Func<IQueryable<Sitting>, IQueryable<Sitting>>? filter = null)
     {
-        IQueryable<Sitting> query = _context.Sittings;
-        if (filter != null)
-        {
-            query = filter(_context.Sittings);
-        }
-
-        return await query.Where(s => s.Id == id).FirstOrDefaultAsync();
+        return await _context.Sittings.ApplyFilter(filter).Where(s => s.Id == id).FirstOrDefaultAsync();
     }
 
     /// <summary>
@@ -82,9 +82,22 @@ public class SittingUtility
     /// This method does not validate the sitting, so ensure it is done first so as not to cause database errors
     /// </remarks>
     /// <param name="sitting">The sitting to be updated</param>
+    /// <throws cref="ArgumentNullException">If the sitting does not exist</throws>
     public async Task EditSittingAsync(Sitting sitting)
     {
-        _context.Sittings.Update(sitting);
+        Sitting? original = await GetSittingAsync(sitting.Id);
+        
+        if(original == null)
+            throw new ArgumentException("The sitting does not exist");
+
+        original.StartTime = sitting.StartTime;
+        original.EndTime = sitting.EndTime;
+        original.IsClosed = sitting.IsClosed;
+        original.Capacity = sitting.Capacity;
+        original.SittingTypeId = sitting.SittingTypeId;
+        original.RestaurantId = sitting.RestaurantId;
+        
+        _context.Sittings.Update(original);
         await _context.SaveChangesAsync();
     }
 
@@ -116,6 +129,6 @@ public class SittingUtility
     /// <returns>The sitting type or null if not found</returns>
     public async Task<SittingType?> GetSittingTypeAsync(int id)
     {
-        return await _context.SittingTypes.Where(s => s.Id == id).FirstOrDefaultAsync();
+        return await _context.SittingTypes.FirstOrDefaultAsync(s => s.Id == id);
     }
 }
