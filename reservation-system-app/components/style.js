@@ -1,4 +1,4 @@
-import {Platform, StyleSheet} from "react-native";
+import {StyleSheet} from "react-native";
 
 const inputStyle = {
     paddingHorizontal: 6,
@@ -30,6 +30,12 @@ const baseStyle = {
         ...inputStyle,
         paddingVertical: 0
     },
+    dropdownIosInput: {
+        //TODO: remember what went in these, as the failed merge lost some of the styles
+    },
+    dropdownIosViewContainer: {
+
+    },
     // only applies to web as other platforms use native picker
     dropdownWebInputStyle: {
         borderWidth: 0,
@@ -52,6 +58,24 @@ const baseStyle = {
     },
     radioIcon: {
         marginRight: 6
+    },
+
+    modalHost: {
+        flex: 1,
+        justifyContent: "flex-end",
+        backgroundColor: 'rgba(0,0,0,0.5)'
+    },
+    modalView: {
+        margin: 20,
+        marginBottom: 0,
+        backgroundColor: "white",
+        padding: 35,
+        alignItems: "center",
+        borderWidth: 2,
+        borderBottomWidth: 0,
+        borderColor: '#0d6efd',
+        borderTopStartRadius: 5,
+        borderTopEndRadius: 5
     }
 };
 

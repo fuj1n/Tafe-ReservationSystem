@@ -1,18 +1,20 @@
-import {TextInput as NativeTextInput} from "react-native";
 import style from "./style";
 import {Text, View} from "react-native";
 import Radio, {RadioGroup} from "./radio";
+import moment from "moment";
+import {useState} from "react";
 
 /**
- * @param props {{label: string, value: Date, setValue: function(Date), timeSlots: Array<Date | string>}}
+ * @param props {{label: string, value: Moment, setValue: function(Moment), timeSlots: Array<Moment>}}
  */
 export default function TimeSlotPicker(props) {
-    //TODO: proper date picker
+    const {label, timeSlots} = props;
 
-    const {label, value, setValue, timeSlots} = props;
+    const [value, setValue] = useState(props.value?.unix());
 
     function onChange(value) {
-        setValue?.(new Date(value));
+        setValue(value);
+        props.setValue(moment.unix(value));
     }
 
     if(!timeSlots) {
@@ -20,14 +22,15 @@ export default function TimeSlotPicker(props) {
     }
 
     const formatMap = timeSlots
-        .map(slot => new Date(slot.toString())) // ensures the provided slots are a date and not just string
-        .map(slot => [slot.getUTCDate(), slot.toLocaleTimeString([], {timeStyle: "short"})]);
+        .map(slot => [slot.unix(), slot.format("hh:mm A")])
 
     return (
         <View style={[style.inputContainer, props.style]}>
             {label && <Text style={style.inputLabel}>{label}</Text>}
-            <RadioGroup mode="button" direction="row">
-                <Radio label="Test1" value={2}/>
+            <RadioGroup mode="button" direction="row" style={{flexWrap: 'wrap'}} itemStyle={{flexBasis: '33.3%'}} value={value} onChange={onChange}>
+                {formatMap.map(([time, fmt]) => (
+                        <Radio key={time} label={fmt} value={time}/>
+                    ))}
             </RadioGroup>
         </View>
     );
