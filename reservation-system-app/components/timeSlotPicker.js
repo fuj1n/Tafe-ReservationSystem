@@ -27,7 +27,7 @@ export default function TimeSlotPicker(props) {
     return (
         <View style={[style.inputContainer, props.style]}>
             {label && <Text style={style.inputLabel}>{label}</Text>}
-            <RadioGroup mode="button" direction="row" style={{flexWrap: 'wrap'}} itemStyle={{flexBasis: '33.3%'}} value={value} onChange={onChange}>
+            <RadioGroup mode="button" direction="row" style={{flexWrap: 'wrap', justifyContent: 'center'}} itemStyle={{flexBasis: '33.3%'}} value={value} onChange={onChange}>
                 {formatMap.map(([time, fmt]) => (
                         <Radio key={time} label={fmt} value={time}/>
                     ))}
