@@ -5,7 +5,7 @@ import {Text, View} from "react-native";
 /**
  * @param props {{label: string, value: Date, setValue: function(Date)}}
  */
-export default function TimeSlotPicker(props) {
+export default function DatePicker(props) {
     //TODO: proper date picker
 
     const {label} = props;
