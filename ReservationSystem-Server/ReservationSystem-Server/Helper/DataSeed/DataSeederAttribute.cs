@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 
-namespace ReservationSystem_Server.Utility.DataSeed;
+namespace ReservationSystem_Server.Helper.DataSeed;
 
 [AttributeUsage(AttributeTargets.Method, Inherited = false)]
 [MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)]

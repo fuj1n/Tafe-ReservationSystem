@@ -7,7 +7,7 @@ namespace ReservationSystem_Server.Areas.Api.Controllers;
 
 #if DEBUG // Only for development, don't really want random users to be able to make themselves admin otherwise
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v1/hidden_test/[controller]")]
 [Area("Api")]
 public class TestApiController : Controller
 {

@@ -1,0 +1,39 @@
+﻿using ReservationSystem_Server.Models;
+
+namespace ReservationSystem_Server.Areas.Api.Models.Reservation.Admin;
+
+public class ReservationModel : CreateModel, IOutputModel
+{
+    public int Id { get; set; }
+    public int ReservationStatusId { get; set; }
+
+    public LinkModel[] Links => new[]
+    {
+        new LinkModel($"reservation/{Id}", "self"),
+        new LinkModel($"reservation/{Id}/edit", "edit"),
+        new LinkModel($"reservation/{Id}/status", "status"),
+        new LinkModel($"reservation/{Id}/status", "set_status", "POST")
+    };
+
+    public static ReservationModel FromReservation(Data.Reservation reservation)
+    {
+        return new ReservationModel
+        {
+            Id = reservation.Id,
+            SittingId = reservation.SittingId,
+            Customer = new CustomerModel
+            {
+                FirstName = reservation.Customer.FirstName,
+                LastName = reservation.Customer.LastName,
+                Email = reservation.Customer.Email,
+                PhoneNumber = reservation.Customer.PhoneNumber
+            },
+            StartTime = reservation.StartTime,
+            Duration = reservation.Duration,
+            ReservationOriginId = reservation.ReservationOriginId,
+            ReservationStatusId = reservation.ReservationStatusId,
+            NumberOfGuests = reservation.NumberOfPeople,
+            Notes = reservation.Notes
+        };
+    }
+}

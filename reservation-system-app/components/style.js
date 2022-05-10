@@ -4,7 +4,6 @@ const inputStyle = {
     paddingHorizontal: 6,
     paddingVertical: 12,
     fontWeight: '400',
-    lineHeight: 1.5,
     color: '#212529',
     backgroundColor: '#fff',
     borderWidth: 1,
@@ -16,16 +15,17 @@ const inputStyle = {
 const baseStyle = {
     inputContainer: {
         fontWeight: '400',
-        lineHeight: 1.5,
         color: '#212529',
         alignSelf: 'stretch',
     },
+
     inputLabel: {
         marginBottom: 4
     },
     textInput: {
         ...inputStyle
     },
+
     dropdownInput: {
         ...inputStyle,
         paddingVertical: 0
@@ -34,6 +34,24 @@ const baseStyle = {
     dropdownWebInputStyle: {
         borderWidth: 0,
         paddingVertical: 12
+    },
+
+    radioHost: {
+
+    },
+    radioItemCircle: {
+        flexDirection: "row",
+        alignItems: "center",
+        paddingVertical: 12,
+        paddingHorizontal: 6,
+        marginRight: 6
+    },
+    radioItemButton: {
+        paddingVertical: 2,
+        paddingHorizontal: 2,
+    },
+    radioIcon: {
+        marginRight: 6
     }
 };
 
@@ -122,14 +140,8 @@ const generators = {
                 borderStyle: 'solid',
             };
             output.buttonText = {
-                fontWeight: '400',
-                lineHeight: 14
+                fontWeight: '400'
             };
-
-            // line height is handled weird outside of web
-            if (Platform.OS !== 'web') {
-                output.buttonText.paddingTop = 14 / 4;
-            }
 
             return output;
         }

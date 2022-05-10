@@ -25,4 +25,6 @@ public class Reservation
     public ReservationOrigin ReservationOrigin { get; set; } = null!;
     
     public List<Table> Tables { get; set; } = new();
+
+    public string SecurityStamp { get; set; } = Guid.NewGuid().ToString();
 }
