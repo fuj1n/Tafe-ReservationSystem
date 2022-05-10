@@ -40,7 +40,7 @@ namespace ReservationSystem_Server.Areas.Api.Controllers
             return Ok(sittings);
         }
 
-        [HttpGet("timeslots")]
+        [HttpGet("details")]
         public async Task<IActionResult> Details(int sittingId)
         {
             var sitting = await _context.Sittings.FirstOrDefaultAsync(s => s.Id == sittingId);
