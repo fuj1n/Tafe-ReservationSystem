@@ -15,7 +15,8 @@ function Sitting(props) {
             <Text style={{ flex: 2 }}>{sitting.endTime}</Text>
             <Text style={{ flex: 1 }}>{sitting.capacity}</Text>
             <Text style={{ flex: 1.5 }}>{sitting.isClosed}</Text>
-            <Button style={{ flex: 1 }} variant="primary" onPress={() => navigation.navigate("EditSitting")}>Edit</Button>
+            <Button style={{ flex: 1 }} variant="primary" 
+            onPress={() => navigation.navigate("EditSitting", {sitting})}>Edit</Button>
             <Button style={{ flex: 1 }} variant="danger" >Close</Button>
         </View>
     );
