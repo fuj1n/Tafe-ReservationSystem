@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -15,52 +14,53 @@ public class ReservationController : Controller
 {
     private readonly ApplicationDbContext _context;
     private readonly CustomerManager _customerManager;
-    private readonly ReservationUtility _utility;
+    private readonly ReservationUtility _reservationUtility;
+    private readonly SittingUtility _sittingUtility;
 
     private readonly TimeSpan _timeSlotLength = TimeSpan.FromMinutes(30);
 
-    public ReservationController(ApplicationDbContext context, CustomerManager customerManager, ReservationUtility utility)
+    public ReservationController(ApplicationDbContext context, CustomerManager customerManager,
+        ReservationUtility reservationUtility, SittingUtility sittingUtility)
     {
         _context = context;
         _customerManager = customerManager;
-        _utility = utility;
+        _reservationUtility = reservationUtility;
+        _sittingUtility = sittingUtility;
     }
-    
+
     public async Task<IActionResult> Index(bool pastSittings)
     {
         ViewData["PastSittings"] = pastSittings;
-        return View(await _context.Sittings.Include(s => s.SittingType).OrderBy(s => s.StartTime)
-                .Where(s => pastSittings || s.StartTime > DateTime.Now)
-                .ToListAsync());
+        return View(await _sittingUtility.GetSittingsAsync(pastSittings, true, q => q
+            .Include(s => s.SittingType)));
     }
 
     public async Task<IActionResult> Sitting(int id)
     {
-        Sitting? sitting = await _context.Sittings
+        Sitting? sitting = await _sittingUtility.GetSittingAsync(id, q => q
             .Include(s => s.SittingType)
             .Include(s => s.Reservations).ThenInclude(r => r.ReservationOrigin)
             .Include(s => s.Reservations).ThenInclude(r => r.ReservationStatus)
             .Include(s => s.Reservations).ThenInclude(r => r.Customer)
-            .Include(s => s.Reservations).ThenInclude(r => r.Tables)
-            .FirstOrDefaultAsync(s => s.Id == id);
+            .Include(s => s.Reservations).ThenInclude(r => r.Tables));
+
         if (sitting == null)
         {
             return NotFound();
         }
-        
+
         return View(sitting);
     }
 
     public async Task<IActionResult> Details(int id)
     {
-        Reservation? reservation = await _context.Reservations
+        Reservation? reservation = await _reservationUtility.GetReservationAsync(id, q => q
             .Include(r => r.ReservationOrigin)
             .Include(r => r.ReservationStatus)
             .Include(r => r.Sitting).ThenInclude(s => s.SittingType)
             .Include(r => r.Customer)
-            .Include(r => r.Tables)
-            .FirstOrDefaultAsync(r => r.Id == id);
-        
+            .Include(r => r.Tables));
+
         if (reservation == null)
         {
             return NotFound();
@@ -68,57 +68,39 @@ public class ReservationController : Controller
 
         return View(reservation);
     }
-    
+
     public async Task<IActionResult> Create(int sittingId)
     {
-        Sitting? sitting = await _context.Sittings
-            .FirstOrDefaultAsync(s => s.Id == sittingId);
+        Sitting? sitting = await _sittingUtility.GetSittingAsync(sittingId);
 
         if (sitting == null)
         {
             return NotFound();
         }
-        
+
         CreateViewModel model = new()
         {
             SittingId = sitting.Id,
             SittingStart = sitting.StartTime,
             SittingEnd = sitting.EndTime,
-            
+
             StartTime = sitting.StartTime,
-            
-            AvailableOrigins = await GetAvailableOriginsAsync(),
-            TimeSlots = _utility.GetTimeSlots(sitting.StartTime, sitting.EndTime, _timeSlotLength)
+
+            AvailableOrigins = await _reservationUtility.GetOriginsAsSelectListAsync(),
+            TimeSlots = _reservationUtility.GetTimeSlots(sitting.StartTime, sitting.EndTime, _timeSlotLength)
         };
-        
+
         return View(model);
     }
 
     [HttpPost]
     public async Task<IActionResult> Create(CreateViewModel model)
     {
-        if(string.IsNullOrWhiteSpace(model.Email) && string.IsNullOrWhiteSpace(model.Phone))
+        if (string.IsNullOrWhiteSpace(model.Email) && string.IsNullOrWhiteSpace(model.Phone))
         {
             ModelState.AddModelError("", "Email or phone number is required");
         }
 
-        if (!ModelState.IsValid)
-        {
-            model.AvailableOrigins = await GetAvailableOriginsAsync();
-            return View(model);
-        }
-
-        Sitting? sitting = await _context.Sittings
-            .FirstOrDefaultAsync(s => s.Id == model.SittingId);
-
-        if (sitting == null)
-        {
-            return NotFound();
-        }
-
-        Customer customer = await _customerManager.GetOrCreateCustomerAsync(model.FirstName, model.LastName,
-                model.Email, model.Phone);
-        
         Reservation reservation = new()
         {
             SittingId = model.SittingId,
@@ -127,23 +109,34 @@ public class ReservationController : Controller
             NumberOfPeople = model.NumGuests,
             ReservationOriginId = model.Origin,
             Notes = model.Notes,
-            ReservationStatusId = 1,
-            CustomerId = customer.Id
+            ReservationStatusId = 1
         };
+
+        await _reservationUtility.ValidateReservationAsync(reservation, ModelState, false);
         
-        _context.Reservations.Add(reservation);
-        await _context.SaveChangesAsync();
+        if (!ModelState.IsValid)
+        {
+            model.AvailableOrigins = await _reservationUtility.GetOriginsAsSelectListAsync();
+            return View(model);
+        }
         
-        return RedirectToAction(nameof(Sitting), new {id = reservation.SittingId, modal = ConfirmationUrl(reservation.Id)});
+        Customer customer = await _customerManager.GetOrCreateCustomerAsync(model.FirstName, model.LastName,
+            model.Email, model.Phone);
+
+        reservation.CustomerId = customer.Id;
+
+        await _reservationUtility.CreateReservationAsync(reservation);
+
+        return RedirectToAction(nameof(Sitting),
+            new { id = reservation.SittingId, modal = ConfirmationUrl(reservation.Id) });
     }
 
     public async Task<IActionResult> Edit(int id)
     {
-        Reservation? reservation = await _context.Reservations
+        Reservation? reservation = await _reservationUtility.GetReservationAsync(id, q => q
             .Include(r => r.Sitting)
             .Include(r => r.ReservationOrigin)
-            .Include(c => c.Customer)
-            .FirstOrDefaultAsync(r => r.Id == id);
+            .Include(c => c.Customer));
 
         if (reservation == null)
             return NotFound();
@@ -152,23 +145,24 @@ public class ReservationController : Controller
         {
             SittingId = reservation.SittingId,
             ReservationId = reservation.Id,
-            
+
             SittingStart = reservation.Sitting.StartTime,
             SittingEnd = reservation.Sitting.EndTime,
             StartTime = reservation.StartTime,
             Duration = reservation.Duration,
             NumGuests = reservation.NumberOfPeople,
             Origin = reservation.ReservationOriginId,
-            
+
             FirstName = reservation.Customer.FirstName,
             LastName = reservation.Customer.LastName,
             Email = reservation.Customer.Email,
             Phone = reservation.Customer.PhoneNumber,
-            
+
             Notes = reservation.Notes,
-            
-            AvailableOrigins = await GetAvailableOriginsAsync(),
-            TimeSlots = _utility.GetTimeSlots(reservation.Sitting.StartTime, reservation.Sitting.EndTime, _timeSlotLength)
+
+            AvailableOrigins = await _reservationUtility.GetOriginsAsSelectListAsync(),
+            TimeSlots = _reservationUtility.GetTimeSlots(reservation.Sitting.StartTime, reservation.Sitting.EndTime,
+                _timeSlotLength)
         };
 
         return View(model);
@@ -177,69 +171,74 @@ public class ReservationController : Controller
     [HttpPost]
     public async Task<IActionResult> Edit(EditViewModel model)
     {
-        if(string.IsNullOrWhiteSpace(model.Email) && string.IsNullOrWhiteSpace(model.Phone))
+        if (string.IsNullOrWhiteSpace(model.Email) && string.IsNullOrWhiteSpace(model.Phone))
         {
             ModelState.AddModelError("", "Email or phone number is required");
         }
 
-        Sitting? sitting = await _context.Sittings
-            .FirstOrDefaultAsync(s => s.Id == model.SittingId);
-        if(sitting == null)
-            return NotFound();
+        Sitting? sitting = await _sittingUtility.GetSittingAsync(model.SittingId);
+        if (sitting == null)
+            return NotFound(); // Irrecoverable state as valid sitting required to calculate time slots
         
-        if(!ModelState.IsValid)
-        {
-            model.AvailableOrigins = await GetAvailableOriginsAsync();
-            model.TimeSlots = _utility.GetTimeSlots(sitting.StartTime, sitting.EndTime, _timeSlotLength);
-            return View(model);
-        }
-        
-        Reservation? reservation = await _context.Reservations
+        Reservation? reservation = await _reservationUtility.GetReservationAsync(model.ReservationId, q => q
             .Include(r => r.Sitting)
-            .Include(r => r.ReservationOrigin)
-            .FirstOrDefaultAsync(r => r.Id == model.ReservationId);
-        
-        if(reservation == null)
+            .Include(r => r.ReservationOrigin));
+
+        if (reservation == null)
             return NotFound();
 
-        reservation.StartTime = model.StartTime;
-        reservation.Duration = model.Duration;
-        reservation.ReservationOriginId = model.Origin;
-        reservation.NumberOfPeople = model.NumGuests;
-        reservation.Notes = model.Notes;
+        Reservation updated = new()
+        {
+            Id = model.ReservationId,
+            SittingId = model.SittingId,
+            StartTime = model.StartTime,
+            Duration = model.Duration,
+            NumberOfPeople = model.NumGuests,
+            ReservationOriginId = model.Origin,
+            Notes = model.Notes,
+            ReservationStatusId = 1
+        };
+
+        await _reservationUtility.ValidateReservationAsync(updated, ModelState, false);
+        
+        if (!ModelState.IsValid)
+        {
+            model.AvailableOrigins = await _reservationUtility.GetOriginsAsSelectListAsync();
+            model.TimeSlots = _reservationUtility.GetTimeSlots(sitting.StartTime, sitting.EndTime, _timeSlotLength);
+            return View(model);
+        }
 
         Customer customer =
             await _customerManager.GetOrCreateCustomerAsync(model.FirstName, model.LastName, model.Email, model.Phone);
-        reservation.CustomerId = customer.Id;
+        updated.CustomerId = customer.Id;
 
-        await _context.SaveChangesAsync();
-        
-        return RedirectToAction(nameof(Sitting), new {id = reservation.SittingId, modal = ConfirmationUrl(reservation.Id, true)});
+        await _reservationUtility.EditReservationAsync(updated);
+
+        return RedirectToAction(nameof(Sitting),
+            new { id = reservation.SittingId, modal = ConfirmationUrl(reservation.Id, true) });
     }
-    
-    public IActionResult Confirmation(int id, bool? edit)
+
+    public async Task<IActionResult> Confirmation(int id, bool? edit)
     {
-        Reservation? reservation = _context.Reservations
+        Reservation? reservation = await _reservationUtility.GetReservationAsync(id, q => q
             .Include(r => r.Sitting)
             .Include(r => r.ReservationOrigin)
-            .Include(r => r.Sitting).ThenInclude(s => s.SittingType)
-            .FirstOrDefault(r => r.Id == id);
+            .Include(r => r.Sitting).ThenInclude(s => s.SittingType));
 
         if (reservation == null)
             return NotFound();
 
         ViewBag.IsEdit = edit is true;
-        
+
         return View(reservation);
     }
 
     public async Task<IActionResult> UpdateStatus(int id)
     {
-        Reservation? reservation = await _context.Reservations
-            .Include(r => r.Customer)
-            .FirstOrDefaultAsync(r => r.Id == id);
-        
-        if(reservation == null)
+        Reservation? reservation = await _reservationUtility.GetReservationAsync(id, q => q
+            .Include(r => r.Customer));
+
+        if (reservation == null)
             return NotFound();
 
         UpdateStatusViewModel model = new()
@@ -248,52 +247,57 @@ public class ReservationController : Controller
             StatusId = reservation.ReservationStatusId,
             ReservationDetails =
                 $"{reservation.Customer.FirstName} {reservation.Customer.LastName} at {reservation.StartTime.ToShortTimeString()}",
-            Statuses = new SelectList(await _context.ReservationStatuses.ToListAsync(),
+            Statuses = new SelectList(await _reservationUtility.GetStatusesAsync(),
                 nameof(ReservationStatus.Id), nameof(ReservationStatus.Description))
         };
-        
+
         return View(model);
     }
 
     [HttpPost]
     public async Task<IActionResult> UpdateStatus(UpdateStatusViewModel model)
     {
+        if(await _reservationUtility.GetStatusAsync(model.StatusId) == null)
+            ModelState.AddModelError(nameof(UpdateStatusViewModel.StatusId), "Could not find status with given id");
+        
         if (!ModelState.IsValid)
-            return Content(string.Join("<br/>", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)), "text/html");
+            return Content(
+                string.Join("<br/>", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)),
+                "text/html");
 
-        Reservation? reservation = await _context.Reservations.SingleOrDefaultAsync(r => r.Id == model.ReservationId);
-        if(reservation == null)
+        Reservation? reservation = await _reservationUtility.GetReservationAsync(model.ReservationId);
+        if (reservation == null)
             return NotFound();
-        
+
         reservation.ReservationStatusId = model.StatusId;
-        await _context.SaveChangesAsync();
-        
-        return RedirectToAction(nameof(Sitting), new {id = reservation.SittingId});
+        await _reservationUtility.EditReservationAsync(reservation);
+
+        return RedirectToAction(nameof(Sitting), new { id = reservation.SittingId });
     }
 
     public async Task<IActionResult> AssignTables(int id)
     {
-        Reservation? reservation = await _context.Reservations
+        Reservation? reservation = await _reservationUtility.GetReservationAsync(id, q => q
             .Include(r => r.Sitting).ThenInclude(s => s.Restaurant)
             .ThenInclude(r => r.Areas).ThenInclude(a => a.Tables)
-            .Include(r => r.Tables)
-            .FirstOrDefaultAsync(r => r.Id == id);
-        
-        if(reservation == null)
+            .Include(r => r.Tables));
+
+        if (reservation == null)
             return NotFound();
-        
+
         AssignTablesViewModel model = new()
         {
             ReservationId = id,
             SittingId = reservation.SittingId,
             Tables = reservation.Sitting.Restaurant.Areas.SelectMany(a => a.Tables).OrderBy(t => t.Id)
-                .Select(t => new AssignTablesViewModel.Table {
-                Id = t.Id,
-                Name = t.Name,
-                IsAssigned = reservation.Tables.Any(rt => rt.Id == t.Id)
-            }).ToList()
+                .Select(t => new AssignTablesViewModel.Table
+                {
+                    Id = t.Id,
+                    Name = t.Name,
+                    IsAssigned = reservation.Tables.Any(rt => rt.Id == t.Id)
+                }).ToList()
         };
-        
+
         return View(model);
     }
 
@@ -302,32 +306,24 @@ public class ReservationController : Controller
     {
         if (!ModelState.IsValid)
             return View(model);
-        
-        Reservation? reservation = await _context.Reservations
-            .Include(r => r.Tables)
-            .FirstOrDefaultAsync(r => r.Id == model.ReservationId);
+
+        Reservation? reservation = await _reservationUtility.GetReservationAsync(model.ReservationId, q => q
+            .Include(r => r.Tables));
 
         if (reservation == null)
             return NotFound();
-        
+
         reservation.Tables.Clear();
         reservation.Tables.AddRange(model.Tables
             .Where(t => t.IsAssigned)
             .Select(t => _context.Tables.First(tbl => tbl.Id == t.Id)));
-        
-        await _context.SaveChangesAsync();
-        return RedirectToAction("Sitting", new {id=reservation.SittingId});
-    }
 
-    private async Task<SelectList> GetAvailableOriginsAsync()
-    {
-        return new SelectList(await _context.ReservationOrigins.ToListAsync(), 
-            nameof(ReservationOrigin.Id), 
-            nameof(ReservationOrigin.Description));
+        await _reservationUtility.EditReservationAsync(reservation);
+        return RedirectToAction("Sitting", new { id = reservation.SittingId });
     }
 
     private string ConfirmationUrl(int id, bool edit = false)
     {
-        return Url.Action(nameof(Confirmation), new {id, edit}) ?? "";
+        return Url.Action(nameof(Confirmation), new { id, edit }) ?? "";
     }
 }
