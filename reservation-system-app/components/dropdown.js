@@ -7,9 +7,7 @@ let Picker;
 let DropdownIOS = (_) => (<></>);
 if (Platform.OS === "ios") {
     let RNPickerSelect;
-    import("react-native-picker-select").then(module => {
-        RNPickerSelect = module.default;
-    });
+    RNPickerSelect = require("react-native-picker-select").default;
 
     DropdownIOS = function DropdownIOS(props) {
         const {label, items, children, style: userStyle} = props;
@@ -38,9 +36,7 @@ if (Platform.OS === "ios") {
         );
     };
 } else {
-    import("@react-native-picker/picker").then(module => {
-        Picker = module.Picker;
-    });
+    Picker = require("@react-native-picker/picker").Picker;
 }
 
 /**

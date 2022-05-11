@@ -7,6 +7,8 @@ import {createDrawerNavigator} from "@react-navigation/drawer";
 import login, {LoginContext, LoginInfo} from './services';
 import {LoginPage, TestPalette} from "./pages";
 import {getFocusedRouteNameFromRoute, NavigationContainer, DefaultTheme} from "@react-navigation/native";
+import moment from "moment";
+import * as Localization from "expo-localization";
 
 const navTheme = {
     ...DefaultTheme,
@@ -21,7 +23,11 @@ export default function App() {
     const [isLoading, setIsLoading] = useState(true);
     const Drawer = createDrawerNavigator();
 
+    moment.locale(Localization.locale);
+
     useEffect(async () => {
+
+
         const loginInfo = await login.getLogin();
 
         if (loginInfo.isLoggedIn) {
