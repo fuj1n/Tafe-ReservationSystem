@@ -31,10 +31,16 @@ const baseStyle = {
         paddingVertical: 0
     },
     dropdownIosInput: {
-        //TODO: remember what went in these, as the failed merge lost some of the styles
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        flex: 1
     },
-    dropdownIosViewContainer: {
 
+    dropdownIosViewContainer: {
+        alignSelf: "center",
+        flex: 1,
+        paddingVertical: 12
     },
     // only applies to web as other platforms use native picker
     dropdownWebInputStyle: {
