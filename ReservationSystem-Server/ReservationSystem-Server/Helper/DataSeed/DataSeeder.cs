@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 
-namespace ReservationSystem_Server.Utility.DataSeed;
+namespace ReservationSystem_Server.Helper.DataSeed;
 
 public class DataSeeder
 {

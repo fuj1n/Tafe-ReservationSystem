@@ -5,15 +5,29 @@ import {StyleSheet, View, ActivityIndicator} from 'react-native';
 import {useEffect, useState} from "react";
 import {createDrawerNavigator} from "@react-navigation/drawer";
 import login, {LoginContext, LoginInfo} from './services';
-import {LoginPage, TestPalette, ReservationPage} from "./pages";
-import {getFocusedRouteNameFromRoute, NavigationContainer} from "@react-navigation/native";
+import {LoginPage, TestPalette, ReservationPage, SittingsPage} from "./pages";
+import {getFocusedRouteNameFromRoute, NavigationContainer, DefaultTheme} from "@react-navigation/native";
+import moment from "moment";
+import * as Localization from "expo-localization";
+
+const navTheme = {
+    ...DefaultTheme,
+    colors: {
+        ...DefaultTheme.colors,
+        background: 'transparent'
+    }
+};
 
 export default function App() {
     const [loginInfo, setLoginInfo] = useState(new LoginInfo());
     const [isLoading, setIsLoading] = useState(true);
     const Drawer = createDrawerNavigator();
 
+    moment.locale(Localization.locale);
+
     useEffect(async () => {
+
+
         const loginInfo = await login.getLogin();
 
         if (loginInfo.isLoggedIn) {
@@ -44,12 +58,13 @@ export default function App() {
     }
 
     return (
-        <NavigationContainer>
+        <NavigationContainer theme={navTheme}>
             <LoginContext.Provider value={{loginInfo, setLoginInfo}}>
                 <View style={styles.root}>
                     <Drawer.Navigator initialRouteName="Home" screenOptions={showHeader}>
                         <Drawer.Screen name="TestPalette" options={{title: "Test Palette"}} component={TestPalette}/>
                         <Drawer.Screen name="Reservation" options={{title: "Sittings"}} component={ReservationPage}/>
+                        <Drawer.Screen name="Sittings" options={{title: "Sittings"}} component={SittingsPage}/>
                         <Drawer.Screen name="Login" options={{title: "Login"}} component={LoginPage}/>
                     </Drawer.Navigator>
                 </View>

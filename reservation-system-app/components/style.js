@@ -1,10 +1,9 @@
-import {Platform, StyleSheet} from "react-native";
+import {StyleSheet} from "react-native";
 
 const inputStyle = {
     paddingHorizontal: 6,
     paddingVertical: 12,
     fontWeight: '400',
-    lineHeight: 1.5,
     color: '#212529',
     backgroundColor: '#fff',
     borderWidth: 1,
@@ -16,24 +15,78 @@ const inputStyle = {
 const baseStyle = {
     inputContainer: {
         fontWeight: '400',
-        lineHeight: 1.5,
         color: '#212529',
         alignSelf: 'stretch',
     },
+
     inputLabel: {
         marginBottom: 4
     },
     textInput: {
         ...inputStyle
     },
+
     dropdownInput: {
         ...inputStyle,
         paddingVertical: 0
+    },
+    dropdownIosInput: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        flex: 1
+    },
+
+    dropdownIosViewContainer: {
+        alignSelf: "center",
+        flex: 1,
+        paddingVertical: 12
     },
     // only applies to web as other platforms use native picker
     dropdownWebInputStyle: {
         borderWidth: 0,
         paddingVertical: 12
+    },
+
+    radioHost: {
+
+    },
+    radioItemCircle: {
+        flexDirection: "row",
+        alignItems: "center",
+        paddingVertical: 12,
+        paddingHorizontal: 6,
+        marginRight: 6
+    },
+    radioItemButton: {
+        paddingVertical: 2,
+        paddingHorizontal: 2,
+    },
+    radioIcon: {
+        marginRight: 6
+    },
+
+    modalHost: {
+        flex: 1,
+        justifyContent: "flex-end",
+        backgroundColor: 'rgba(0,0,0,0.5)'
+    },
+    modalView: {
+        margin: 20,
+        marginBottom: 0,
+        backgroundColor: "white",
+        padding: 35,
+        alignItems: "center",
+        borderWidth: 2,
+        borderBottomWidth: 0,
+        borderColor: '#0d6efd',
+        borderTopStartRadius: 5,
+        borderTopEndRadius: 5
+    },
+
+    icon28: {
+        width: 28,
+        height: 27 // Not same as width to fix centering
     }
 };
 
@@ -122,14 +175,8 @@ const generators = {
                 borderStyle: 'solid',
             };
             output.buttonText = {
-                fontWeight: '400',
-                lineHeight: 14
+                fontWeight: '400'
             };
-
-            // line height is handled weird outside of web
-            if (Platform.OS !== 'web') {
-                output.buttonText.paddingTop = 14 / 4;
-            }
 
             return output;
         }
@@ -162,6 +209,32 @@ const generators = {
         }
 
         output[`text${name}`] = {
+            color: variant.color ?? 'transparent'
+        }
+
+        return output;
+    },
+    bg: (name, variant, state) => {
+        let output = {};
+
+        if(!variant) {
+            return {};
+        }
+
+        output[`bg${name}${state}`] = {
+            backgroundColor: variant.backgroundColor ?? 'transparent'
+        }
+
+        return output;
+    },
+    fg: (name, variant, state) => {
+        let output = {};
+
+        if(!variant) {
+            return {};
+        }
+
+        output[`fg${name}${state}`] = {
             color: variant.color ?? 'transparent'
         }
 

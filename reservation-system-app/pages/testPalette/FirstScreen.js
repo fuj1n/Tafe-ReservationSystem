@@ -3,6 +3,7 @@ import {ScrollView} from "react-native";
 import styles from "../styles";
 import {Button, DatePicker, Dropdown, StyledText, TextInput, TimeSlotPicker} from "../../components";
 import {useRef, useState} from "react";
+import moment from "moment";
 
 export default function FirstScreen(props) {
     const {navigation} = props;
@@ -24,17 +25,17 @@ export default function FirstScreen(props) {
     ];
 
     const timeSlots = [
-        new Date(2022, 5, 4, 9),
-        new Date(2022, 5, 4, 9, 30),
-        new Date(2022, 5, 4, 10),
-        new Date(2022, 5, 4, 10, 30),
-        new Date(2022, 5, 4, 11),
-        new Date(2022, 5, 4, 11, 30),
-        new Date(2022, 5, 4, 12),
+        moment("2022/05/04 09:00", "YYYY/MM/DD HH:mm"),
+        moment("2022/05/04 09:30", "YYYY/MM/DD HH:mm"),
+        moment("2022/05/04 10:00", "YYYY/MM/DD HH:mm"),
+        moment("2022/05/04 10:30", "YYYY/MM/DD HH:mm"),
+        moment("2022/05/04 11", "YYYY/MM/DD HH:mm"),
+        moment("2022/05/04 11:30", "YYYY/MM/DD HH:mm"),
+        moment("2022/05/04 12", "YYYY/MM/DD HH:mm")
     ];
     const [timeSlot, setTimeSlot] = useState(timeSlots[0]);
 
-    const [date, setDate] = useState(new Date(2022, 5, 4, 9));
+    const [date, setDate] = useState(moment().startOf('hour'));
 
     const variants = [
         "no variant",
@@ -61,7 +62,7 @@ export default function FirstScreen(props) {
 
             <Dropdown label="This is a dropdown:" items={dropdownOneItems} selectedValue={dropdownValue}
                       onValueChange={setDropdownValue}/>
-            <Dropdown style={styles.containerItem} label="This is a dropdown 2:" items={dropdownTwoItems}
+            <Dropdown style={styles.containerItem} label="This is a dropdown #2:" items={dropdownTwoItems}
                       selectedValue={dropdownTwoValue} onValueChange={setDropdownTwoValue}/>
 
             <TimeSlotPicker label="This is a time slot picker:" style={styles.containerItem} value={timeSlot}

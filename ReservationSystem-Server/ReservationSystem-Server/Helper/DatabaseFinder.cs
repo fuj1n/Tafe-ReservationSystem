@@ -1,6 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 
-namespace ReservationSystem_Server.Utility;
+namespace ReservationSystem_Server.Helper;
 
 public static class DatabaseFinder
 {

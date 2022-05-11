@@ -27,8 +27,14 @@ export class LoginInfo {
      */
     username;
 
-    constructor() {
+    /**
+     * @type {string | null}
+     */
+    error;
+
+    constructor(error = null) {
         this.isLoggedIn = false;
+        this.error = error;
     }
 }
 
@@ -60,7 +66,7 @@ async function getLoginFromToken(jwt) {
 
     const response = await apiFetch("user/me", "GET", null, jwt);
     if (response.status !== 200) {
-        return new LoginInfo();
+        return new LoginInfo(errorToString(response));
     }
 
     const json = await response.json();
@@ -85,7 +91,7 @@ async function getLoginFromToken(jwt) {
 async function login(username, password) {
     const response = await apiFetch("token", "POST", {email: username, password: password});
     if (response.status !== 200) {
-        return new LoginInfo();
+        return new LoginInfo(errorToString(response));
     }
 
     const jwt = await response.text();
@@ -122,11 +128,26 @@ async function apiFetch(url, method, body, jwt) {
 
     }).catch(error => {
         // Return a response anyway so that it can be handled elsewhere
-        return new Response(null, {
-            status: 500,
+        let response = new Response(null, {
+            status: 499,
             statusText: error.message
         });
+        response.internalError = true;
+        return response;
     });
+}
+
+function errorToString(response) {
+    if(response.internalError) {
+        return response.statusText;
+    }
+
+    switch(response.status) {
+        case 400:
+            return "Invalid username or password";
+        default:
+            return "Unknown error";
+    }
 }
 
 export default {login, logout, getLogin, apiFetch};

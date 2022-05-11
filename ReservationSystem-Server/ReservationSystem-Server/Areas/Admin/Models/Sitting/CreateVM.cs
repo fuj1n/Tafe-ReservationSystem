@@ -14,7 +14,7 @@ namespace ReservationSystem_Server.Areas.Admin.Models.Sitting
         [Range(0, 10000)]
         public int Capacity { get; set; }
         [Required(ErrorMessage = "Please select a sitting type")]
-        public int SittingType { get; set; }
+        public int SittingTypeId { get; set; }
         public SelectList? SittingTypes { get; set; }
 
         public void Validate(ModelStateDictionary state)

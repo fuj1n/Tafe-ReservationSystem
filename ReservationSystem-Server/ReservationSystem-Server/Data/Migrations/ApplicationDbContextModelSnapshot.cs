@@ -306,6 +306,11 @@ namespace ReservationSystem_Server.Migrations
                         },
                         new
                         {
+                            UserId = "13da5cd2-2c3b-475f-82a6-f79b704b4ff7",
+                            RoleId = "1337x03"
+                        },
+                        new
+                        {
                             UserId = "4957f11c-e346-4abf-bc30-323e92eec3e8",
                             RoleId = "1337x02"
                         },
@@ -406,6 +411,10 @@ namespace ReservationSystem_Server.Migrations
 
                     b.Property<int>("ReservationStatusId")
                         .HasColumnType("int");
+
+                    b.Property<string>("SecurityStamp")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SittingId")
                         .HasColumnType("int");

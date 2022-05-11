@@ -16,6 +16,13 @@ namespace ReservationSystem_Server.Areas.Admin.Controllers
         {
             _context = context;
         }
+
+        // taken from https://stackoverflow.com/questions/1004698/how-to-truncate-milliseconds-off-of-a-net-datetime
+        private DateTime DateTimeTruncate(DateTime dateTime)
+        {
+            return new DateTime(dateTime.Ticks - (dateTime.Ticks % TimeSpan.TicksPerMinute), dateTime.Kind);
+        }
+
         public async Task<IActionResult> Index(bool pastSittings)
         {
             ViewBag.pastSittings = pastSittings;
@@ -26,11 +33,8 @@ namespace ReservationSystem_Server.Areas.Admin.Controllers
 
         public async Task<IActionResult> Create()
         {
-            // taken from https://stackoverflow.com/questions/1004698/how-to-truncate-milliseconds-off-of-a-net-datetime
-            DateTime dt = DateTime.Now;
-            dt = new DateTime(dt.Ticks -
-                (dt.Ticks % TimeSpan.TicksPerMinute),
-                dt.Kind);
+
+            DateTime dt = DateTimeTruncate(DateTime.Now);
 
             var vm = new CreateVM()
             {
@@ -44,11 +48,6 @@ namespace ReservationSystem_Server.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateVM vm)
         {
-            if(vm.StartTime < DateTime.Now)
-            {
-                ModelState.AddModelError("StartTime", "Start Time must be in the future");
-            }
-
             vm.Validate(ModelState);
 
             var sitting = new Sitting
@@ -56,7 +55,7 @@ namespace ReservationSystem_Server.Areas.Admin.Controllers
                 StartTime = vm.StartTime,
                 EndTime = vm.EndTime,
                 Capacity = vm.Capacity,
-                SittingTypeId = vm.SittingType,
+                SittingTypeId = vm.SittingTypeId,
                 RestaurantId = 1
             };
 
@@ -67,20 +66,32 @@ namespace ReservationSystem_Server.Areas.Admin.Controllers
 
         public async Task<IActionResult> Edit(int id)
         {
-            var sitting = await _context.Sittings.FirstOrDefaultAsync(s => s.Id == id);
+            var sitting = await _context.Sittings.Include(s => s.Reservations).FirstOrDefaultAsync(s => s.Id == id);
+            if (sitting == null)
+            {
+                return NotFound();
+            }
+
+            bool reservations = false;
+            if( sitting.Reservations.Count != 0 )
+            {
+                reservations = true;
+            }
+            ViewBag.reservations = reservations;
+
             var vm = new EditVM()
             {
                 Id = id,
-                StartTime = sitting!.StartTime,
-                EndTime = sitting.EndTime,
+                StartTime = DateTimeTruncate(sitting.StartTime),
+                EndTime = DateTimeTruncate(sitting.EndTime),
                 Capacity = sitting.Capacity,
-                SittingType = sitting.SittingTypeId,
+                SittingTypeId = sitting.SittingTypeId,
                 SittingTypes = new SelectList(await _context.SittingTypes.ToListAsync(), "Id", "Description")
             };
             return View(vm);
         }
 
-        [HttpPut]
+        [HttpPost]
         public async Task<IActionResult> Edit(EditVM vm)
         {
             var sitting = await _context.Sittings.FirstOrDefaultAsync(s => s.Id == vm.Id);
@@ -99,18 +110,22 @@ namespace ReservationSystem_Server.Areas.Admin.Controllers
             sitting.StartTime = vm.StartTime;
             sitting.EndTime = vm.EndTime;
             sitting.Capacity = vm.Capacity;
-            sitting.SittingTypeId = vm.SittingType;
+            sitting.SittingTypeId = vm.SittingTypeId;
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
 
         }
 
-        [HttpPut]
+        [HttpPost]
         public async Task<IActionResult> Close(int id)
         {
             var sitting = await _context.Sittings.FirstOrDefaultAsync(s => s.Id == id);
-            sitting!.IsClosed = true;
+            if (sitting == null)
+            {
+                return NotFound();
+            }
+            sitting.IsClosed = true;
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

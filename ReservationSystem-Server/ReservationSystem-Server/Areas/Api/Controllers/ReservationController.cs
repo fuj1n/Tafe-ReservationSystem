@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReservationSystem_Server.Areas.Api.Models.Reservation;
+using ReservationSystem_Server.Areas.Api.Models.Reservation.Admin;
 using ReservationSystem_Server.Data;
 using ReservationSystem_Server.Models.Reservation;
 using ReservationSystem_Server.Services;
