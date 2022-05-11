@@ -1,4 +1,4 @@
-import {Platform, StyleSheet} from "react-native";
+import {StyleSheet} from "react-native";
 
 const inputStyle = {
     paddingHorizontal: 6,
@@ -30,6 +30,18 @@ const baseStyle = {
         ...inputStyle,
         paddingVertical: 0
     },
+    dropdownIosInput: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        flex: 1
+    },
+
+    dropdownIosViewContainer: {
+        alignSelf: "center",
+        flex: 1,
+        paddingVertical: 12
+    },
     // only applies to web as other platforms use native picker
     dropdownWebInputStyle: {
         borderWidth: 0,
@@ -52,6 +64,29 @@ const baseStyle = {
     },
     radioIcon: {
         marginRight: 6
+    },
+
+    modalHost: {
+        flex: 1,
+        justifyContent: "flex-end",
+        backgroundColor: 'rgba(0,0,0,0.5)'
+    },
+    modalView: {
+        margin: 20,
+        marginBottom: 0,
+        backgroundColor: "white",
+        padding: 35,
+        alignItems: "center",
+        borderWidth: 2,
+        borderBottomWidth: 0,
+        borderColor: '#0d6efd',
+        borderTopStartRadius: 5,
+        borderTopEndRadius: 5
+    },
+
+    icon28: {
+        width: 28,
+        height: 27 // Not same as width to fix centering
     }
 };
 
@@ -174,6 +209,32 @@ const generators = {
         }
 
         output[`text${name}`] = {
+            color: variant.color ?? 'transparent'
+        }
+
+        return output;
+    },
+    bg: (name, variant, state) => {
+        let output = {};
+
+        if(!variant) {
+            return {};
+        }
+
+        output[`bg${name}${state}`] = {
+            backgroundColor: variant.backgroundColor ?? 'transparent'
+        }
+
+        return output;
+    },
+    fg: (name, variant, state) => {
+        let output = {};
+
+        if(!variant) {
+            return {};
+        }
+
+        output[`fg${name}${state}`] = {
             color: variant.color ?? 'transparent'
         }
 

@@ -3,7 +3,7 @@ import {Text, View} from "react-native";
 import {RectButton} from "react-native-gesture-handler";
 import style from "./style";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import {Button} from "./index";
+import Button from "./button";
 
 /**
  * @typedef radioType {"circle"|"button"}
@@ -20,18 +20,23 @@ export function RadioGroup(props) {
     const {label} = props;
     const [value, setValue] = useState(props.value ?? null);
 
+    function onChange(value) {
+        setValue(value);
+        props.onChange?.(value);
+    }
+
     useEffect(() => {
         if(!value) {
             // Finds first child and sets default value to it
             const first = props?.children?.length >= 1 ? props.children[0] : undefined;
-            if(first) {
-                setValue(first.props?.value);
+            if(first && first.props) {
+                onChange(first.props.value);
             }
         }
     }, [props.children]);
 
     return (
-        <RadioGroupContext.Provider value={{value, setValue, style: props.itemStyle,
+        <RadioGroupContext.Provider value={{value, setValue: onChange, style: props.itemStyle,
             type: props.mode ?? "circle"}}>
             <View style={[style.inputContainer, props.style]}>
                 {label && <Text style={style.inputLabel}>{label}</Text>}
@@ -51,7 +56,7 @@ function CircleRadio(props) {
     return (
         <View style={customStyle}>
             <RectButton style={style.radioItemCircle} onPress={() => setValue(value)} rippleColor="#DDDDDD">
-                <MaterialIcons name={icon} size={20} color="black" style={style.radioIcon} />
+                <MaterialIcons name={icon} size={28} color="black" style={[style.icon28, style.radioIcon]} />
                 <Text>{children}</Text>
             </RectButton>
         </View>
