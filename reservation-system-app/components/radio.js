@@ -56,7 +56,7 @@ function CircleRadio(props) {
     return (
         <View style={customStyle}>
             <RectButton style={style.radioItemCircle} onPress={() => setValue(value)} rippleColor="#DDDDDD">
-                <MaterialIcons name={icon} size={20} color="black" style={style.radioIcon} />
+                <MaterialIcons name={icon} size={28} color="black" style={[style.icon28, style.radioIcon]} />
                 <Text>{children}</Text>
             </RectButton>
         </View>

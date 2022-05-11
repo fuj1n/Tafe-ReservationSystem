@@ -76,6 +76,11 @@ const baseStyle = {
         borderColor: '#0d6efd',
         borderTopStartRadius: 5,
         borderTopEndRadius: 5
+    },
+
+    icon28: {
+        width: 28,
+        height: 27 // Not same as width to fix centering
     }
 };
 
@@ -198,6 +203,32 @@ const generators = {
         }
 
         output[`text${name}`] = {
+            color: variant.color ?? 'transparent'
+        }
+
+        return output;
+    },
+    bg: (name, variant, state) => {
+        let output = {};
+
+        if(!variant) {
+            return {};
+        }
+
+        output[`bg${name}${state}`] = {
+            backgroundColor: variant.backgroundColor ?? 'transparent'
+        }
+
+        return output;
+    },
+    fg: (name, variant, state) => {
+        let output = {};
+
+        if(!variant) {
+            return {};
+        }
+
+        output[`fg${name}${state}`] = {
             color: variant.color ?? 'transparent'
         }
 
