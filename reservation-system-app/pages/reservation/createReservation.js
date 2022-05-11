@@ -16,7 +16,6 @@ export default function CreateReservation(props) {
 
     const [startTime, setStartTime] = useState(new Date());
 
-
     const {loginInfo} = useContext(LoginContext); // pull variable loginInfo out of LoginContext
     useEffect(async () => {
         const response = await login.apiFetch(`reservation/details?sittingId=${sitting.id}`, 'GET', null, loginInfo.jwt);  //useEffect runs everytime the page re-renders
@@ -29,10 +28,9 @@ export default function CreateReservation(props) {
         
     }, []);
 
-
     return (
         <ScrollView contentContainerStyle={styles.container} ref={ref}>
-            <Text>Hello Sathi, you are the best teacher ever!</Text> 
+            <Text>Peter is the best teacher ever!</Text> 
             <TimeSlotPicker timeSlots={details?.timeSlots} value={startTime} setValue={setStartTime}/> 
         
         </ScrollView>

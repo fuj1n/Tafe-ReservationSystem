@@ -15,7 +15,7 @@ function Row (props) {
     const endTime = new Date (sitting.endTime);
 
     function onButtonPressed() {
-        navigation.navigate("CreateReservation", {sitting}); //navigates to CreateReservation page and passes the sitting that was clicked
+        navigation.navigate("CreateReservation", {sitting}); //navigates to CreateReservation page for the sitting that was clicked
     }
 
     return (
@@ -29,7 +29,7 @@ function Row (props) {
 
 export default function SittingsPage(props) {
     const {navigation} = props;
-    const ref = useRef(null); //Gesture navigation scrool to top when we switch screen
+    const ref = useRef(null); //Gesture navigation scroll to top when we switch screen
     useScrollToTop(ref);
 
     const {loginInfo} = useContext(LoginContext); // pull variable loginInfo out of LoginContext
