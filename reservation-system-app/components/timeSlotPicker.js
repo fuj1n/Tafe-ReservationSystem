@@ -5,7 +5,7 @@ import moment from "moment";
 import {useState} from "react";
 
 /**
- * @param props {{label: string, value: Moment, setValue: function(Moment), timeSlots: Array<Moment>}}
+ * @param props {{label: string, value: moment.Moment, setValue: function(moment.Moment), timeSlots: Array<moment.Moment>}}
  */
 export default function TimeSlotPicker(props) {
     const {label, timeSlots} = props;
