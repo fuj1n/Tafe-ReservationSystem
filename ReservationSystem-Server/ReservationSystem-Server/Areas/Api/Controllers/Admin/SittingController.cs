@@ -28,7 +28,7 @@ namespace ReservationSystem_Server.Areas.Api.Controllers.Admin
             return Ok(sittings);
         }
 
-        [HttpGet("close")]
+        [HttpPut("close")]
         public async Task<IActionResult> Close(int id)
         {
             var sitting = await _context.Sittings.FirstOrDefaultAsync(s => s.Id == id);
@@ -69,10 +69,12 @@ namespace ReservationSystem_Server.Areas.Api.Controllers.Admin
 
             _context.Sittings.Add(sitting);
             await _context.SaveChangesAsync();
+
+            await _context.SittingTypes.ToArrayAsync();
             return CreatedAtAction("Create", sitting);
         }
 
-        [HttpPost("edit")]
+        [HttpPut("edit")]
         public async Task<IActionResult> Edit(EditVM vm)
         {
             var sitting = await _context.Sittings.FirstOrDefaultAsync(s => s.Id == vm.Id);
@@ -93,6 +95,8 @@ namespace ReservationSystem_Server.Areas.Api.Controllers.Admin
             sitting.SittingTypeId = vm.SittingTypeId;
 
             await _context.SaveChangesAsync();
+
+            await _context.SittingTypes.ToArrayAsync();
             return Ok(sitting);
 
         }

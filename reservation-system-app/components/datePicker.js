@@ -5,6 +5,7 @@ import {useState} from "react";
 import Button from "./button";
 import moment from "moment";
 import {misc} from "../utility";
+import TextInput from "./textInput"
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 function DatePickerContent(props) {
@@ -45,6 +46,10 @@ function TimePickerContent(props) {
  */
 export default function DatePicker(props) {
     const {label} = props;
+
+    return (
+        <TextInput {...props} value={props.value.toISOString(true)} onChangeText={v => props.setValue(moment(v))}/>
+    )
 
     const [show, setShow] = useState(false);
     const [value, setValue] = useState(props.value ?? moment());
