@@ -17,7 +17,9 @@ namespace ReservationSystem_Server.Models.Reservation
         [Range(0,1000)]
         public int NoOfPeople { get; set; }
 
+        [Required]
         public string FirstName { get; set; }
+        [Required]
         public string LastName { get; set; }
 
         [EmailAddress]

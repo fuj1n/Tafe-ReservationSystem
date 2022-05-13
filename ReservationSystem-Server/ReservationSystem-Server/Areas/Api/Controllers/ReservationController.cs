@@ -14,12 +14,14 @@ namespace ReservationSystem_Server.Areas.Api.Controllers
     public class ReservationController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly ReservationUtility _utility;
+        private readonly ReservationUtility _reservationUtility;
+        private readonly SittingUtility _sittingUtility;
         private readonly CustomerManager _customerManager;
-        public ReservationController(ApplicationDbContext context, ReservationUtility utility, CustomerManager customerManager)
+        public ReservationController(ApplicationDbContext context, ReservationUtility reservationUtility, SittingUtility sittingUtility, CustomerManager customerManager)
         {
             _context = context;
-            _utility = utility;
+            _reservationUtility = reservationUtility;
+            _sittingUtility = sittingUtility;
             _customerManager = customerManager;
         }
 
@@ -44,7 +46,8 @@ namespace ReservationSystem_Server.Areas.Api.Controllers
         [HttpGet("details")]
         public async Task<IActionResult> Details(int sittingId)
         {
-            var sitting = await _context.Sittings.FirstOrDefaultAsync(s => s.Id == sittingId);
+            var sitting = await _sittingUtility.GetSittingAsync(sittingId);
+            //var sitting = await _context.Sittings.FirstOrDefaultAsync(s => s.Id == sittingId);
 
             if (sitting == null)
             {
@@ -56,7 +59,7 @@ namespace ReservationSystem_Server.Areas.Api.Controllers
 
                 SittingId = sitting.Id,
                 Duration = TimeSpan.FromMinutes(30),
-                TimeSlots = _utility.GetTimeSlots(sitting.StartTime, sitting.EndTime, TimeSpan.FromMinutes(30))
+                TimeSlots = _reservationUtility.GetTimeSlots(sitting.StartTime, sitting.EndTime, TimeSpan.FromMinutes(30))
             };
 
             return Ok(details);
@@ -84,6 +87,8 @@ namespace ReservationSystem_Server.Areas.Api.Controllers
         }
 
         [HttpPost("create")]
+        [ProducesResponseType(typeof(ConfirmationModel), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(string[]), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Create(CreateVM model)
         {
             if (!ModelState.IsValid)  //ModelState contains all the errors
@@ -91,8 +96,11 @@ namespace ReservationSystem_Server.Areas.Api.Controllers
                 return BadRequest(ModelState.Values.SelectMany(v => v.Errors)); //For every value in ModelState, selects all lists of errors and returns them as 1 long list
             }
 
-            var sitting = await _context.Sittings
-                     .Include(s => s.SittingType).FirstOrDefaultAsync(s => s.Id == model.SittingId);
+            var sitting = await _sittingUtility.GetSittingAsync(model.SittingId, s =>
+                s.Include(s => s.SittingType));
+
+            //var sitting = await _context.Sittings
+            //         .Include(s => s.SittingType).FirstOrDefaultAsync(s => s.Id == model.SittingId);
             if (sitting == null)
             {
                 return NotFound();
@@ -107,7 +115,7 @@ namespace ReservationSystem_Server.Areas.Api.Controllers
             var reservation = new Reservation
             {
                 StartTime = model.StartTime,
-                Duration = model.Duration,
+                Duration = TimeSpan.FromMinutes(30),
                 Notes = model.Notes,
                 NumberOfPeople = model.NoOfPeople,
                 SittingId = model.SittingId,
@@ -121,9 +129,15 @@ namespace ReservationSystem_Server.Areas.Api.Controllers
 
             var confirmation = new ConfirmationModel
             {
+                
                 SittingType = sitting.SittingType.Description,
                 StartTime = model.StartTime,
-                Duration = model.Duration,
+                Duration = TimeSpan.FromMinutes(30),
+                NoOfPeople = model.NoOfPeople,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Phone = model.PhoneNumber,
+                Email = model.Email,
                 Notes = model.Notes,
             };
 

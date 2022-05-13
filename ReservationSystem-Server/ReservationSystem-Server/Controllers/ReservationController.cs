@@ -74,7 +74,7 @@ namespace ReservationSystem_Server.Controllers
             var reservation = new Reservation
             {
                 StartTime = model.StartTime,
-                Duration = model.Duration,
+                Duration = TimeSpan.FromMinutes(30),
                 Notes = model.Notes,
                 NumberOfPeople = model.NoOfPeople,
                 SittingId = model.SittingId,

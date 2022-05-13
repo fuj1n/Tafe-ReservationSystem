@@ -6,6 +6,7 @@ import styles from "./styles";
 import SittingsPage  from "./reservation/sittings";
 import SecondScreen from "./testPalette/SecondScreen";
 import CreateReservation from "./reservation/createReservation";
+import ConfirmReservation from "./reservation/confirmReservation";
 
 export default function ReservationPage() {
     const Stack = createNativeStackNavigator();
@@ -17,6 +18,7 @@ export default function ReservationPage() {
         <Stack.Navigator>
             <Stack.Screen name="ReservationSittings" options={{headerShown: false}} component={SittingsPage}/>
             <Stack.Screen name="CreateReservation" options={{title: "Create Reservation"}} component={CreateReservation}/>
+            <Stack.Screen name="ConfirmReservation" options={{title: "Confirmation"}} component={ConfirmReservation}/>
         </Stack.Navigator>
     );
 }

@@ -19,7 +19,7 @@ function Row (props) {
     }
 
     return (
-        <Button style={styles.containerItem} variant="success" onPress={onButtonPressed}>
+        <Button style={[styles.containerItem, {alignItems:"stretch"}]} variant="success" onPress={onButtonPressed}>
             
                 {sitting.sittingType} from {startTime.toLocaleTimeString([],{timeStyle:"short"})} to {endTime.toLocaleTimeString([],{timeStyle:"short"})}
             
@@ -77,9 +77,9 @@ export default function SittingsPage(props) {
             <Text>This is the sittings page</Text>
 
             {Object.entries(sittingsByDate).map(([ticks,sittingsList])=>(  //separates objects into an array of entries
-                <View key={parseInt(ticks)}>
+                <View style={{alignItems:"stretch"}} key={parseInt(ticks)}>
 
-                    <Text>{format(ticks)}</Text> 
+                    <Text style={[styles.containerItem,{textAlign:"center", fontWeight: "bold"}]}>{format(ticks)}</Text> 
                     {sittingsList.map((s)=>( 
                         <Row key={s.id} sitting={s} navigation={navigation}/> //{fromat{ticks} = returns the formatted date of ticks*/}, mapping sitting list to an array of row components
                     ))}
