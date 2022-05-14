@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using JetBrains.Annotations;
+using ReservationSystem_Server.Data;
 using ReservationSystem_Server.Models;
 
 namespace ReservationSystem_Server.Areas.Api.Models.Sitting;
@@ -20,6 +21,8 @@ public class SittingModel : IOutputModel
     public int Capacity { get; set; }
     [Required]
     public int SittingTypeId { get; set; }
+
+    public SittingType SittingType { get; set; } = null!; // TODO: Remove when API matures
     [Required]
     public int RestaurantId { get; set; }
     [ReadOnly(true)]
@@ -44,6 +47,7 @@ public class SittingModel : IOutputModel
         IsClosed = sitting.IsClosed;
         Capacity = sitting.Capacity;
         SittingTypeId = sitting.SittingTypeId;
+        SittingType = sitting.SittingType;
         RestaurantId = sitting.RestaurantId;
 
         return this;

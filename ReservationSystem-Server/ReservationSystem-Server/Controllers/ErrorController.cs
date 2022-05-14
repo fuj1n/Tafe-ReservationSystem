@@ -30,16 +30,6 @@ public class ErrorController : Controller
         }
 
         Response.StatusCode = statusCode;
-        
-        // Return basic JSON in the event of API call
-        if (feature.OriginalPath.StartsWith("/api"))
-        {
-            return Json(new
-            {
-                statusCode, 
-                feature.OriginalPath
-            });
-        }
 
         StatusCodeErrorViewModel vm = new()
         {
@@ -47,6 +37,12 @@ public class ErrorController : Controller
             ErrorMessage = ((HttpStatusCode)statusCode).ToString(),
             ErrorUrl = feature.OriginalPath
         };
+        
+        // Return basic JSON in the event of API call
+        if (feature.OriginalPath.StartsWith("/api"))
+        {
+            return Json(vm);
+        }
 
         // Return the most specific view available, either a view named after a status code, or a generic status code view
         return _viewEngine.FindView(ControllerContext, statusCode.ToString(), false).Success 

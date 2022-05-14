@@ -130,7 +130,8 @@ async function apiFetch(url, method, body, jwt) {
         // Return a response anyway so that it can be handled elsewhere
         let response = new Response(null, {
             status: 499,
-            statusText: error.message
+            statusText: error.message,
+            ok: false
         });
         response.internalError = true;
         return response;

@@ -27,7 +27,7 @@ function Switch(props) {
 
 /**
  * @typedef toggleMode {"checkbox"|"switch"}
- * @param props
+ * @param props {{mode : toggleMode, value : boolean, onChange : function(boolean), variant? : string}}
  */
 export default function Toggle(props) {
     const {mode, label} = props;

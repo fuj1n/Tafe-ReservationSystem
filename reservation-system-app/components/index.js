@@ -12,3 +12,6 @@ export {default as Radio} from './radio';
 export * from './radio';
 
 export {default as Toggle} from './toggle';
+
+export {default as SittingPicker} from './sittingPicker';
+export {default as Loader} from './loader';
