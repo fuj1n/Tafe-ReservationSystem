@@ -28,8 +28,18 @@ public class ErrorController : Controller
                 OriginalPath = "/Error"
             };
         }
-        
+
         Response.StatusCode = statusCode;
+        
+        // Return basic JSON in the event of API call
+        if (feature.OriginalPath.StartsWith("/api"))
+        {
+            return Json(new
+            {
+                statusCode, 
+                feature.OriginalPath
+            });
+        }
 
         StatusCodeErrorViewModel vm = new()
         {
