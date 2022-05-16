@@ -35,7 +35,7 @@ export default function FirstScreen(props) {
     ];
     const [timeSlot, setTimeSlot] = useState(timeSlots[0]);
 
-    const [date, setDate] = useState(moment().startOf('hour'));
+    const [date, setDate] = useState(moment().startOf('hour').toISOString(true));
 
     const variants = [
         "no variant",
