@@ -15,6 +15,8 @@ export default function Sittings(props) {
     const {loginInfo} = useContext(LoginContext);
 
     const [sittings, setSittings] = useState([]);
+    const [sittingTypes, setSittingTypes] = useState([]);
+
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -22,6 +24,26 @@ export default function Sittings(props) {
     const [showClosed, setShowClosed] = useState(true);
 
     useFocusEffect(useCallback(() => {
+        async function getSittingTypes() {
+            const response = await login.apiFetch(`sittings/sittingTypes`, "GET", null, loginInfo.jwt);
+
+            if(response.ok) {
+                const sittingTypes = await response.json();
+                // Turn sitting types into an object with id as key
+                setSittingTypes(sittingTypes.reduce((acc, sittingType) => {
+                    acc[sittingType.id] = sittingType.description;
+                    return acc;
+                }, {}));
+            } else {
+                if (response.internalError) {
+                    setError(response.statusText);
+                } else {
+                    const errorObject = await response.json();
+                    setError(errorObject.errorMessage ?? `${response.status} ${response.statusText}`);
+                }
+            }
+        }
+
         async function getSittings() {
             setLoading(true);
             setError(null);
@@ -43,6 +65,8 @@ export default function Sittings(props) {
         }
 
         // noinspection JSIgnoredPromiseFromCall
+        getSittingTypes();
+        // noinspection JSIgnoredPromiseFromCall
         getSittings();
     }, [showPast, showClosed]));
 
@@ -55,7 +79,7 @@ export default function Sittings(props) {
                             <Toggle mode="switch" label="Show past sittings" value={showPast} onChange={setShowPast} style={{paddingRight: 6}}/>
                             <Toggle mode="switch" label="Show closed sittings" value={showClosed} onChange={setShowClosed}/>
                         </View>
-                        <SittingPicker sittings={sittings} onSelected={s => navigation.navigate("Reservations", s)}/>
+                        <SittingPicker sittings={sittings} onSelected={s => navigation.navigate("Reservations", s)} sittingTypeSelector={s => sittingTypes[s.sittingTypeId]}/>
                     </>}
             </Loader>
         </ScrollView>

@@ -11,7 +11,7 @@ public class SittingsController : Controller
 {
     private readonly SittingUtility _sittingUtility;
     private readonly ReservationUtility _reservationUtility;
-    
+
     //TODO configurable from sitting
     private static readonly TimeSpan TimeSlotLength = TimeSpan.FromMinutes(30);
 
@@ -38,7 +38,7 @@ public class SittingsController : Controller
 
         return Ok(sittings);
     }
-    
+
     /// <summary>
     /// Get an available sitting by id
     /// </summary>
@@ -60,10 +60,10 @@ public class SittingsController : Controller
         {
             return NotFound();
         }
-        
+
         return Ok(new SittingModel().FromSitting(sitting));
     }
-    
+
     /// <summary>
     /// Gets a list of time slots for a given available sitting
     /// </summary>
@@ -87,5 +87,12 @@ public class SittingsController : Controller
         }
 
         return Ok(_reservationUtility.GetTimeSlots(sitting.StartTime, sitting.EndTime, TimeSlotLength));
+    }
+
+    [HttpGet("sittingTypes")]
+    [ProducesResponseType(typeof(SittingType[]), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetSittingTypes()
+    {
+        return Ok(await _sittingUtility.GetSittingTypesAsync());
     }
 }

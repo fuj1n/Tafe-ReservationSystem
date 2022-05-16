@@ -12,7 +12,7 @@ import StyledText from "./styledText";
  */
 export default function SittingPicker(props) {
     const {sittings} = props;
-    const sittingTypeSelector = props.sittingTypeSelector ?? (s => s.sittingType.description);
+    const sittingTypeSelector = props.sittingTypeSelector ?? (s => s.sittingType?.description);
     const startTimeSelector = props.startTimeSelector ?? (s => s.startTime);
     const endTimeSelector = props.endTimeSelector ?? (s => s.endTime);
     const dateFormat = props.dateOutFormat ?? "DD/MM/YYYY";

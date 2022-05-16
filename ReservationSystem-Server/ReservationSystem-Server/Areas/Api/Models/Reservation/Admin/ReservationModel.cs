@@ -1,7 +1,9 @@
-﻿using ReservationSystem_Server.Models;
+﻿using JetBrains.Annotations;
+using ReservationSystem_Server.Models;
 
 namespace ReservationSystem_Server.Areas.Api.Models.Reservation.Admin;
 
+[PublicAPI]
 public class ReservationModel : CreateModel, IOutputModel
 {
     public int Id { get; set; }
@@ -10,8 +12,9 @@ public class ReservationModel : CreateModel, IOutputModel
     public LinkModel[] Links => new[]
     {
         new LinkModel($"reservation/{Id}", "self"),
-        new LinkModel($"reservation/{Id}/edit", "edit"),
-        new LinkModel($"reservation/{Id}/status", "status"),
+        new LinkModel($"reservation/{Id}/edit", "edit", "POST"),
+        new LinkModel($"reservation/origin/{ReservationOriginId}", "origin"),
+        new LinkModel($"reservation/status/{ReservationStatusId}", "status"),
         new LinkModel($"reservation/{Id}/status", "set_status", "POST")
     };
 
@@ -33,7 +36,7 @@ public class ReservationModel : CreateModel, IOutputModel
             ReservationOriginId = reservation.ReservationOriginId,
             ReservationStatusId = reservation.ReservationStatusId,
             NumberOfGuests = reservation.NumberOfPeople,
-            Notes = reservation.Notes
+            Notes = reservation.Notes,
         };
     }
 }

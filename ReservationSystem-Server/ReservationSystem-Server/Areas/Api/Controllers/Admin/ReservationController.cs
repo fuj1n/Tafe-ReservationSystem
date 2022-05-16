@@ -37,7 +37,7 @@ public class ReservationController : Controller
     [ProducesResponseType(typeof(SittingModel[]), StatusCodes.Status200OK)]
     public async Task<IActionResult> Get(bool includePast = false, bool includeClosed = false)
     {
-        SittingModel[] sittings = (await _sittingUtility.GetSittingsAsync(includePast, includeClosed, q => q.Include(s => s.SittingType)))
+        SittingModel[] sittings = (await _sittingUtility.GetSittingsAsync(includePast, includeClosed))
             .Select(s => new SittingModel().FromSitting(s)).ToArray();
 
         return Ok(sittings);
@@ -83,10 +83,7 @@ public class ReservationController : Controller
         }
 
         Reservation[] reservations = await _reservationUtility.GetReservationsForSittingAsync(id, q => q
-            .Include(r => r.ReservationOrigin)
-            .Include(r => r.ReservationStatus)
             .Include(r => r.Customer)
-            .Include(r => r.Tables)
         );
         
         return Ok(reservations.Select(ReservationModel.FromReservation).ToArray());

@@ -15,11 +15,33 @@ export default function Reservations(props) {
 
     const {loginInfo} = useContext(LoginContext);
 
+    const [statuses, setStatuses] = useState({});
+
     const [reservations, setReservations] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useFocusEffect(useCallback(() => {
+        async function getStatuses() {
+            const response = await login.apiFetch(`admin/reservation/statuses`, "GET", null, loginInfo.jwt);
+
+            if(response.ok) {
+                const statuses = await response.json();
+                // Turn origins into an object with id as key
+                setStatuses(statuses.reduce((acc, status) => {
+                    acc[status.id] = status.description;
+                    return acc;
+                }, {}));
+            } else {
+                if (response.internalError) {
+                    setError(response.statusText);
+                } else {
+                    const errorObject = await response.json();
+                    setError(errorObject.errorMessage ?? `${response.status} ${response.statusText}`);
+                }
+            }
+        }
+
         async function getReservations() {
             setLoading(true);
             setError(null);
@@ -40,6 +62,8 @@ export default function Reservations(props) {
             setLoading(false);
         }
 
+        // noinspection JSIgnoredPromiseFromCall
+        getStatuses();
         // noinspection JSIgnoredPromiseFromCall
         getReservations();
     }, []));
