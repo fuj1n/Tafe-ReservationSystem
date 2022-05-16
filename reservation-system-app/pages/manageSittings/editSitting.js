@@ -1,9 +1,10 @@
-import { useRef, useState, useEffect, useContext } from "react";
-import { ScrollView, Text, View } from "react-native";
-import { useScrollToTop } from "@react-navigation/native";
+import { useRef, useState, useContext, useCallback } from "react";
+import { ScrollView, View } from "react-native";
+import { useScrollToTop, useFocusEffect } from "@react-navigation/native";
 import styles from "../styles";
-import { DatePicker, TextInput, Dropdown, Button } from "../../components";
+import { DatePicker, TextInput, Dropdown, Button, StyledText } from "../../components";
 import login, { LoginContext } from "../../services";
+import moment from "moment";
 
 export default function EditSitting(props) {
     const ref = useRef(null);
@@ -11,32 +12,60 @@ export default function EditSitting(props) {
 
     const { navigation, route } = props;
     const { sitting } = route.params;
-    const [startTime, setStartTime] = useState(sitting.startTime);
-    const [endTime, setEndTime] = useState(sitting.endTime);
+    const [startTime, setStartTime] = useState(moment(sitting.startTime));
+    const [endTime, setEndTime] = useState(moment(sitting.endTime));
     const [capacity, setCapacity] = useState(sitting.capacity);
     const [sittingType, setSittingType] = useState(sitting.sittingTypeId);
+
+    const [error, setError] = useState(null);
 
     const [sittingTypes, setSittingTypes] = useState([]);
 
     const { loginInfo } = useContext(LoginContext);
 
-    useEffect(async () => {
-        const response = await login.apiFetch("admin/sitting/sittingTypes", "GET", null, loginInfo.jwt)
-            .catch(() => { });
-        //console.log(response);
-        if (response.ok) {
-            setSittingTypes(await response.json());
-        }
-    }, []);
+    useFocusEffect(
+        useCallback(() => {
+            async function getTypes() {
+                const response = await login.apiFetch("admin/sitting/sittingTypes", "GET", null, loginInfo.jwt)
+                    .catch(() => { });
+                //console.log(response);
+                if (response.ok) {
+                    setSittingTypes(await response.json());
+                }
+            }
+
+            getTypes();
+        }, [sitting.id])
+    );
 
     const sittingTypesDropdown = [
         { label: "-- Please Select --", value: 0 },
         ...sittingTypes.map(st => ({ label: st.description, value: st.id }))
     ];
 
-    function submit(){
+    async function submit() {
+        const body = {
+            "id": sitting.id,
+            "startTime": startTime.toISOString(true),
+            "endTime": endTime.toISOString(true),
+            "capacity": capacity,
+            "sittingTypeId": sittingType,
+        };
+        const response = await login.apiFetch("admin/sitting/edit", "PUT", body, loginInfo.jwt)
+            .catch(() => { });
 
-        navigation.goBack();
+        setError(null);
+        if (!response.ok) {
+            if (response.status === 400) {
+                setError(await response.json());
+            }
+            else {
+                setError(`${response.status} - ${response.statusText}`);
+            }
+        }
+        else {
+            navigation.navigate("SittingDetails", { sitting: await response.json(), operation: "edited" });
+        }
     }
 
     return (
@@ -50,6 +79,7 @@ export default function EditSitting(props) {
                 <Button variant="success" onPress={submit}>Confirm</Button>
                 <Button variant="primary" onPress={() => navigation.goBack()}>Back</Button>
             </View>
+            <StyledText variant="danger">{error && JSON.stringify(error)}</StyledText>
         </ScrollView>
     );
 }
