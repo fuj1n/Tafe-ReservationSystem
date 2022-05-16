@@ -3,8 +3,10 @@ import {View} from "react-native";
 import {useFocusEffect, useScrollToTop} from "@react-navigation/native";
 import styles from "../styles";
 import {ScrollView} from "react-native-gesture-handler";
-import {Loader, SittingPicker, StyledText, Toggle} from "../../components";
-import login, {LoginContext} from "../../services/login";
+import {Loader, SittingPicker, Toggle} from "../../components";
+import {LoginContext} from "../../services";
+import api from "../../services/api";
+import ErrorDisplay from "../../components/errorDisplay";
 
 export default function Sittings(props) {
     const {navigation} = props;
@@ -15,7 +17,7 @@ export default function Sittings(props) {
     const {loginInfo} = useContext(LoginContext);
 
     const [sittings, setSittings] = useState([]);
-    const [sittingTypes, setSittingTypes] = useState([]);
+    const [sittingTypes, setSittingTypes] = useState({});
 
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -25,45 +27,29 @@ export default function Sittings(props) {
 
     useFocusEffect(useCallback(() => {
         async function getSittingTypes() {
-            const response = await login.apiFetch(`sittings/sittingTypes`, "GET", null, loginInfo.jwt);
-
-            if(response.ok) {
-                const sittingTypes = await response.json();
-                // Turn sitting types into an object with id as key
-                setSittingTypes(sittingTypes.reduce((acc, sittingType) => {
-                    acc[sittingType.id] = sittingType.description;
-                    return acc;
-                }, {}));
+            const response = await api.sittings.getSittingTypes();
+            if (response.error) {
+                setError(response);
             } else {
-                if (response.internalError) {
-                    setError(response.statusText);
-                } else {
-                    const errorObject = await response.json();
-                    setError(errorObject.errorMessage ?? `${response.status} ${response.statusText}`);
-                }
+                setSittingTypes(response);
             }
         }
 
         async function getSittings() {
             setLoading(true);
-            setError(null);
 
-            const response = await login.apiFetch(`admin/reservation?includePast=${showPast}&includeClosed=${showClosed}`, "GET", null, loginInfo.jwt);
+            const response = await api.sittings.getSittingsAsAdmin(loginInfo.jwt, showPast, showClosed);
 
-            if (response.ok) {
-                setSittings(await response.json());
+            if (response.error) {
+                setError(response);
             } else {
-                if (response.internalError) {
-                    setError(response.statusText);
-                } else {
-                    const errorObject = await response.json();
-                    setError(errorObject.errorMessage ?? `${response.status} ${response.statusText}`);
-                }
+                setSittings(response);
             }
 
             setLoading(false);
         }
 
+        setError(null);
         // noinspection JSIgnoredPromiseFromCall
         getSittingTypes();
         // noinspection JSIgnoredPromiseFromCall
@@ -73,14 +59,15 @@ export default function Sittings(props) {
     return (
         <ScrollView contentContainerStyle={styles.container} ref={ref}>
             <Loader loading={loading}>
-                {error ? <StyledText variant="danger" style={styles.error}>{error}</StyledText> :
-                    <>
-                        <View style={[styles.row, {alignSelf: 'stretch', justifyContent: "flex-end"}]}>
-                            <Toggle mode="switch" label="Show past sittings" value={showPast} onChange={setShowPast} style={{paddingRight: 6}}/>
-                            <Toggle mode="switch" label="Show closed sittings" value={showClosed} onChange={setShowClosed}/>
-                        </View>
-                        <SittingPicker sittings={sittings} onSelected={s => navigation.navigate("Reservations", s)} sittingTypeSelector={s => sittingTypes[s.sittingTypeId]}/>
-                    </>}
+                <ErrorDisplay error={error}>
+                    <View style={[styles.row, {alignSelf: 'stretch', justifyContent: "flex-end"}]}>
+                        <Toggle mode="switch" label="Show past sittings" value={showPast} onChange={setShowPast}
+                                style={{paddingRight: 6}}/>
+                        <Toggle mode="switch" label="Show closed sittings" value={showClosed} onChange={setShowClosed}/>
+                    </View>
+                    <SittingPicker sittings={sittings} onSelected={s => navigation.navigate("Reservations", s)}
+                                   sittingTypeSelector={s => sittingTypes[s.sittingTypeId]}/>
+                </ErrorDisplay>
             </Loader>
         </ScrollView>
     );

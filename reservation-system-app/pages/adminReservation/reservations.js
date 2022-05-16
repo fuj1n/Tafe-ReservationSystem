@@ -1,10 +1,11 @@
 import {useCallback, useContext, useRef, useState} from "react";
-import {View} from "react-native";
 import {useFocusEffect, useScrollToTop} from "@react-navigation/native";
 import styles from "../styles";
 import {ScrollView} from "react-native-gesture-handler";
 import {Loader, StyledText} from "../../components";
-import login, {LoginContext} from "../../services/login";
+import {LoginContext} from "../../services";
+import api from "../../services/api";
+import ErrorDisplay from "../../components/errorDisplay";
 
 export default function Reservations(props) {
     const {route} = props;
@@ -23,45 +24,30 @@ export default function Reservations(props) {
 
     useFocusEffect(useCallback(() => {
         async function getStatuses() {
-            const response = await login.apiFetch(`admin/reservation/statuses`, "GET", null, loginInfo.jwt);
+            const response = await api.reservations.getStatuses();
 
-            if(response.ok) {
-                const statuses = await response.json();
-                // Turn origins into an object with id as key
-                setStatuses(statuses.reduce((acc, status) => {
-                    acc[status.id] = status.description;
-                    return acc;
-                }, {}));
+            if(response.error) {
+                setError(response)
             } else {
-                if (response.internalError) {
-                    setError(response.statusText);
-                } else {
-                    const errorObject = await response.json();
-                    setError(errorObject.errorMessage ?? `${response.status} ${response.statusText}`);
-                }
+                setStatuses(response);
             }
         }
 
         async function getReservations() {
             setLoading(true);
-            setError(null);
 
-            const response = await login.apiFetch(`admin/reservation/list/${sitting.id}`, "GET", null, loginInfo.jwt);
+            const response = await api.reservations.getReservationsAsAdmin(loginInfo.jwt, sitting.id);
 
-            if (response.ok) {
-                setReservations(await response.json());
+            if (response.error) {
+                setError(response);
             } else {
-                if (response.internalError) {
-                    setError(response.statusText);
-                } else {
-                    const errorObject = await response.json();
-                    setError(errorObject.errorMessage ?? `${response.status} ${response.statusText}`);
-                }
+                setReservations(response);
             }
 
             setLoading(false);
         }
 
+        setError(null);
         // noinspection JSIgnoredPromiseFromCall
         getStatuses();
         // noinspection JSIgnoredPromiseFromCall
@@ -71,10 +57,11 @@ export default function Reservations(props) {
     return (
         <ScrollView contentContainerStyle={styles.container} ref={ref}>
             <Loader loading={loading}>
-                {error ? <StyledText variant="danger" style={styles.error}>{error}</StyledText> :
-                    <View>
+                <ErrorDisplay error={error}>
+                    <StyledText style={{fontWeight: '700'}}>
                         {reservations.length.toString()}
-                    </View>}
+                    </StyledText>
+                </ErrorDisplay>
             </Loader>
         </ScrollView>
     );

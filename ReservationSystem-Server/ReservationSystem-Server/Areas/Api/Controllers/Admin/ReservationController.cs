@@ -250,10 +250,12 @@ public class ReservationController : Controller
 
     /// <summary>
     /// Retrieves all reservation statuses
+    /// TODO: should probably be in non-admin controller
     /// </summary>
     /// <response code="200">Returns all reservation statuses</response>
     [HttpGet("statuses")]
     [ProducesResponseType(typeof(ReservationStatus[]), StatusCodes.Status200OK)]
+    [AllowAnonymous]
     public async Task<IActionResult> GetStatuses()
     {
         return Ok(await _reservationUtility.GetStatusesAsync());
