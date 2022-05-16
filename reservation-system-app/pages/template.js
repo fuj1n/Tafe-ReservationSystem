@@ -3,9 +3,9 @@
  * scrollable content.
  */
 import {useRef} from "react";
-import {ScrollView} from "react-native";
 import {useScrollToTop} from "@react-navigation/native";
 import styles from "./styles";
+import {ScrollView} from "react-native-gesture-handler";
 
 export default function MyPageName() {
     const ref = useRef(null);

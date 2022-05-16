@@ -87,10 +87,17 @@ const baseStyle = {
     icon28: {
         width: 28,
         height: 27 // Not same as width to fix centering
+    },
+
+    row: {
+        flexDirection: 'row'
+    },
+    column: {
+        flexDirection: 'column'
     }
 };
 
-const variants = {
+export const variants = {
     none: null, // used for default generator
     Primary: {
         color: '#0d6efd',
