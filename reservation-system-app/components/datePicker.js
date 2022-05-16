@@ -80,8 +80,10 @@ function DatePickerContent(props) {
             </View>
             <View style={[style.row, {justifyContent: 'center', alignItems: 'center'}]}>
                 {misc.overflowMap(firstDayOfWeek, moment.weekdaysMin(), (day, index) => (
-                    <View style={{width: 32, height: 32, margin: 1, justifyContent: 'center', alignItems: 'center',
-                        backgroundColor: '#333', borderRadius: 5}}
+                    <View style={{
+                        width: 32, height: 32, margin: 1, justifyContent: 'center', alignItems: 'center',
+                        backgroundColor: '#333', borderRadius: 5
+                    }}
                           key={index}>
                         <Text style={{color: '#FFF'}}>{day}</Text>
                     </View>
@@ -91,30 +93,35 @@ function DatePickerContent(props) {
                 {daysGrid.map((week, weekIdx) => (
                     <View key={weekIdx} style={[style.row, {justifyContent: 'center', height: 32}]}>
                         {week && week.map((day, dayIdx) => (
-                            <RectButton
-                                key={dayIdx}
-                                onPress={() => changeDate(day)}
-                                rippleColor="#DDDDDD"
-                                style={
-                                    {
-                                        backgroundColor: isHomeMonth && day.month() === selectedMonth && day.date() === date.date() ? variants.Primary.color :
-                                            day.month() === selectedMonth ? '#FFFFFF' : '#F5F5F5',
-                                        borderColor: '#DDDDDD',
-                                        borderWidth: day.month() === selectedMonth ? 1 : 0,
-                                        borderRadius: 5,
-                                        opacity: day.month() === selectedMonth ? 1 : 0.5,
+                            <View key={dayIdx}
+                                  style={{
+                                      backgroundColor: isHomeMonth && day.month() === selectedMonth && day.date() === date.date() ? variants.Primary.color :
+                                          day.month() === selectedMonth ? '#FFFFFF' : '#F5F5F5',
+                                      borderColor: '#DDDDDD',
+                                      borderWidth: day.month() === selectedMonth ? 1 : 0,
+                                      borderRadius: 5,
+                                      opacity: day.month() === selectedMonth ? 1 : 0.5,
+                                      width: 32,
+                                      height: 32,
+                                      margin: 1,
+                                      justifyContent: 'center',
+                                      alignItems: 'center'
+                                  }}>
+                                <RectButton
+                                    onPress={() => changeDate(day)}
+                                    rippleColor="#DDDDDD"
+                                    style={{
                                         width: 32,
                                         height: 32,
                                         justifyContent: 'center',
-                                        alignItems: 'center',
-                                        margin: 1
-                                    }
-                                }>
-                                <Text style={{
-                                    color: isHomeMonth && day.month() === selectedMonth && day.date() === date.date() ? '#FFFFFF' :
-                                        '#000000',
-                                }}>{day.date()}</Text>
-                            </RectButton>
+                                        alignItems: 'center'
+                                    }}>
+                                    <Text style={{
+                                        color: isHomeMonth && day.month() === selectedMonth && day.date() === date.date() ? '#FFFFFF' :
+                                            '#000000',
+                                    }}>{day.date()}</Text>
+                                </RectButton>
+                            </View>
                         ))}
                     </View>
                 ))}
@@ -171,7 +178,8 @@ function TimePickerContent(props) {
             <TimeElement value={time.format('hh')} hasEdit={true} increase={() => setTime(time.clone().add(1, 'hour'))}
                          decrease={() => setTime(time.clone().subtract(1, 'hour'))}/>
             <TimeElement value={":"}/>
-            <TimeElement value={time.format('mm')} hasEdit={true} increase={() => setTime(time.clone().add(minuteStep, 'minute'))}
+            <TimeElement value={time.format('mm')} hasEdit={true}
+                         increase={() => setTime(time.clone().add(minuteStep, 'minute'))}
                          decrease={() => setTime(time.clone().subtract(minuteStep, 'minute'))}/>
             {showSeconds && <>
                 <TimeElement value={":"}/>
@@ -214,7 +222,11 @@ export default function DatePicker(props) {
                     <View style={style.modalView}>
                         <Text>Please Select Date{timePicker && "/Time"}</Text>
 
-                        <View style={[style.column, {justifyContent: 'center', alignItems: 'center', alignSelf: 'stretch'}]}>
+                        <View style={[style.column, {
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            alignSelf: 'stretch'
+                        }]}>
                             <DatePickerContent {...props} date={value} setDate={onChange}/>
                             {timePicker && <TimePickerContent {...props} time={value} setTime={onChange}/>}
                         </View>

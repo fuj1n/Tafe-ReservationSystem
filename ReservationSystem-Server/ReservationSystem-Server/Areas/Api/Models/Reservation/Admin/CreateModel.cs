@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using JetBrains.Annotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using ReservationSystem_Server.Models;
 
 namespace ReservationSystem_Server.Areas.Api.Models.Reservation.Admin;
 
+[PublicAPI]
 public class CreateModel : IValidatable
 {
     public int SittingId { get; set; }

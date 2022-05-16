@@ -5,7 +5,7 @@ import {StyleSheet, View, ActivityIndicator} from 'react-native';
 import {useEffect, useState} from "react";
 import {createDrawerNavigator} from "@react-navigation/drawer";
 import login, {LoginContext, LoginInfo} from './services';
-import {LoginPage, TestPalette, ReservationPage, SittingsPage} from "./pages";
+import {LoginPage, TestPalette, ReservationPage, SittingsPage, AdminReservationPage} from "./pages";
 import {getFocusedRouteNameFromRoute, NavigationContainer, DefaultTheme} from "@react-navigation/native";
 
 import moment from "moment";
@@ -76,6 +76,7 @@ export default function App() {
                     <Drawer.Navigator initialRouteName="Home" screenOptions={showHeader}>
                         <Drawer.Screen name="TestPalette" options={{title: "Test Palette"}} component={TestPalette}/>
                         <Drawer.Screen name="Reservation" options={{title: "Sittings"}} component={ReservationPage}/>
+                        <Drawer.Screen name="AdminReservation" options={{title: "Admin/Reservation"}} component={AdminReservationPage}/>
                         <Drawer.Screen name="Sittings" options={{title: "Sittings"}} component={SittingsPage}/>
                         <Drawer.Screen name="Login" options={{title: "Login"}} component={LoginPage}/>
                     </Drawer.Navigator>

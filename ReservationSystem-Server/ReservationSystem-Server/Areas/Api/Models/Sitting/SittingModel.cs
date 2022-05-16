@@ -20,6 +20,7 @@ public class SittingModel : IOutputModel
     public int Capacity { get; set; }
     [Required]
     public int SittingTypeId { get; set; }
+
     [Required]
     public int RestaurantId { get; set; }
     [ReadOnly(true)]
