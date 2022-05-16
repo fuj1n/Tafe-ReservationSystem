@@ -200,10 +200,6 @@ function TimePickerContent(props) {
 export default function DatePicker(props) {
     const {label} = props;
 
-    return (
-        <TextInput {...props} value={props.value.toISOString(true)} onChangeText={v => props.setValue(moment(v))}/>
-    )
-
     const [show, setShow] = useState(false);
     const [value, setValue] = useState(props.value ? moment(props.value) : moment());
 
