@@ -15,3 +15,5 @@ export {default as Toggle} from './toggle';
 
 export {default as SittingPicker} from './sittingPicker';
 export {default as Loader} from './loader';
+
+export {default as ErrorDisplay} from './errorDisplay';
