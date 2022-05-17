@@ -3,10 +3,9 @@ import {View} from "react-native";
 import {useFocusEffect, useScrollToTop} from "@react-navigation/native";
 import styles from "../styles";
 import {ScrollView} from "react-native-gesture-handler";
-import {Loader, SittingPicker, Toggle} from "../../components";
+import {ErrorDisplay, Loader, SittingPicker, Toggle} from "../../components";
 import {LoginContext} from "../../services";
 import api from "../../services/api";
-import ErrorDisplay from "../../components/errorDisplay";
 
 export default function Sittings(props) {
     const {navigation} = props;
@@ -39,6 +38,7 @@ export default function Sittings(props) {
             setLoading(true);
 
             const response = await api.sittings.getSittingsAsAdmin(loginInfo.jwt, showPast, showClosed);
+            console.log({from: "reservation", ...loginInfo});
 
             if (response.error) {
                 setError(response);
@@ -54,12 +54,12 @@ export default function Sittings(props) {
         getSittingTypes();
         // noinspection JSIgnoredPromiseFromCall
         getSittings();
-    }, [showPast, showClosed]));
+    }, [showPast, showClosed, loginInfo]));
 
     return (
         <ScrollView contentContainerStyle={styles.container} ref={ref}>
-            <Loader loading={loading}>
-                <ErrorDisplay error={error}>
+            <ErrorDisplay error={error}>
+                <Loader loading={loading}>
                     <View style={[styles.row, {alignSelf: 'stretch', justifyContent: "flex-end"}]}>
                         <Toggle mode="switch" label="Show past sittings" value={showPast} onChange={setShowPast}
                                 style={{paddingRight: 6}}/>
@@ -67,8 +67,8 @@ export default function Sittings(props) {
                     </View>
                     <SittingPicker sittings={sittings} onSelected={s => navigation.navigate("Reservations", s)}
                                    sittingTypeSelector={s => sittingTypes[s.sittingTypeId]}/>
-                </ErrorDisplay>
-            </Loader>
+                </Loader>
+            </ErrorDisplay>
         </ScrollView>
     );
 }

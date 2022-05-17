@@ -14,7 +14,7 @@ function LoggedIn() {
 
     return(
         <>
-            <Text style={styles.containerItem}>Logged in as {loginInfo.username}</Text>
+            <Text style={styles.containerItem}>Logged in as {loginInfo.user.username}</Text>
             <Button variant="danger" onPress={async () => setLoginInfo(await login.logout())} style={styles.containerItem}>Logout</Button>
         </>
     )
@@ -34,7 +34,7 @@ export default function Login() {
         setError("");
 
         const info = await login.login(username, password);
-        if((await info).isLoggedIn) {
+        if(info.isLoggedIn) {
             setLoginInfo(info);
         } else {
             setError(info.error ?? "Unknown error");

@@ -23,9 +23,9 @@ export class LoginInfo {
     jwt;
 
     /**
-     * @type {string}
+     * @type {{authorized : boolean, username : string, roles : string[]}}
      */
-    username;
+    user;
 
     /**
      * @type {string | null}
@@ -75,7 +75,7 @@ async function getLoginFromToken(jwt) {
         let info = new LoginInfo();
         info.isLoggedIn = true;
         info.jwt = jwt;
-        info.username = json.username;
+        info.user = json;
         return info;
     }
 

@@ -59,13 +59,27 @@ async function processValidationErrorCollection(collection) {
     }, []) ?? null;
 }
 
+function getStatusCodeMessage(code) {
+    // Handle only a handful of the codes, ones that are most likely to be run into.
+    switch(code) {
+        case 400:
+            return "Bad Request";
+        case 401:
+            return "You must be logged in to access this resource";
+        case 403:
+            return "You are not authorized to access this resource";
+        case 404:
+            return "Resource not found, ensure you are using an up-to-date version of the app";
+    }
+}
+
 /**
  * Processes the error response from the API and maps it into consistent format
  * @param response {Response} The response from the API
  * @returns {Promise<ErrorDesc>} An object with error flag set
  */
 async function processError(response) {
-    let error = {error: true, message: "An unknown error occurred"};
+    let error = {error: true, message: getStatusCodeMessage(response.status) ?? "An unknown error occurred"};
 
     if (response.internalError) {
         error.message = response.statusText;
@@ -95,9 +109,9 @@ async function processError(response) {
                 }
             }
         }
-
-        return error;
     }
+
+    return error;
 }
 
 export default {

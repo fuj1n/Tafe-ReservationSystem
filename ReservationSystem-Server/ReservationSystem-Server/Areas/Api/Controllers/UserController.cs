@@ -9,10 +9,12 @@ namespace ReservationSystem_Server.Areas.Api.Controllers;
 public class UserController : Controller
 {
     private readonly UserManager<IdentityUser> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
 
-    public UserController(UserManager<IdentityUser> userManager)
+    public UserController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
     {
         _userManager = userManager;
+        _roleManager = roleManager;
     }
 
     [HttpGet("me")]
@@ -27,7 +29,8 @@ public class UserController : Controller
         return new UserData
         {
             Authorized = true,
-            Username = user.UserName
+            Username = user.UserName,
+            Roles = (await _userManager.GetRolesAsync(user)).ToArray()
         };
     }
 }

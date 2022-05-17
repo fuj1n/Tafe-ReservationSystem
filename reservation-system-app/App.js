@@ -62,7 +62,7 @@ export default function App() {
         const child = route[Object.getOwnPropertySymbols(route)[0]];
         const routeName = getFocusedRouteNameFromRoute(route);
 
-        if(!child || !routeName || child.routeNames[0] === routeName) {
+        if (!child || !routeName || child.routeNames[0] === routeName) {
             return {};
         }
 
@@ -76,8 +76,12 @@ export default function App() {
                     <Drawer.Navigator initialRouteName="Home" screenOptions={showHeader}>
                         <Drawer.Screen name="TestPalette" options={{title: "Test Palette"}} component={TestPalette}/>
                         <Drawer.Screen name="Reservation" options={{title: "Sittings"}} component={ReservationPage}/>
-                        <Drawer.Screen name="AdminReservation" options={{title: "Admin/Reservation"}} component={AdminReservationPage}/>
-                        <Drawer.Screen name="Sittings" options={{title: "Sittings"}} component={SittingsPage}/>
+                        {loginInfo.user?.roles.includes("Employee") &&
+                            <Drawer.Group>
+                                <Drawer.Screen name="AdminReservation" options={{title: "Admin/Reservation"}}
+                                               component={AdminReservationPage}/>
+                                <Drawer.Screen name="Sittings" options={{title: "Sittings"}} component={SittingsPage}/>
+                            </Drawer.Group>}
                         <Drawer.Screen name="Login" options={{title: "Login"}} component={LoginPage}/>
                     </Drawer.Navigator>
                 </View>

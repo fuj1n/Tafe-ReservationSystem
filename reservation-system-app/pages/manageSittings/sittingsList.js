@@ -36,7 +36,7 @@ function Sitting(props) {
 export default function SittingsList(props) {
     const { navigation } = props;
     const { loginInfo, setLoginInfo } = useContext(LoginContext);
-
+    console.log({from: "sitting", ...loginInfo});
     const [sittings, setSittings] = useState([]);
     const [changed, setChanged] = useState(false);
 
