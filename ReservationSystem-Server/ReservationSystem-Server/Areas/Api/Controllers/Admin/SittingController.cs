@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReservationSystem_Server.Areas.Admin.Models.Sitting;
+using ReservationSystem_Server.Areas.Api.Models.Sitting;
 using ReservationSystem_Server.Data;
 using ReservationSystem_Server.Services;
 
@@ -14,9 +15,11 @@ namespace ReservationSystem_Server.Areas.Api.Controllers.Admin
     public class SittingController : Controller
     {
         private readonly ApplicationDbContext _context;
-        public SittingController(ApplicationDbContext context)
+        private readonly SittingUtility _sittingUtility;
+        public SittingController(ApplicationDbContext context, SittingUtility sittingUtility)
         {
             _context = context;
+            _sittingUtility = sittingUtility;
         }
 
         [HttpGet("sittings")]
@@ -26,6 +29,43 @@ namespace ReservationSystem_Server.Areas.Api.Controllers.Admin
             var sittings = await _context.Sittings.Include(s => s.SittingType).OrderBy(s => s.StartTime)
                 .Where(s => pastSittings || s.StartTime > DateTime.Now).ToListAsync();
             return Ok(sittings);
+        }
+
+        /// <summary>
+        /// Get all sittings based on given criteria
+        /// </summary>
+        /// <param name="includePast">Whether to include past sittings</param>
+        /// <param name="includeClosed">Whether to include closed sittings</param>
+        /// <response code="200">All sittings that match criteria</response>
+        [HttpGet]
+        [ProducesResponseType(typeof(SittingModel[]), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Get(bool includePast = false, bool includeClosed = false)
+        {
+            SittingModel[] sittings = (await _sittingUtility.GetSittingsAsync(includePast, includeClosed))
+                .Select(s => new SittingModel().FromSitting(s)).ToArray();
+
+            return Ok(sittings);
+        }
+
+        /// <summary>
+        /// Get a sitting by id
+        /// </summary>
+        /// <param name="id">The id of the sitting to return</param>
+        /// <response code="200">Returns the sitting</response>
+        /// <response code="404">If the sitting does not exist</response>
+        [HttpGet("{id:int}")]
+        [ProducesResponseType(typeof(SittingModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Get(int id)
+        {
+            Sitting? sitting = await _sittingUtility.GetSittingAsync(id);
+
+            if (sitting == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(new SittingModel().FromSitting(sitting));
         }
 
         [HttpPut("close")]

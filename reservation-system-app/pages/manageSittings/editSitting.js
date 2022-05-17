@@ -12,8 +12,8 @@ export default function EditSitting(props) {
 
     const { navigation, route } = props;
     const { sitting } = route.params;
-    const [startTime, setStartTime] = useState(moment(sitting.startTime));
-    const [endTime, setEndTime] = useState(moment(sitting.endTime));
+    const [startTime, setStartTime] = useState(sitting.startTime);
+    const [endTime, setEndTime] = useState(sitting.endTime);
     const [capacity, setCapacity] = useState(sitting.capacity);
     const [sittingType, setSittingType] = useState(sitting.sittingTypeId);
 
@@ -46,8 +46,8 @@ export default function EditSitting(props) {
     async function submit() {
         const body = {
             "id": sitting.id,
-            "startTime": startTime.toISOString(true),
-            "endTime": endTime.toISOString(true),
+            "startTime": startTime,
+            "endTime": endTime,
             "capacity": capacity,
             "sittingTypeId": sittingType,
         };
@@ -70,8 +70,8 @@ export default function EditSitting(props) {
 
     return (
         <ScrollView contentContainerStyle={styles.container} ref={ref}>
-            <DatePicker label="Start Time: " style={styles.containerItem} value={startTime} setValue={setStartTime} />
-            <DatePicker label="End Time: " style={styles.containerItem} value={endTime} setValue={setEndTime} />
+            <DatePicker label="Start Time: " style={styles.containerItem} value={startTime} onChange={setStartTime} />
+            <DatePicker label="End Time: " style={styles.containerItem} value={endTime} onChange={setEndTime} />
             <TextInput label="Capacity: " value={capacity} onChangeText={setCapacity} keyboardType="numeric" />
             <Dropdown style={styles.containerItem} label="Sitting Type:" items={sittingTypesDropdown}
                 selectedValue={sittingType} onValueChange={setSittingType} />
