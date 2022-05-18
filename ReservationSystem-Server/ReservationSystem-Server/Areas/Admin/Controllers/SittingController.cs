@@ -59,6 +59,12 @@ namespace ReservationSystem_Server.Areas.Admin.Controllers
                 RestaurantId = 1
             };
 
+            if (!ModelState.IsValid)
+            {
+                vm.SittingTypes = new SelectList(await _context.SittingTypes.ToListAsync(), "Id", "Description");
+                return View(vm);
+            }
+
             await _context.Sittings.AddAsync(sitting);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -94,7 +100,7 @@ namespace ReservationSystem_Server.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(EditVM vm)
         {
-            var sitting = await _context.Sittings.FirstOrDefaultAsync(s => s.Id == vm.Id);
+            var sitting = await _context.Sittings.Include(s => s.Reservations).FirstOrDefaultAsync(s => s.Id == vm.Id);
             if (sitting == null)
             {
                 return NotFound();
@@ -105,6 +111,14 @@ namespace ReservationSystem_Server.Areas.Admin.Controllers
             if (!ModelState.IsValid)
             {
                 vm.SittingTypes = new SelectList(await _context.SittingTypes.ToListAsync(), "Id", "Description");
+
+                bool reservations = false;
+                if (sitting.Reservations.Count != 0)
+                {
+                    reservations = true;
+                }
+                ViewBag.reservations = reservations;
+
                 return View(vm);
             }
             sitting.StartTime = vm.StartTime;

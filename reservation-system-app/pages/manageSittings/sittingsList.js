@@ -1,9 +1,11 @@
 import { useState, useRef, useContext, useCallback } from "react";
 import { useScrollToTop, useFocusEffect } from "@react-navigation/native";
 import { ScrollView, View, Text } from "react-native";
-import { Button } from "../../components";
+import { Button, SittingPicker, Toggle } from "../../components";
 import styles from "../styles";
 import login, { LoginContext } from "../../services/login"
+import api from "../../services/api"
+import ErrorDisplay from "../../components/errorDisplay"
 import moment from "moment";
 
 function Sitting(props) {
@@ -23,6 +25,7 @@ function Sitting(props) {
             {sitting.sittingType.description} from {sitting.startTime.format("hh:mm A")} to {sitting.endTime.format("hh:mm A")} {sitting.isClosed && "[CLOSED]"}
         </Button>
 
+
         /*             <Text style={{ flex: 1 }}>{sitting.sittingType.description}</Text>
                     <Text style={{ flex: 2 }}>{sitting.startTime}</Text>
                     <Text style={{ flex: 2 }}>{sitting.endTime}</Text>
@@ -35,42 +38,71 @@ function Sitting(props) {
 
 export default function SittingsList(props) {
     const { navigation } = props;
-    const { loginInfo, setLoginInfo } = useContext(LoginContext);
+    const { loginInfo } = useContext(LoginContext);
 
+    const [sittingTypes, setSittingTypes] = useState({});
     const [sittings, setSittings] = useState([]);
     const [changed, setChanged] = useState(false);
 
+    const [error, setError] = useState(null);
+
+    const [showPast, setShowPast] = useState(false);
+
     useFocusEffect(
         useCallback(() => {
-            async function get() {
-                const response = await login.apiFetch("admin/sitting/sittings", "GET", null, loginInfo.jwt)
-                    .catch(() => { });
-                if (response.ok) {
-                    const data = await response.json();
-                    data.map(st => {
-                        st.startTime = moment(st.startTime);
-                        st.endTime = moment(st.endTime);
-                        return st;
-                    })
-
-                    setSittings(data);
+            async function getSittingTypes() {
+                const response = await api.sittings.getSittingTypes();
+                if(response.error) {
+                    setError(response);
+                } else {
+                    setSittingTypes(response);
                 }
+            }
+
+            async function get() {
+                const response = await api.sittings.getSittingsAsAdmin(loginInfo.jwt, showPast, true);
+                if(response.error) {
+                    setError(response);
+                } else {
+                    setSittings(response);
+                }
+
+                // const response = await login.apiFetch(`admin/sitting/sittings?pastSittings=${showPast}`, "GET", null, loginInfo.jwt)
+                //     .catch(() => { });
+                // if (response.ok) {
+                //     const data = await response.json();
+                //     data.map(st => {
+                //         st.startTime = moment(st.startTime);
+                //         st.endTime = moment(st.endTime);
+                //         return st;
+                //     })
+
+                //     setSittings(data);
+                // } else {
+                //     setSittings([]);
+                // }
             }
 
             if (changed) {
                 setChanged(false);
             } else {
+                setError(null);
+                setSittings([]);
+
+                getSittingTypes();
                 get();
             }
-        }, [changed])
+        }, [changed, showPast, loginInfo])
     );
 
     const ref = useRef(null);
     useScrollToTop(ref);
+    
     return (
         <ScrollView contentContainerStyle={styles.container} ref={ref}>
-            <Button style={{}} variant="primary" onPress={() => navigation.navigate("CreateSitting")}>Create</Button>
-            {/*             <View style={{ flexDirection: "column", flex: 1 }}>
+            <ErrorDisplay error={error}>
+                <Button style={{}} variant="primary" onPress={() => navigation.navigate("CreateSitting")}>Create</Button>
+                {/*             <View style={{ flexDirection: "column", flex: 1 }}>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <Text style={{ flex: 1 }}>Type</Text>
                     <Text style={{ flex: 2 }}>Start Time</Text>
@@ -83,11 +115,14 @@ export default function SittingsList(props) {
 
             </View> */}
 
-            <View>
-                {sittings.map((s, index) => (
+                {/* {sittings.map((s, index) => (
                     <Sitting key={index} sitting={s} navigation={navigation} setChanged={setChanged} />
-                ))}
-            </View>
+                ))} */}
+                <Toggle mode="switch" label="Show past sittings" value={showPast} onChange={setShowPast}
+                    style={{ paddingRight: 6 }} />
+                <SittingPicker sittings={sittings} onSelected={sitting => navigation.navigate("SittingDetails", { sitting })} 
+                sittingTypeSelector={s => sittingTypes[s.sittingTypeId]}/>
+            </ErrorDisplay>
         </ScrollView>
     )
 }
