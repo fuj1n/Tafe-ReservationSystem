@@ -75,7 +75,7 @@ export default function App() {
                 <View style={styles.root}>
                     <Drawer.Navigator initialRouteName="Home" screenOptions={showHeader}>
                         <Drawer.Screen name="TestPalette" options={{title: "Test Palette"}} component={TestPalette}/>
-                        <Drawer.Screen name="Reservation" options={{title: "Sittings"}} component={ReservationPage}/>
+                        <Drawer.Screen name="Reservation" options={{title: "Reservation"}} component={ReservationPage}/>
                         {loginInfo.user?.roles.includes("Employee") &&
                             <Drawer.Group>
                                 <Drawer.Screen name="AdminReservation" options={{title: "Admin/Reservation"}}
