@@ -52,30 +52,31 @@ export default function SittingsPage(props) {
 
    return (
     <ScrollView contentContainerStyle={styles.container} ref={ref}>
+        <Text style={{textAlign:"center",fontWeight:'bold'}}>Please select a sitting</Text>
        <SittingPicker sittings={sittings} sittingTypeSelector={s=>s.sittingType} onSelected={onButtonPressed}/>
     </ScrollView>
 
    );
     
 
-    const sittingsByDate = sittings.reduce ((total,s) => { //total = an object containing all sittings, s = each sitting or ?INITIAL VALUE????
-        let date = new Date (s.startTime);
-        date = new Date (date.getFullYear(),date.getMonth(),date.getDate()); //reformat the date to ONLY Year Month Day
+    // const sittingsByDate = sittings.reduce ((total,s) => { //total = an object containing all sittings, s = each sitting or ?INITIAL VALUE????
+    //     let date = new Date (s.startTime);
+    //     date = new Date (date.getFullYear(),date.getMonth(),date.getDate()); //reformat the date to ONLY Year Month Day
         
 
-        const ticks = date.getTime(); //ticks = time from date to Jan 1 1970
+    //     const ticks = date.getTime(); //ticks = time from date to Jan 1 1970
         
-        if(!total[ticks]){ //if total[ticks] does NOT exist
-                            //accessing a variable inside the total object the name of which is value of ticks 
-            total[ticks] = []; //each tick is a group of sitting, if it doesn't exist, create it
-        }
+    //     if(!total[ticks]){ //if total[ticks] does NOT exist
+    //                         //accessing a variable inside the total object the name of which is value of ticks 
+    //         total[ticks] = []; //each tick is a group of sitting, if it doesn't exist, create it
+    //     }
         
 
-        total[ticks].push(s); //adds each sitting to an array within the total object
-        return total;
-    }, {});
+    //     total[ticks].push(s); //adds each sitting to an array within the total object
+    //     return total;
+    // }, {});
     
-    console.log (sittingsByDate); //should remove?
+
 
     function format (ticks){
         const date = new Date(parseInt(ticks)); //values for keys always stored as strings, must convert to Int
