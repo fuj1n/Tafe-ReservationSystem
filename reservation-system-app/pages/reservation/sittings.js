@@ -2,8 +2,9 @@ import {useRef, useContext, useState, useEffect} from "react";
 import {ScrollView, View, Text} from "react-native";
 import {useScrollToTop} from "@react-navigation/native";
 import styles from "../styles";
-import { Button } from "../../components";
+import { Button, SittingPicker } from "../../components";
 import login, { LoginContext } from "../../services";
+
 
 
 function Row (props) {
@@ -45,7 +46,17 @@ export default function SittingsPage(props) {
         
     }, []); //empty dependency array causes useEffect to only run the function after the first initial render
 
-   
+    function onButtonPressed(sitting) {
+        navigation.navigate("CreateReservation", {sitting}); //navigates to CreateReservation page for the sitting that was clicked
+    }
+
+   return (
+    <ScrollView contentContainerStyle={styles.container} ref={ref}>
+       <SittingPicker sittings={sittings} sittingTypeSelector={s=>s.sittingType} onSelected={onButtonPressed}/>
+    </ScrollView>
+
+   );
+    
 
     const sittingsByDate = sittings.reduce ((total,s) => { //total = an object containing all sittings, s = each sitting or ?INITIAL VALUE????
         let date = new Date (s.startTime);
@@ -74,8 +85,7 @@ export default function SittingsPage(props) {
     
     return (
         <ScrollView contentContainerStyle={styles.container} ref={ref}>
-            <Text>This is the sittings page</Text>
-
+          
             {Object.entries(sittingsByDate).map(([ticks,sittingsList])=>(  //separates objects into an array of entries
                 <View style={{alignItems:"stretch"}} key={parseInt(ticks)}>
 

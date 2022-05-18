@@ -75,7 +75,7 @@ export default function App() {
                 <View style={styles.root}>
                     <Drawer.Navigator initialRouteName="Home" screenOptions={showHeader}>
                         <Drawer.Screen name="TestPalette" options={{title: "Test Palette"}} component={TestPalette}/>
-                        <Drawer.Screen name="Reservation" options={{title: "Sittings"}} component={ReservationPage}/>
+                        <Drawer.Screen name="Reservation" options={{title: "Reservation"}} component={ReservationPage}/>
                         <Drawer.Screen name="AdminReservation" options={{title: "Admin/Reservation"}} component={AdminReservationPage}/>
                         <Drawer.Screen name="Sittings" options={{title: "Sittings"}} component={SittingsPage}/>
                         <Drawer.Screen name="Login" options={{title: "Login"}} component={LoginPage}/>
