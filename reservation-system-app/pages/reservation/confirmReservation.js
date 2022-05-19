@@ -17,8 +17,7 @@ export default function ConfirmReservation(props) {
 
     return (
         <ScrollView contentContainerStyle={styles.container} ref={ref}>
-            <Text>Your reservation has been confirmed</Text>
-
+            <Text style={styles.containerItem}>Your reservation has been confirmed</Text>
             <Text style={styles.containerItem}>Sitting Type: {returnedBody.sittingType}</Text>
             <Text style={styles.containerItem}>Start Time: {moment(returnedBody.startTime).format("DD/MM/YYYY hh:mm A")}</Text>
             <Text style={styles.containerItem}>Duration: {returnedBody.duration}</Text>

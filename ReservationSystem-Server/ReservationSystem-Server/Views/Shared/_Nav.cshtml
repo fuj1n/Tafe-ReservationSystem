@@ -1,12 +1,14 @@
-﻿<li class="nav-item">
-    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index" cth-active>Home</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link" asp-area="" asp-controller="Reservation" asp-action="Index" cth-active>Create Reservation</a>
-</li>
-@if (User.IsInRole("Employee"))
+﻿@if (User.IsInRole("Employee"))
 {
     <li class="nav-item">
         <a class="nav-link text-danger" asp-area="Admin" asp-controller="Home" asp-action="Index" cth-active>Admin</a>
     </li>
 }
+
+<li class="nav-item">
+    <a class="nav-link" asp-area="" asp-controller="Reservation" asp-action="Index" cth-active>Contact Us</a>
+</li>
+
+<li class="nav-item">
+    <a class="nav-link" asp-area="" asp-controller="Reservation" asp-action="Index" cth-active>Book Online</a>
+</li>
