@@ -3,8 +3,9 @@ import { ScrollView, Text, View } from "react-native";
 import { useScrollToTop, useFocusEffect } from "@react-navigation/native";
 import styles from "../styles";
 import login, { LoginContext } from "../../services";
-import { DatePicker, TextInput, Dropdown, Button, StyledText } from "../../components";
+import { DatePicker, TextInput, Dropdown, Button, StyledText, ErrorDisplay } from "../../components";
 import moment from "moment";
+import api from "../../services/api";
 
 export default function CreateSitting(props) {
     const ref = useRef(null);
@@ -18,7 +19,7 @@ export default function CreateSitting(props) {
     const [capacity, setCapacity] = useState(0);
     const [sittingType, setSittingType] = useState(0);
     const [sittingTypes, setSittingTypes] = useState([]);
-    const [error, setError] = useState("");
+    const [error, setError] = useState(null);
 
     useFocusEffect(
         useCallback(() => {
@@ -40,8 +41,6 @@ export default function CreateSitting(props) {
         ...sittingTypes.map(st => ({ label: st.description, value: st.id }))
     ];
 
-    //console.log(sittingTypesDropdown);
-
     async function submit() {
         const body = {
             "startTime": startTime,
@@ -49,16 +48,10 @@ export default function CreateSitting(props) {
             "capacity": capacity,
             "sittingTypeId": sittingType,
         };
-        const response = await login.apiFetch("admin/sitting/create", "POST", body, loginInfo.jwt)
-            .catch(() => { });
         setError(null);
+        const response = await login.apiFetch("admin/sitting/create", "POST", body, loginInfo.jwt);
         if (!response.ok) {
-            if (response.status === 400) {
-                setError(await response.json());
-            }
-            else {
-                setError(`${response.status} - ${response.statusText}`);
-            }
+            setError(await api.common.processError(response));
         }
         else {
             navigation.navigate("SittingDetails", { sitting: await response.json(), operation: "created" });
@@ -67,6 +60,7 @@ export default function CreateSitting(props) {
 
     return (
         <ScrollView contentContainerStyle={styles.container} ref={ref}>
+            <ErrorDisplay error={error} />
             <DatePicker label="Start Time: " style={styles.containerItem} value={startTime} onChange={setStartTime} />
             <DatePicker label="End Time: " style={styles.containerItem} value={endTime} onChange={setEndTime} />
             <TextInput label="Capacity: " value={capacity} onChangeText={setCapacity} keyboardType="numeric" />
@@ -76,7 +70,6 @@ export default function CreateSitting(props) {
                 <Button variant="success" onPress={submit}>Confirm</Button>
                 <Button variant="primary" onPress={() => navigation.goBack()}>Back</Button>
             </View>
-            <StyledText variant="danger">{error && JSON.stringify(error)}</StyledText>
         </ScrollView>
     );
 }

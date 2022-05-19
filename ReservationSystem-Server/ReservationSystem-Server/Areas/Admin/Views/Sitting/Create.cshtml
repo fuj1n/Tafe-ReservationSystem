@@ -2,23 +2,27 @@
 
 @{
     ViewData["Title"] = "Create a New Sitting";
+    Layout = "";
 }
 
-<form method="post">
+<span class="d-none" id="modal-name">@ViewData["Title"]</span>
+<span class="d-none" id="modal-size"></span>
+
+<form asp-action="Create" method="post" id="modal-submit">
     <div asp-validation-summary="All" class="alert alert-danger"></div>
     <div class="form-group">
         <label asp-for="StartTime" class="form-label">Start Time</label>
-        <input asp-for="StartTime" class="form-control" />
+        <input asp-for="StartTime" class="form-control" step="120" />
         <span asp-validation-for="StartTime" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="EndTime" class="form-label">End Time</label>
-        <input asp-for="EndTime" class="form-control" />
+        <input asp-for="EndTime" class="form-control" step="300" />
         <span asp-validation-for="EndTime" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="Capacity" class="form-label"></label>
-        <input asp-for="Capacity" class="form-control" min="0"/>
+        <input asp-for="Capacity" class="form-control" min="0" />
         <span asp-validation-for="Capacity" class="text-danger"></span>
     </div>
     <div class="form-group">
@@ -28,6 +32,6 @@
         </select>
         <span asp-validation-for="SittingTypeId" class="text-danger"></span>
     </div>
-    <input class="btn btn-outline-success mt-2" type="submit" value="Confirm" />
-    <a class="btn btn-outline-primary mt-2" asp-action="Index">Back</a>
+@*    <input class="btn btn-outline-success mt-2" type="submit" value="Confirm" />
+    <a class="btn btn-outline-primary mt-2" asp-action="Index">Back</a>*@
 </form>

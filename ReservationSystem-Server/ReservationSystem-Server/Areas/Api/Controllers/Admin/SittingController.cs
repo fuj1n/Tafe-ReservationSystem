@@ -96,7 +96,7 @@ namespace ReservationSystem_Server.Areas.Api.Controllers.Admin
 
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState.Values.SelectMany(v => v.Errors));
+                return BadRequest(ModelState);
             }
             var sitting = new Sitting
             {
@@ -127,7 +127,7 @@ namespace ReservationSystem_Server.Areas.Api.Controllers.Admin
 
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState.Values.SelectMany(v => v.Errors));
+                return BadRequest(ModelState);
             }
             sitting.StartTime = vm.StartTime;
             sitting.EndTime = vm.EndTime;
