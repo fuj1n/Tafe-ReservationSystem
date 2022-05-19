@@ -18,8 +18,8 @@
             @foreach (DateTime timeSlot in timeSlots)
             {
                 string formattedTime = timeSlot.ToShortTimeString();
-                <a class="list-group-item list-group-item-action select-time-slot border-start"
-                   data-time=@Json.Serialize(timeSlot) data-display="@formattedTime" style="cursor: pointer; flex: 1 0 16%;">
+                <a class="list-group-item list-group-item-action select-time-slot border-start rounded-0"
+                   data-time=@Json.Serialize(timeSlot) data-display="@formattedTime" style="cursor: pointer; width: 16.6%;">
                     @formattedTime
                 </a>
             }

@@ -3,15 +3,17 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="Bean Scene Cafe Reservation System"/>
     <title>@ViewData["Title"] - Bean Scene</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    @* <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/> *@
+    <link rel="stylesheet" href="~/scss/customBootstrap.css"/>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
 </head>
-<body style="background-color: #f4ebdc !important;">
+<body>
 <header>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3" style="background-color: #d7c6b4 !important;">
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3" style="background-color: var(--navbar-bg)">
         <div class="container-fluid">
-            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/images/Brand.png" style="width:40px"/></a>
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/images/Brand.png" width="256" height="256" style="width:40px; height: auto;" alt="Logo of a bean above a coffee cup"/></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -31,9 +33,15 @@
     </main>
 </div>
 
-<footer class="border-top footer text-muted">
-    <div class="container">
-        &copy; 2022 - ReservationSystem_Server - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+<footer class="border-top border-primary footer">
+    <div class="container mt-2">
+        <b>Bean Scene</b>
+        <span class="d-block">Address: 123 Main Street</span>
+        <span class="d-block">Phone: 04 1234 5678</span>
+        <span class="d-block">Email: email@example.com</span>
+        
+        
+        <span>&copy; 2022 - Bean Scene</span>
     </div>
 </footer>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>

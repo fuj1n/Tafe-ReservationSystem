@@ -1,0 +1,38 @@
+﻿@import "bootstrap/functions";
+
+:root {
+  --navbar-bg: #d7c6b4;
+}
+
+$body-bg: #f4ebdc;
+
+// Colors
+$green: #188150;
+$cyan: #0AB0D1;
+$yellow: #BD8E00;
+$red: #C72334;
+
+// Variants
+$primary: #6a1a21;
+
+$border-color: shift-color($primary, -50%);
+
+// List group
+$list-group-bg: #f4ebdc;
+$list-group-hover-bg: darken($list-group-bg, 5%);
+$list-group-active-bg: darken($list-group-hover-bg, 5%);
+$list-group-action-active-bg: $list-group-active-bg;
+$list-group-border-color: $border-color;
+
+// Input
+$input-border-color: $border-color;
+$input-disabled-bg: shade-color($body-bg, 10%);
+
+// Modal
+$modal-content-bg: $body-bg;
+
+@import "bootstrap/bootstrap";
+
+.form-group {
+  margin-bottom: map-get($spacers, 3) !important;
+}

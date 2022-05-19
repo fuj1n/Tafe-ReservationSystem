@@ -22,11 +22,9 @@ body {
 }
 
 .nav-item-impact {
-  background-color: #6a1a21;
-  color: var(--bs-light) !important;
   padding: 20px 24px 12px !important;
-  margin-top: -10px;
-  margin-bottom: -10px;
+  margin-top: -12px;
+  margin-bottom: -12px;
 }
 
 .nav-item-impact:hover {
@@ -43,4 +41,8 @@ body {
 
 .carousel-indicators {
   bottom: 1.25rem;
+}
+
+.navbar {
+  box-shadow: #D4C7B4 -1px 5px 15px -3px;
 }

@@ -1,8 +1,8 @@
 ﻿<span class="d-flex flex-nowrap">
     @if (User.IsInRole("Employee"))
     {
-        <a class="nav-item nav-link text-danger" asp-area="Admin" asp-controller="Home" asp-action="Index" cth-active>Admin</a>
+        <a class="nav-item nav-link" style="color: #941925" asp-area="Admin" asp-controller="Home" asp-action="Index" cth-active>Admin</a>
     }
-    <a class="nav-item nav-link" asp-area="" asp-controller="Reservation" asp-action="Index" cth-active>Contact Us</a>
+    <a class="nav-item nav-link" asp-area="" asp-controller="Home" asp-action="Contact" cth-active>Contact Us</a>
 </span>
-<a class="nav-item nav-item-impact nav-link" asp-area="" asp-controller="Reservation" asp-action="Index" cth-active>Book Online</a>
+<a class="nav-item bg-primary text-light nav-item-impact nav-link" asp-area="" asp-controller="Reservation" asp-action="Index" cth-active>Book Online</a>

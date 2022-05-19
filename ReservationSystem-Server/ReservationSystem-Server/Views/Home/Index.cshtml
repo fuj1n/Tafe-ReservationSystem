@@ -5,8 +5,8 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="d-flex flex-column align-items-center justify-content-center">
-    <img src="images/Brand.png" alt="" style="width: 48px"/>
+<div class="d-flex flex-column align-items-center justify-content-center mb-3">
+    <img src="images/Brand.webp" alt="Logo of a coffee bean above a coffee cup" width="256" height="256" style="width: 48px; height: auto;"/>
     <span class="display-6 text-center">Bean Scene Café</span>
 </div>
 
@@ -16,7 +16,7 @@
             @for (int i = 0; i < Model!.Length; i++)
             {
                 string activeClass = i == 0 ? "active" : "";
-                <button type="button" data-bs-target="#main-carousel" data-bs-slide-to="@i" class="@activeClass"></button>
+                <button type="button" data-bs-target="#main-carousel" data-bs-slide-to="@i" class="@activeClass" aria-label="Move to slide @i"></button>
             }
         </div>
         <div class="carousel-inner">
@@ -26,7 +26,7 @@
                 string activeClass = first ? "active" : "";
                 first = false;
                 <div class="carousel-item @activeClass">
-                    <img class="d-block w-100" src="@Url.Content(item.ImageUrl)" alt="" width="980" height="550"> @*Provide sample size for better loading experience*@
+                    <img class="d-block w-100 h-auto rounded" src="@Url.Content(item.ImageUrl)" alt="" width="980" height="550"> @*Provide sample size for better loading experience*@
                     <div class="carousel-caption d-none d-md-block">
                         <p>@item.Text</p>
                     </div>
