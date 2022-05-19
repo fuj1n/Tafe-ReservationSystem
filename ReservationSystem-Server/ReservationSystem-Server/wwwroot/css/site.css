@@ -38,7 +38,7 @@ body {
   left: 0;
   width: 100%;
   bottom: 0.05rem;
-  text-shadow: 1px 1px #000;
+  text-shadow: 2px 2px #000;
 }
 
 .carousel-indicators {

@@ -1,30 +1,23 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ReservationSystem_Server.Data;
 using ReservationSystem_Server.Models;
 
 namespace ReservationSystem_Server.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    private readonly ApplicationDbContext _context;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ApplicationDbContext context)
     {
-        _logger = logger;
+        _context = context;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        string File(string name) => Url.Content($"~/images/home-carousel/{name}.webp");
-
-        List<(string, string)> carouselImages = new()
-        {
-                (File("OutdoorGarden"), "Enjoy the fresh air in our outdoor garden"),
-                (File("BlueberryMuffin"), "Freshly baked muffins everyday"),
-                (File("Cakes"), "Scrumptous cakes freshly baked")
-        };
-        
-        return View(carouselImages);
+        return View(await _context.RestaurantCarouselItemVisuals.Where(v => v.RestaurantId == 1).ToArrayAsync());
     }
 
     public IActionResult Privacy()

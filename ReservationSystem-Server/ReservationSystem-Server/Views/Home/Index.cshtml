@@ -1,4 +1,5 @@
-﻿@model List<(string, string)>
+﻿@using ReservationSystem_Server.Data.Visual
+@model ReservationSystem_Server.Data.Visual.RestaurantCarouselItemVisual[]
 
 @{
     ViewData["Title"] = "Home Page";
@@ -12,7 +13,7 @@
 <div class="d-flex justify-content-center">
     <div class="carousel slide w-75" id="main-carousel" data-bs-ride="carousel">
         <div class="carousel-indicators">
-            @for (int i = 0; i < Model.Count; i++)
+            @for (int i = 0; i < Model!.Length; i++)
             {
                 string activeClass = i == 0 ? "active" : "";
                 <button type="button" data-bs-target="#main-carousel" data-bs-slide-to="@i" class="@activeClass"></button>
@@ -20,14 +21,14 @@
         </div>
         <div class="carousel-inner">
             @{ bool first = true; }
-            @foreach ((string file, string description) in Model)
+            @foreach (RestaurantCarouselItemVisual item in Model)
             {
                 string activeClass = first ? "active" : "";
                 first = false;
                 <div class="carousel-item @activeClass">
-                    <img class="d-block w-100" src="@file" alt="">
+                    <img class="d-block w-100" src="@Url.Content(item.ImageUrl)" alt="" width="980" height="550"> @*Provide sample size for better loading experience*@
                     <div class="carousel-caption d-none d-md-block">
-                        <p>@description</p>
+                        <p>@item.Text</p>
                     </div>
                 </div>
             }
