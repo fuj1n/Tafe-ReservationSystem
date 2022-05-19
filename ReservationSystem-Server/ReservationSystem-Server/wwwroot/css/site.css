@@ -20,3 +20,27 @@ body {
 .validation-summary-valid {
   display: none;
 }
+
+.nav-item-impact {
+  background-color: #6a1a21;
+  color: var(--bs-light) !important;
+  padding: 20px 24px 12px !important;
+  margin-top: -10px;
+  margin-bottom: -10px;
+}
+
+.nav-item-impact:hover {
+  filter: brightness(85%);
+}
+
+.carousel-caption {
+  padding: 0;
+  left: 0;
+  width: 100%;
+  bottom: 0.05rem;
+  text-shadow: 1px 1px #000;
+}
+
+.carousel-indicators {
+  bottom: 1.25rem;
+}

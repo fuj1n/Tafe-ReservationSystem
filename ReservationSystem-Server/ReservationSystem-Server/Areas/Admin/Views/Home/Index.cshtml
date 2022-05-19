@@ -1,2 +1,15 @@
 ﻿<h2>Admin Area</h2>
 <p>Please select a section</p>
+
+<div class="w-25 m-auto">
+    <div class="row mb-2 gap-2">
+        <a class="col btn btn-outline-primary" asp-controller="Sitting" asp-action="Create">Create a Sitting</a>
+        <a class="col btn btn-outline-primary" asp-controller="Sitting" asp-action="Index">Manage Sittings</a>
+    </div>
+    <div class="row mb-2">
+        <a class="col btn btn-outline-primary" asp-controller="Reservation" asp-action="Index">Create/Manage Reservations</a>
+    </div>
+</div>
+<div class="row justify-content-center border-1 border-primary">
+    <img src="https://picsum.photos/1200" class="col w-75" alt=""/>
+</div>

@@ -1,8 +1,44 @@
-﻿@{
+﻿@model List<(string, string)>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="d-flex flex-column align-items-center justify-content-center">
+    <img src="images/Brand.png" alt="" style="width: 48px"/>
+    <span class="display-6 text-center">Bean Scene Café</span>
+</div>
+
+<div class="d-flex justify-content-center">
+    <div class="carousel slide w-75" id="main-carousel" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                string activeClass = i == 0 ? "active" : "";
+                <button type="button" data-bs-target="#main-carousel" data-bs-slide-to="@i" class="@activeClass"></button>
+            }
+        </div>
+        <div class="carousel-inner">
+            @{ bool first = true; }
+            @foreach ((string file, string description) in Model)
+            {
+                string activeClass = first ? "active" : "";
+                first = false;
+                <div class="carousel-item @activeClass">
+                    <img class="d-block w-100" src="@file" alt="">
+                    <div class="carousel-caption d-none d-md-block">
+                        <p>@description</p>
+                    </div>
+                </div>
+            }
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#main-carousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#main-carousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
 </div>

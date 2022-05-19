@@ -1,14 +1,8 @@
-﻿@if (User.IsInRole("Employee"))
-{
-    <li class="nav-item">
-        <a class="nav-link text-danger" asp-area="Admin" asp-controller="Home" asp-action="Index" cth-active>Admin</a>
-    </li>
-}
-
-<li class="nav-item">
-    <a class="nav-link" asp-area="" asp-controller="Reservation" asp-action="Index" cth-active>Contact Us</a>
-</li>
-
-<li class="nav-item">
-    <a class="nav-link" asp-area="" asp-controller="Reservation" asp-action="Index" cth-active>Book Online</a>
-</li>
+﻿<span class="d-flex flex-nowrap">
+    @if (User.IsInRole("Employee"))
+    {
+        <a class="nav-item nav-link text-danger" asp-area="Admin" asp-controller="Home" asp-action="Index" cth-active>Admin</a>
+    }
+    <a class="nav-item nav-link" asp-area="" asp-controller="Reservation" asp-action="Index" cth-active>Contact Us</a>
+</span>
+<a class="nav-item nav-item-impact nav-link" asp-area="" asp-controller="Reservation" asp-action="Index" cth-active>Book Online</a>

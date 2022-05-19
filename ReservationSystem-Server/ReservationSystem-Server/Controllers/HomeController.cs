@@ -15,7 +15,16 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        return View();
+        string File(string name) => Url.Content($"~/images/home-carousel/{name}.webp");
+
+        List<(string, string)> carouselImages = new()
+        {
+                (File("OutdoorGarden"), "Enjoy the fresh air in our outdoor garden"),
+                (File("BlueberryMuffin"), "Freshly baked muffins everyday"),
+                (File("Cakes"), "Scrumptous cakes freshly baked")
+        };
+        
+        return View(carouselImages);
     }
 
     public IActionResult Privacy()
