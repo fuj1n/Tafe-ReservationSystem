@@ -1,7 +1,7 @@
 import { useState, useRef, useContext, useCallback } from "react";
 import { useScrollToTop, useFocusEffect } from "@react-navigation/native";
 import { ScrollView, View, Text } from "react-native";
-import { Button, SittingPicker, Toggle } from "../../components";
+import { Button, SittingPicker, Toggle, Loader } from "../../components";
 import styles from "../styles";
 import login, { LoginContext } from "../../services/login"
 import api from "../../services/api"
@@ -45,6 +45,7 @@ export default function SittingsList(props) {
     const [changed, setChanged] = useState(false);
 
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     const [showPast, setShowPast] = useState(false);
 
@@ -52,7 +53,7 @@ export default function SittingsList(props) {
         useCallback(() => {
             async function getSittingTypes() {
                 const response = await api.sittings.getSittingTypes();
-                if(response.error) {
+                if (response.error) {
                     setError(response);
                 } else {
                     setSittingTypes(response);
@@ -60,13 +61,16 @@ export default function SittingsList(props) {
             }
 
             async function get() {
+                setLoading(true);
+
                 const response = await api.sittings.getSittingsAsAdmin(loginInfo.jwt, showPast, true);
-                if(response.error) {
+                if (response.error) {
                     setError(response);
                 } else {
                     setSittings(response);
                 }
 
+                setLoading(false);
                 // const response = await login.apiFetch(`admin/sitting/sittings?pastSittings=${showPast}`, "GET", null, loginInfo.jwt)
                 //     .catch(() => { });
                 // if (response.ok) {
@@ -92,17 +96,19 @@ export default function SittingsList(props) {
                 getSittingTypes();
                 get();
             }
+
         }, [changed, showPast, loginInfo])
     );
 
     const ref = useRef(null);
     useScrollToTop(ref);
-    
+
     return (
         <ScrollView contentContainerStyle={styles.container} ref={ref}>
             <ErrorDisplay error={error}>
-                <Button style={{}} variant="primary" onPress={() => navigation.navigate("CreateSitting")}>Create</Button>
-                {/*             <View style={{ flexDirection: "column", flex: 1 }}>
+                <Loader loading={loading}>
+                    <Button style={{}} variant="primary" onPress={() => navigation.navigate("CreateSitting")}>Create</Button>
+                    {/*             <View style={{ flexDirection: "column", flex: 1 }}>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <Text style={{ flex: 1 }}>Type</Text>
                     <Text style={{ flex: 2 }}>Start Time</Text>
@@ -115,13 +121,16 @@ export default function SittingsList(props) {
 
             </View> */}
 
-                {/* {sittings.map((s, index) => (
+                    {/* {sittings.map((s, index) => (
                     <Sitting key={index} sitting={s} navigation={navigation} setChanged={setChanged} />
                 ))} */}
-                <Toggle mode="switch" label="Show past sittings" value={showPast} onChange={setShowPast}
-                    style={{ paddingRight: 6 }} />
-                <SittingPicker sittings={sittings} onSelected={sitting => navigation.navigate("SittingDetails", { sitting })} 
-                sittingTypeSelector={s => sittingTypes[s.sittingTypeId]}/>
+                    <View style={[styles.row, { alignSelf: 'stretch', justifyContent: "flex-end" }]}>
+                        <Toggle mode="switch" label="Show past sittings" value={showPast} onChange={setShowPast}
+                            style={{ paddingRight: 6 }} />
+                    </View>
+                    <SittingPicker sittings={sittings} onSelected={sitting => navigation.navigate("SittingDetails", { sitting })}
+                        sittingTypeSelector={s => sittingTypes[s.sittingTypeId]} />
+                </Loader>
             </ErrorDisplay>
         </ScrollView>
     )

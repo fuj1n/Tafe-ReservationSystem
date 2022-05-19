@@ -18,9 +18,10 @@ namespace ReservationSystem_Server.Areas.Admin.Controllers
         }
 
         // taken from https://stackoverflow.com/questions/1004698/how-to-truncate-milliseconds-off-of-a-net-datetime
+        // modified to snap to nearest 5 minutes
         private DateTime DateTimeTruncate(DateTime dateTime)
         {
-            return new DateTime(dateTime.Ticks - (dateTime.Ticks % TimeSpan.TicksPerMinute), dateTime.Kind);
+            return new DateTime(dateTime.Ticks - (dateTime.Ticks % (TimeSpan.TicksPerMinute * 5)), dateTime.Kind);
         }
 
         public async Task<IActionResult> Index(bool pastSittings)

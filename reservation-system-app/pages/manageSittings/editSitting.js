@@ -2,9 +2,9 @@ import { useRef, useState, useContext, useCallback } from "react";
 import { ScrollView, View } from "react-native";
 import { useScrollToTop, useFocusEffect } from "@react-navigation/native";
 import styles from "../styles";
-import { DatePicker, TextInput, Dropdown, Button, StyledText } from "../../components";
+import { DatePicker, TextInput, Dropdown, Button, StyledText, ErrorDisplay } from "../../components";
 import login, { LoginContext } from "../../services";
-import moment from "moment";
+import api from "../../services/api";
 
 export default function EditSitting(props) {
     const ref = useRef(null);
@@ -51,17 +51,10 @@ export default function EditSitting(props) {
             "capacity": capacity,
             "sittingTypeId": sittingType,
         };
-        const response = await login.apiFetch("admin/sitting/edit", "PUT", body, loginInfo.jwt)
-            .catch(() => { });
-
         setError(null);
+        const response = await login.apiFetch("admin/sitting/edit", "PUT", body, loginInfo.jwt);
         if (!response.ok) {
-            if (response.status === 400) {
-                setError(await response.json());
-            }
-            else {
-                setError(`${response.status} - ${response.statusText}`);
-            }
+            setError(await api.common.processError(response));
         }
         else {
             navigation.navigate("SittingDetails", { sitting: await response.json(), operation: "edited" });
@@ -70,6 +63,7 @@ export default function EditSitting(props) {
 
     return (
         <ScrollView contentContainerStyle={styles.container} ref={ref}>
+            <ErrorDisplay error={error} />  
             <DatePicker label="Start Time: " style={styles.containerItem} value={startTime} onChange={setStartTime} />
             <DatePicker label="End Time: " style={styles.containerItem} value={endTime} onChange={setEndTime} />
             <TextInput label="Capacity: " value={capacity} onChangeText={setCapacity} keyboardType="numeric" />
@@ -79,7 +73,6 @@ export default function EditSitting(props) {
                 <Button variant="success" onPress={submit}>Confirm</Button>
                 <Button variant="primary" onPress={() => navigation.goBack()}>Back</Button>
             </View>
-            <StyledText variant="danger">{error && JSON.stringify(error)}</StyledText>
         </ScrollView>
     );
 }
