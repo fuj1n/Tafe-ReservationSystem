@@ -103,6 +103,10 @@ public class ReservationUtility
 
         if (requireAvailable && _sittingUtility.EvaluateAvailability(sitting))
             modelState.AddModelError(nameof(Reservation.SittingId), "The given sitting is not available");
+        
+        if (!GetTimeSlots(sitting.StartTime, sitting.EndTime, TimeSpan.FromMinutes(30)).Contains(reservation.StartTime))
+            modelState.AddModelError(nameof(Reservation.StartTime),
+                $"The start time must be between {sitting.StartTime} and {sitting.EndTime} in 30 minute intervals");
     }
 
     /// <summary>
