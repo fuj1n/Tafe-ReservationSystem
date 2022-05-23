@@ -117,6 +117,7 @@ public class ReservationController : Controller
         if (!ModelState.IsValid)
         {
             model.AvailableOrigins = await _reservationUtility.GetOriginsAsSelectListAsync();
+            model.TimeSlots = _reservationUtility.GetTimeSlots(model.SittingStart, model.SittingEnd, _timeSlotLength);
             return View(model);
         }
         
@@ -127,8 +128,7 @@ public class ReservationController : Controller
 
         await _reservationUtility.CreateReservationAsync(reservation);
 
-        return RedirectToAction(nameof(Sitting),
-            new { id = reservation.SittingId, modal = ConfirmationUrl(reservation.Id) });
+        return RedirectToAction(nameof(Confirmation), new { id = reservation.Id });
     }
 
     public async Task<IActionResult> Edit(int id)
@@ -214,8 +214,7 @@ public class ReservationController : Controller
 
         await _reservationUtility.EditReservationAsync(updated);
 
-        return RedirectToAction(nameof(Sitting),
-            new { id = reservation.SittingId, modal = ConfirmationUrl(reservation.Id, true) });
+        return RedirectToAction(nameof(Confirmation), new { id = updated.Id });
     }
 
     public async Task<IActionResult> Confirmation(int id, bool? edit)
@@ -320,10 +319,5 @@ public class ReservationController : Controller
 
         await _reservationUtility.EditReservationAsync(reservation);
         return RedirectToAction("Sitting", new { id = reservation.SittingId });
-    }
-
-    private string ConfirmationUrl(int id, bool edit = false)
-    {
-        return Url.Action(nameof(Confirmation), new { id, edit }) ?? "";
     }
 }

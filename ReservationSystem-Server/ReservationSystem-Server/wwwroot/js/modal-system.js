@@ -1,11 +1,79 @@
-﻿function openError(message) {
-    $('#modal-body').html(`<p class="text-danger">Error: ${message}</p>`);
-    $('#modal-title').text('Error');
-    $('.modal-dialog').removeClass().addClass('modal-dialog modal-dialog-scrollable');
+﻿function setTitle(title) {
+    $('#modal-title').text(title);
+}
+
+function setBody(html) {
+    $('#modal-body').html(html);
+}
+
+function setButton(text, className = 'btn btn-primary') {
+    const submitBtn = $('#btn-save');
+    const isHidden = submitBtn.hasClass('d-none');
+    
+    submitBtn.removeClass();
+    submitBtn.addClass(className);
+    
+    if(isHidden) {
+        submitBtn.addClass('d-none');
+    }
+    
+    submitBtn.text(text);
+}
+
+function setShowButton(show) {
+    const submitBtn = $('#btn-save');
+    if(show) {
+        submitBtn.removeClass('d-none');
+    } else {
+        submitBtn.addClass('d-none');
+    }
+}
+
+function displayModal() {
     $('#modal').modal('show');
 }
 
-function openModal(url) {
+function hideModal() {
+    // Dirty way to eliminate race condition with modal opening and closing too quickly
+    const modal = $('#modal');
+    modal.modal('hide');
+    modal.on('shown.bs.modal', function () {
+        modal.modal('hide');
+        modal.off('shown.bs.modal');
+    });
+}
+
+function setModalSize(sizeClass = '') {
+    $('.modal-dialog').removeClass()
+        .addClass('modal-dialog modal-dialog-scrollable')
+        .addClass(sizeClass);
+}
+
+function submitForm(form) {
+    if(!form || !form.length) {
+        openError('No form provided');
+        return;
+    }
+    
+    const url = form.attr('action');
+    let method = form.attr('method').toUpperCase();
+    if(method.trim() === '') {
+        method = 'GET';
+    }
+    
+    const data = new FormData(form[0]);
+    
+    openModal(url, method, data);
+}
+
+function openError(message) {
+    setBody(`<p class="text-danger">Error: ${message}</p>`);
+    setTitle('Error');
+    setModalSize();
+    displayModal();
+}
+
+function openModal(url, method = 'GET', data = null) {
     if(!url) {
         console.error("No url provided");
         return;
@@ -18,27 +86,38 @@ function openModal(url) {
     if(modal.hasClass('show')) {
         modal.modal('hide');
         modal.on('hidden.bs.modal', function () {
-            _openModal(modal, url);
+            _openModal(modal, url, method, data);
             modal.off('hidden.bs.modal');
         });
     } else {
-        _openModal(modal, url);
+        _openModal(modal, url, method, data);
     }
 }
 
-function _openModal(modal, url, retries = 0) {
+function _openModal(modal, url, method = 'GET', data = null, retries = 0) {
     const isUrlAbsolute = new RegExp('^(?:[a-z]+:)?//', 'i');
     
-    const submitBtn = $('#btn-save');
-    submitBtn.off('click');
-    submitBtn.addClass('d-none');
+    setShowButton(false);
     
     if(isUrlAbsolute.test(url)) {
         openError('Cross-origin urls are not permitted');
         return;
     }
     
-    fetch(url, { mode: 'same-origin'})
+    setTitle('Loading...');
+    setBody($('#modal-loader').html()); // Open the loader
+    setModalSize();
+    displayModal();
+    
+    if(method === 'GET' && data) {
+        const params = new URLSearchParams();
+        Object.keys(data).forEach(key => {
+            params.append(key, data[key]);
+        });
+        url += '?' + params.toString();
+    }
+    
+    fetch(url, { mode: 'same-origin', method: method, body: method !== "GET" ? data : null})
         .then(response => {
             if(!response.ok) {
                 throw new Error(`${response.status} ${response.statusText}`);
@@ -46,19 +125,30 @@ function _openModal(modal, url, retries = 0) {
             
             return response.text()
         }).then(html => {
-            $('#modal-body').html(html);
+            setBody(html);
             
-            $('#modal-title').text($('#modal-name').text());
+            if($('modal-refresh-on-close').length > 0) {
+                modal.on('hidden.bs.modal', function () {
+                    location.reload();
+                });
+            }
+            
+            if($('modal-close').length > 0) {
+                hideModal();
+                return;
+            }
+            
+            setTitle($('#modal-name').text());
 
             const modalSize = `modal-${$('#modal-size').text()}`;
-            $('.modal-dialog').removeClass()
-                .addClass('modal-dialog modal-dialog-scrollable')
-                .addClass(modalSize);
+            setModalSize(modalSize);
 
             const action = $('#modal-action');
             const submittable = $('#modal-submit');
             const hasAction = action.length > 0 || submittable.length > 0;
-
+            
+            const submitBtn = $('#btn-save');
+            
             if(action.length > 0) {
                 submitBtn.on('click', () => {
                     action.trigger('click');
@@ -66,19 +156,22 @@ function _openModal(modal, url, retries = 0) {
             }
             if(submittable.length > 0) {
                 submitBtn.on('click', () => {
-                    submittable.submit();
+                    submitForm(submittable);
                 });
             }
 
             if (hasAction) {
-                submitBtn.removeClass('d-none');
+                const btnText = $('#modal-button-text');
+                const btnClass = $('#modal-button-class');
+                
+                setButton(btnText.length > 0 ? btnText.text() : "Save", btnClass.length > 0 ? btnClass.text() : "btn btn-primary");
+                setShowButton(true);
             }
 
             autoBindModals();
-            modal.modal('show');
         }).catch(error => {
             if(retries < 3) {
-                _openModal(modal, url, retries + 1);
+                _openModal(modal, url, method, data, retries + 1);
             } else {
                 openError(`${error.message}`);
             }
@@ -89,10 +182,6 @@ function bindModalToElement(item, url) {
     item.on('click', function () {
         openModal(url.replace('{id}', $(this).data('id')));
     });
-}
-
-function bindModal(selector, url) {
-    bindModalToElement($(selector), url);
 }
 
 function autoBindModals() {
@@ -111,9 +200,9 @@ function autoBindModals() {
 
 $(() => {
     autoBindModals();
-    
-    const searchParams = new URLSearchParams(window.location.search);
-    if(searchParams.has('modal')) {
-        openModal(searchParams.get('modal'));
-    }
+    //
+    // const searchParams = new URLSearchParams(window.location.search);
+    // if(searchParams.has('modal')) {
+    //     openModal(searchParams.get('modal'));
+    // }
 });
