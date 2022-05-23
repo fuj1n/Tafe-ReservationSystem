@@ -59,6 +59,11 @@ public static class TestUtility
         return ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete");
     }
     
+    public static bool IsModalLoaded(IWebDriver driver)
+    {
+        return driver.FindElements(By.ClassName("lds-dual-ring")).Count <= 1; // There is always at least one on the page that acts as a prefab
+    }
+    
     public enum DefaultAccount
     {
         Admin,

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using NUnit.Framework;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
 using ReservationSystem_Server.UiTests.Util;
 using static ReservationSystem_Server.UiTests.Util.Config;
 using static ReservationSystem_Server.UiTests.Util.TestUtility;
@@ -64,33 +65,45 @@ public class SittingUiTest : UiTestBase
     }
 
     [Test]
-    public void Test_Create_Button_Redirects_To_Create_Page()
+    public void Test_Create_Button_Opens_Create_Page()
     {
         LoginAs(Driver, DefaultAccount.Manager);
 
         Driver.Navigate().GoToUrl(BaseUrl + "/Admin/Sitting");
-
         Driver.FindElement(By.PartialLinkText("Create")).Click();
 
-        Assert.That(Driver.Url, Does.Contain("/Admin/Sitting/Create"));
-        Assert.That(Driver.FindElements(By.XPath("//input[@type='submit']")), Is.Not.Empty);
+        WebDriverWait wait = new(Driver, TimeSpan.FromSeconds(5));
+        wait.Until(IsModalLoaded);
+        
+        Assert.That(Driver.FindElement(By.Id("modal-title")).Text, Does.Contain("Create"));
+        Assert.That(Driver.FindElement(By.Id("btn-save")).Displayed, Is.True);
     }
     
     [Test]
+    [Retry(3)]
     public void Test_Create_Sitting_With_Invalid_Data_Shows_Validation_Errors()
     {
         LoginAs(Driver, DefaultAccount.Manager);
 
-        Driver.Navigate().GoToUrl(BaseUrl + "/Admin/Sitting/Create");
+        Driver.Navigate().GoToUrl(BaseUrl + "/Admin/Sitting");
+        Driver.FindElement(By.PartialLinkText("Create")).Click();
+        
+        WebDriverWait wait = new(Driver, TimeSpan.FromSeconds(5));
+        wait.Until(IsModalLoaded);
+        
         Assert.That(() => Driver.FindElement(By.ClassName("validation-summary-errors")), Throws.TypeOf<NoSuchElementException>());
         
-        Driver.FindElement(By.XPath("//input[@type='submit']")).Click();
+        Driver.FindElement(By.Id("btn-save")).Click();
 
-        Assert.That(Driver.FindElements(By.XPath("//input[@type='submit']")), Is.Not.Empty);
+        Thread.Sleep(500);
+        wait.Until(IsModalLoaded);
+        
+        Assert.That(Driver.FindElements(By.Id("btn-save")), Is.Not.Empty);
         Assert.That(Driver.FindElements(By.ClassName("validation-summary-errors")), Is.Not.Empty);
     }
 
     [Test]
+    [Retry(3)]
     public void Test_Create_Sitting_With_Valid_Data_Created_Successfully()
     {
         DateOnly sittingDate = DateOnly.FromDateTime(DateTime.Now.AddMonths(1));
@@ -100,7 +113,10 @@ public class SittingUiTest : UiTestBase
         Driver.Navigate().GoToUrl(BaseUrl + "/Admin/Sitting");
         ReadOnlyCollection<IWebElement>? beforeRows = Driver.FindElements(By.TagName("tr"));
         
-        Driver.Navigate().GoToUrl(BaseUrl + "/Admin/Sitting/Create");
+        Driver.FindElement(By.PartialLinkText("Create")).Click();
+        
+        WebDriverWait wait = new(Driver, TimeSpan.FromSeconds(5));
+        wait.Until(IsModalLoaded);
 
         IWebElement startTime = Driver.FindElement(By.Id("StartTime"));
         IWebElement endTime = Driver.FindElement(By.Id("EndTime"));
@@ -115,11 +131,18 @@ public class SittingUiTest : UiTestBase
         
         sittingType.SendKeys("B");
         
-        Driver.FindElement(By.XPath("//input[@type='submit']")).Click();
-
+        Driver.FindElement(By.Id("btn-save")).Click();
+        
+        Thread.Sleep(500);
+        wait.Until(IsModalLoaded);
+        
         Assert.That(() => Driver.FindElement(By.ClassName("validation-summary-errors")), Throws.TypeOf<NoSuchElementException>());
         Assert.That(Driver.Url, Does.Not.Contain("/Admin/Sitting/Create"));
         Assert.That(Driver.Url, Does.Contain("/Admin/Sitting"));
+
+        // Wait for modal system to finish up
+        Thread.Sleep(500);
+        wait.Until(IsModalLoaded);
         
         ReadOnlyCollection<IWebElement>? afterRows = Driver.FindElements(By.TagName("tr"));
         Assert.That(afterRows.Count, Is.GreaterThan(beforeRows.Count));
