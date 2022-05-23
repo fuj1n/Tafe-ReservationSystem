@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ReservationSystem_Server.Areas.Admin.Models.Sitting;
 using ReservationSystem_Server.Data;
+using ReservationSystem_Server.Helper;
 
 namespace ReservationSystem_Server.Areas.Admin.Controllers
 {
@@ -68,7 +69,7 @@ namespace ReservationSystem_Server.Areas.Admin.Controllers
 
             await _context.Sittings.AddAsync(sitting);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return this.CloseModalAndRefresh();
         }
 
         public async Task<IActionResult> Edit(int id)
@@ -128,7 +129,7 @@ namespace ReservationSystem_Server.Areas.Admin.Controllers
             sitting.SittingTypeId = vm.SittingTypeId;
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return this.CloseModalAndRefresh();
 
         }
 
