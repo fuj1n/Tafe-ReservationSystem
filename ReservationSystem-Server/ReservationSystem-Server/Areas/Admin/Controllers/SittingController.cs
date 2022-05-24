@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using ReservationSystem_Server.Areas.Admin.Models.Sitting;
 using ReservationSystem_Server.Data;
 using ReservationSystem_Server.Helper;
+using ReservationSystem_Server.Services;
 
 namespace ReservationSystem_Server.Areas.Admin.Controllers
 {
@@ -12,10 +13,12 @@ namespace ReservationSystem_Server.Areas.Admin.Controllers
     [Authorize(Roles = "Manager")]
     public class SittingController : Controller
     {
+        private readonly SittingUtility _sittingUtility;
         private ApplicationDbContext _context;
-        public SittingController(ApplicationDbContext context)
+        public SittingController(ApplicationDbContext context, SittingUtility sittingUtility)
         {
             _context = context;
+            _sittingUtility = sittingUtility;
         }
 
         // taken from https://stackoverflow.com/questions/1004698/how-to-truncate-milliseconds-off-of-a-net-datetime
@@ -69,7 +72,7 @@ namespace ReservationSystem_Server.Areas.Admin.Controllers
 
             await _context.Sittings.AddAsync(sitting);
             await _context.SaveChangesAsync();
-            return this.CloseModalAndRefresh();
+            return RedirectToAction(nameof(Confirmation), new { id = sitting.Id });
         }
 
         public async Task<IActionResult> Edit(int id)
@@ -129,12 +132,17 @@ namespace ReservationSystem_Server.Areas.Admin.Controllers
             sitting.SittingTypeId = vm.SittingTypeId;
 
             await _context.SaveChangesAsync();
-            return this.CloseModalAndRefresh();
+            return RedirectToAction(nameof(Confirmation), new { id = sitting.Id, edit = true });
 
         }
 
-        [HttpPost]
         public async Task<IActionResult> Close(int id)
+        {
+            return View(id);
+        }
+
+        [HttpPost, ActionName("Close")]
+        public async Task<IActionResult> DoClose(int id)
         {
             var sitting = await _context.Sittings.FirstOrDefaultAsync(s => s.Id == id);
             if (sitting == null)
@@ -143,7 +151,20 @@ namespace ReservationSystem_Server.Areas.Admin.Controllers
             }
             sitting.IsClosed = true;
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return this.CloseModalAndRefresh();
+        }
+
+        public async Task<IActionResult> Confirmation(int id, bool? edit)
+        {
+            Sitting? sitting = await _sittingUtility.GetSittingAsync(id, q => q
+                .Include(r => r.SittingType));
+
+            if (sitting == null)
+                return NotFound();
+
+            ViewBag.IsEdit = edit is true;
+
+            return View(sitting);
         }
     }
 }
