@@ -19,7 +19,7 @@
 
 <div class="list-group">
     @{ DateOnly lastDate = new(); }
-    @foreach (Sitting sitting in Model!)
+    @foreach (Sitting sitting in Model)
     {
         DateOnly thisDate = DateOnly.FromDateTime(sitting.StartTime);
 
@@ -31,7 +31,7 @@
             </span>
         }
 
-        <a class="list-group-item list-group-item-action" asp-action="Sitting" asp-route-id="@sitting.Id">
+        <a class="list-group-item list-group-item-action d-flex justify-content-between" asp-action="Sitting" asp-route-id="@sitting.Id">
             <span>
                 @sitting.SittingType.Description
                 from @sitting.StartTime.ToShortTimeString()

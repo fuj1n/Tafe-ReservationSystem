@@ -67,6 +67,7 @@ function openError(message) {
     setTitle('Error');
     setModalSize();
     displayModal();
+    setShowButton(false);
 }
 
 function openModal(url, method = 'GET', data = null) {
@@ -79,10 +80,13 @@ function openModal(url, method = 'GET', data = null) {
     _openModal(modal, url, method, data);
 }
 
-function _openModal(modal, url, method = 'GET', data = null, retries = 0) {
+async function _openModal(modal, url, method = 'GET', data = null, retries = 0) {
     const isUrlAbsolute = new RegExp('^(?:[a-z]+:)?//', 'i');
+
+    const submitBtn = $('#btn-save');
     
     setShowButton(false);
+    submitBtn.off('click');
     
     if(isUrlAbsolute.test(url)) {
         openError('Cross-origin urls are not permitted');
@@ -102,65 +106,61 @@ function _openModal(modal, url, method = 'GET', data = null, retries = 0) {
         url += '?' + params.toString();
     }
     
-    fetch(url, { mode: 'same-origin', method: method, body: method !== "GET" ? data : null})
-        .then(response => {
-            if(!response.ok) {
-                throw new Error(`${response.status} ${response.statusText}`);
-            }
-            
-            return response.text()
-        }).then(html => {
-            setBody(html);
-            
-            if($('modal-refresh-on-close').length > 0) {
-                modal.on('hidden.bs.modal', function () {
-                    location.reload();
-                });
-            }
-            
-            if($('modal-close').length > 0) {
-                hideModal();
-                return;
-            }
-            
-            setTitle($('#modal-name').text());
+    const response = await fetch(url, { mode: 'same-origin', method: method, body: method !== "GET" ? data : null});
+    if(!response.ok) {
+        if(retries < 3) {
+            await _openModal(modal, url, method, data, retries + 1);
+        } else {
+            openError(`${error.message}`);
+        }
+        
+        return;
+    }
+    
+    const html = await response.text();
 
-            const modalSize = `modal-${$('#modal-size').text()}`;
-            setModalSize(modalSize);
+    setBody(html);
 
-            const action = $('#modal-action');
-            const submittable = $('#modal-submit');
-            const hasAction = action.length > 0 || submittable.length > 0;
-            
-            const submitBtn = $('#btn-save');
-            
-            if(action.length > 0) {
-                submitBtn.on('click', () => {
-                    action.trigger('click');
-                });
-            }
-            if(submittable.length > 0) {
-                submitBtn.on('click', () => {
-                    submitForm(submittable);
-                });
-            }
-
-            if (hasAction) {
-                const btnText = $('#modal-button-text');
-                const btnClass = $('#modal-button-class');
-                
-                setButton(btnText.length > 0 ? btnText.text() : "Save", btnClass.length > 0 ? btnClass.text() : "btn btn-primary");
-                setShowButton(true);
-            }
-
-            autoBindModals();
-        }).catch(error => {
-            if(retries < 3) {
-                _openModal(modal, url, method, data, retries + 1);
-            } else {
-                openError(`${error.message}`);
-            }
+    if($('modal-refresh-on-close').length > 0) {
+        modal.on('hidden.bs.modal', function () {
+            location.reload();
         });
+    }
+
+    if($('modal-close').length > 0) {
+        hideModal();
+        return;
+    }
+
+    setTitle($('#modal-name').text());
+
+    const modalSize = `modal-${$('#modal-size').text()}`;
+    setModalSize(modalSize);
+
+    const action = $('#modal-action');
+    const submittable = $('#modal-submit');
+    const hasAction = action.length > 0 || submittable.length > 0;
+
+    if(action.length > 0) {
+        submitBtn.on('click', () => {
+            action.trigger('click');
+        });
+    }
+    if(submittable.length > 0) {
+        submitBtn.on('click', () => {
+            submitForm(submittable);
+        });
+    }
+
+    if (hasAction) {
+        const btnText = $('#modal-button-text');
+        const btnClass = $('#modal-button-class');
+
+        setButton(btnText.length > 0 ? btnText.text() : "Save", btnClass.length > 0 ? btnClass.text() : "btn btn-primary");
+    }
+    setShowButton(hasAction);
+
+    autoBindModals();
 }
 
 function bindModalToElement(item, url) {
@@ -185,9 +185,9 @@ function autoBindModals() {
 
 $(() => {
     autoBindModals();
-    //
-    // const searchParams = new URLSearchParams(window.location.search);
-    // if(searchParams.has('modal')) {
-    //     openModal(searchParams.get('modal'));
-    // }
+
+    const searchParams = new URLSearchParams(window.location.search);
+    if(searchParams.has('modal')) {
+        openModal(searchParams.get('modal'));
+    }
 });
