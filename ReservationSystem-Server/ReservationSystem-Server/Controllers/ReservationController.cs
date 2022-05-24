@@ -31,7 +31,7 @@ namespace ReservationSystem_Server.Controllers
         public async Task<IActionResult> Create(int sittingId)
         {
             var sitting = await _context.Sittings.
-                Include(s=>s.SittingType).FirstOrDefaultAsync(s=>s.Id == sittingId);
+                Include(s=>s.SittingType).FirstOrDefaultAsync(s=>s.Id == sittingId); //retrieves the first sitting that matches the sittinId
             var customer = await _customerManager.FindCustomerAsync(User);
 
             var vm = new Models.Reservation.CreateVM 
@@ -93,7 +93,7 @@ namespace ReservationSystem_Server.Controllers
             var reservation = await _context.Reservations
                 .Include(r=>r.Sitting)
                 .ThenInclude(s=>s.SittingType)
-                .FirstOrDefaultAsync(r => r.Id == id);
+                .FirstOrDefaultAsync(r => r.Id == id); //Reservation SittingType
             return View(reservation);
         }
     }
