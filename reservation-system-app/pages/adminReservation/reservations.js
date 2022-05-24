@@ -2,7 +2,7 @@ import {useCallback, useContext, useRef, useState} from "react";
 import {useFocusEffect, useScrollToTop} from "@react-navigation/native";
 import styles from "../styles";
 import {ScrollView} from "react-native-gesture-handler";
-import {Loader, StyledText} from "../../components";
+import {Loader, ReservationPicker, StyledText} from "../../components";
 import {LoginContext} from "../../services";
 import api from "../../services/api";
 import ErrorDisplay from "../../components/errorDisplay";
@@ -59,7 +59,7 @@ export default function Reservations(props) {
             <Loader loading={loading}>
                 <ErrorDisplay error={error}>
                     <StyledText style={{fontWeight: '700'}}>
-                        {reservations.length.toString()}
+                        <ReservationPicker reservations={reservations}/>
                     </StyledText>
                 </ErrorDisplay>
             </Loader>

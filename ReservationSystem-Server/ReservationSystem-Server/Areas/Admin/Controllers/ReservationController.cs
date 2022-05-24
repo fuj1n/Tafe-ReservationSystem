@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ReservationSystem_Server.Areas.Admin.Models.Reservation;
 using ReservationSystem_Server.Data;
+using ReservationSystem_Server.Helper;
 using ReservationSystem_Server.Services;
 
 namespace ReservationSystem_Server.Areas.Admin.Controllers;
@@ -32,7 +33,8 @@ public class ReservationController : Controller
     {
         ViewData["PastSittings"] = pastSittings;
         return View(await _sittingUtility.GetSittingsAsync(pastSittings, true, q => q
-            .Include(s => s.SittingType)));
+            .Include(s => s.SittingType)
+            .Include(s => s.Reservations)));
     }
 
     public async Task<IActionResult> Sitting(int id)
@@ -214,7 +216,7 @@ public class ReservationController : Controller
 
         await _reservationUtility.EditReservationAsync(updated);
 
-        return RedirectToAction(nameof(Confirmation), new { id = updated.Id });
+        return RedirectToAction(nameof(Confirmation), new { id = updated.Id, edit = true });
     }
 
     public async Task<IActionResult> Confirmation(int id, bool? edit)
@@ -271,7 +273,7 @@ public class ReservationController : Controller
         reservation.ReservationStatusId = model.StatusId;
         await _reservationUtility.EditReservationAsync(reservation);
 
-        return RedirectToAction(nameof(Sitting), new { id = reservation.SittingId });
+        return this.CloseModalAndRefresh();
     }
 
     public async Task<IActionResult> AssignTables(int id)
@@ -318,6 +320,6 @@ public class ReservationController : Controller
             .Select(t => _context.Tables.First(tbl => tbl.Id == t.Id)));
 
         await _reservationUtility.EditReservationAsync(reservation);
-        return RedirectToAction("Sitting", new { id = reservation.SittingId });
+        return RedirectToAction(nameof(Sitting), new { id = reservation.SittingId });
     }
 }

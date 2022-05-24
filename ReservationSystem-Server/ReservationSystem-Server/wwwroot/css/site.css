@@ -47,6 +47,10 @@ body {
   box-shadow: #D4C7B4 -1px 5px 15px -3px;
 }
 
+.modal-dialog {
+  transition: max-width 0.3s ease-in-out;
+}
+
 /* Loading spinner */
 .lds-dual-ring {
   display: inline-block;

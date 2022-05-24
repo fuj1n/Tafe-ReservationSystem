@@ -6,7 +6,7 @@ import StyledText from "./styledText";
 /**
  * @typedef Sitting Object
  * @typedef SittingAcceptor function(Sitting) : *
- * @param props {{sittings : Sitting[], dateOutFormat : string, timeOutFormat : string, onSelected : function(number),
+ * @param props {{sittings : Sitting[], dateOutFormat : string, timeOutFormat : string, onSelected : function(Sitting),
  * sittingTypeSelector : SittingAcceptor, startTimeSelector : SittingAcceptor,
  * endTimeSelector : SittingAcceptor}}
  */

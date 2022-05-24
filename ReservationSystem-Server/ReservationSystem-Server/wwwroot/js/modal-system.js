@@ -1,4 +1,6 @@
-﻿function setTitle(title) {
+﻿// const requestQueue = jquery.queue();
+
+function setTitle(title) {
     $('#modal-title').text(title);
 }
 
@@ -34,13 +36,7 @@ function displayModal() {
 }
 
 function hideModal() {
-    // Dirty way to eliminate race condition with modal opening and closing too quickly
-    const modal = $('#modal');
-    modal.modal('hide');
-    modal.on('shown.bs.modal', function () {
-        modal.modal('hide');
-        modal.off('shown.bs.modal');
-    });
+    $('#modal').modal('hide');
 }
 
 function setModalSize(sizeClass = '') {
@@ -80,18 +76,7 @@ function openModal(url, method = 'GET', data = null) {
     }
     
     const modal = $('#modal');
-    
-    // this song and dance is done to still display the animation when switching between modals
-    // the hidden.bs.modal event is not triggered when the modal is not shown
-    if(modal.hasClass('show')) {
-        modal.modal('hide');
-        modal.on('hidden.bs.modal', function () {
-            _openModal(modal, url, method, data);
-            modal.off('hidden.bs.modal');
-        });
-    } else {
-        _openModal(modal, url, method, data);
-    }
+    _openModal(modal, url, method, data);
 }
 
 function _openModal(modal, url, method = 'GET', data = null, retries = 0) {
