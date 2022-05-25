@@ -1,14 +1,16 @@
 import {StyleSheet} from "react-native";
 
+const bodyBg = '#f4ebdc';
+
 const inputStyle = {
     paddingHorizontal: 6,
     paddingVertical: 12,
     fontWeight: '400',
     color: '#212529',
-    backgroundColor: '#fff',
+    backgroundColor: bodyBg,
     borderWidth: 1,
     borderStyle: 'solid',
-    borderColor: '#ced4da',
+    borderColor: '#b58d90',
     borderRadius: 4
 };
 
@@ -45,7 +47,8 @@ const baseStyle = {
     // only applies to web as other platforms use native picker
     dropdownWebInputStyle: {
         borderWidth: 0,
-        paddingVertical: 12
+        paddingVertical: 12,
+        backgroundColor: bodyBg
     },
 
     radioHost: {
@@ -74,12 +77,12 @@ const baseStyle = {
     modalView: {
         margin: 20,
         marginBottom: 0,
-        backgroundColor: "white",
+        backgroundColor: bodyBg,
         padding: 35,
         alignItems: "center",
         borderWidth: 2,
         borderBottomWidth: 0,
-        borderColor: '#0d6efd',
+        borderColor: '#6a1a21',
         borderTopStartRadius: 5,
         borderTopEndRadius: 5
     },
@@ -100,11 +103,11 @@ const baseStyle = {
 export const variants = {
     none: null, // used for default generator
     Primary: {
-        color: '#0d6efd',
-        borderColor: '#0d6efd',
+        color: '#6a1a21',
+        borderColor: '#6a1a21',
         Hover: {
             color: '#fff',
-            backgroundColor: '#0d6efd'
+            backgroundColor: '#6a1a21'
         }
     },
     Secondary: {
@@ -116,35 +119,35 @@ export const variants = {
         }
     },
     Success: {
-        color: '#198754',
-        borderColor: '#198754',
+        color: '#188150',
+        borderColor: '#188150',
         Hover: {
             color: '#fff',
-            backgroundColor: '#198754'
+            backgroundColor: '#188150'
         }
     },
     Info: {
-        color: '#0dcaf0',
-        borderColor: '#0dcaf0',
+        color: '#0AB0D1',
+        borderColor: '#0AB0D1',
         Hover: {
             color: '#fff',
-            backgroundColor: '#0dcaf0'
+            backgroundColor: '#0AB0D1'
         }
     },
     Warning: {
-        color: '#ffc107',
-        borderColor: '#ffc107',
+        color: '#BD8E00',
+        borderColor: '#BD8E00',
         Hover: {
             color: '#fff',
-            backgroundColor: '#ffc107'
+            backgroundColor: '#BD8E00'
         }
     },
     Danger: {
-        color: '#dc3545',
-        borderColor: '#dc3545',
+        color: '#C72334',
+        borderColor: '#C72334',
         Hover: {
             color: '#fff',
-            backgroundColor: '#dc3545'
+            backgroundColor: '#C72334'
         }
     },
     Dark: {

@@ -16,7 +16,10 @@ const navTheme = {
     ...DefaultTheme,
     colors: {
         ...DefaultTheme.colors,
-        background: 'transparent'
+        background: 'transparent',
+        primary: '#6a1a21',
+        card: '#d7c6b4',
+        border: '#b58d90'
     }
 };
 
@@ -94,7 +97,7 @@ export default function App() {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        backgroundColor: '#fff'
+        backgroundColor: '#f4ebdc'
     },
     loadingContainer: {
         alignItems: 'center',
