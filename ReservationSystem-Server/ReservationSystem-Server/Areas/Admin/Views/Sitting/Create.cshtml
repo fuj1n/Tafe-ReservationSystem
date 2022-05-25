@@ -9,7 +9,7 @@
 <span class="d-none" id="modal-size"></span>
 
 <form asp-action="Create" method="post" id="modal-submit">
-    <div asp-validation-summary="All" class="alert alert-danger"></div>
+    @* <div asp-validation-summary="All" class="alert alert-danger"></div> *@
     <div class="form-group">
         <label asp-for="StartTime" class="form-label">Start Time</label>
         <input asp-for="StartTime" class="form-control" step="120" />

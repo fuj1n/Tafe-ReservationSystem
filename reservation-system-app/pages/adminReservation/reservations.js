@@ -2,14 +2,15 @@ import {useCallback, useContext, useRef, useState} from "react";
 import {useFocusEffect, useScrollToTop} from "@react-navigation/native";
 import styles from "../styles";
 import {ScrollView} from "react-native-gesture-handler";
-import {Loader, ReservationPicker, StyledText} from "../../components";
+import {Button, Loader, ReservationPicker, StyledText} from "../../components";
 import {LoginContext} from "../../services";
 import api from "../../services/api";
 import ErrorDisplay from "../../components/errorDisplay";
+import {View} from "react-native";
 
 export default function Reservations(props) {
-    const {route} = props;
-    const sitting = route.params;
+    const {route, navigation} = props;
+    const {sitting, sittingType} = route.params;
 
     const ref = useRef(null);
     useScrollToTop(ref);
@@ -52,15 +53,17 @@ export default function Reservations(props) {
         getStatuses();
         // noinspection JSIgnoredPromiseFromCall
         getReservations();
-    }, []));
+    }, [loginInfo]));
 
     return (
         <ScrollView contentContainerStyle={styles.container} ref={ref}>
             <Loader loading={loading}>
                 <ErrorDisplay error={error}>
-                    <StyledText style={{fontWeight: '700'}}>
-                        <ReservationPicker reservations={reservations}/>
-                    </StyledText>
+                    <View style={[styles.row, {alignSelf: 'stretch', justifyContent: "flex-start", marginBottom: 5}]}>
+                        <Button variant="success" style={{marginRight: 5}}>Create Reservation</Button>
+                        <Button variant="primary" onPress={() => navigation.goBack()}>Back to Sittings</Button>
+                    </View>
+                    <ReservationPicker reservations={reservations} onSelected={reservation => navigation.navigate("Details", {reservation, sitting, sittingType, status: statuses[reservation.reservationStatusId]})}/>
                 </ErrorDisplay>
             </Loader>
         </ScrollView>

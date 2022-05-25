@@ -38,7 +38,6 @@ export default function Sittings(props) {
             setLoading(true);
 
             const response = await api.sittings.getSittingsAsAdmin(loginInfo.jwt, showPast, showClosed);
-            console.log({from: "reservation", ...loginInfo});
 
             if (response.error) {
                 setError(response);
@@ -65,8 +64,9 @@ export default function Sittings(props) {
                                 style={{paddingRight: 6}}/>
                         <Toggle mode="switch" label="Show closed sittings" value={showClosed} onChange={setShowClosed}/>
                     </View>
-                    <SittingPicker sittings={sittings} onSelected={s => navigation.navigate("Reservations", s)}
-                                   sittingTypeSelector={s => sittingTypes[s.sittingTypeId]}/>
+                    <SittingPicker sittings={sittings} onSelected={sitting => navigation.navigate("Reservations", {
+                        sitting, sittingType: sittingTypes[sitting.sittingTypeId]
+                    })} sittingTypeSelector={s => sittingTypes[s.sittingTypeId]}/>
                 </Loader>
             </ErrorDisplay>
         </ScrollView>

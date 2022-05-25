@@ -246,7 +246,33 @@ const generators = {
         }
 
         return output;
-    }
+    },
+    badge: (name, variant, state) => {
+        let output = {};
+
+        if(state) {
+            return {};
+        }
+
+
+        if(!variant) {
+            output.badge = {
+                borderRadius: 8,
+                alignItems: 'center',
+                justifyContent: 'center',
+                paddingHorizontal: 10.4,
+                paddingVertical: 2.8
+            };
+            return output;
+        }
+
+        output[`badge${name}`] = {
+            backgroundColor: variant.color ?? 'transparent',
+
+        }
+
+        return output;
+    },
 };
 
 // This is ugly, but it does a lot of work for how little code it is

@@ -7,11 +7,13 @@ import StyledText from "./styledText";
  * @typedef Reservation Object
  * @typedef ReservationAcceptor function(Reservation) : *
  * @param props {{reservations : Reservation[], timeOutFormat : string, onSelected : function(Reservation),
- * customerNameSelector : ReservationAcceptor, startTimeSelector : ReservationAcceptor, endTimeSelector : ReservationAcceptor}}
+ * customerFirstNameSelector : ReservationAcceptor, customerLastNameSelector : ReservationAcceptor,
+ * startTimeSelector : ReservationAcceptor, endTimeSelector : ReservationAcceptor}}
  */
 export default function ReservationPicker(props) {
     const {reservations} = props;
-    const customerNameSelector = props.customerNameSelector ?? (s => s.sittingType?.description);
+    const customerFirstNameSelector = props.customerNameSelector ?? (s => s.customer?.firstName);
+    const customerLastNameSelector = props.customerNameSelector ?? (s => s.customer?.lastName);
     const startTimeSelector = props.startTimeSelector ?? (s => s.startTime);
     const endTimeSelector = props.endTimeSelector ?? (s => s.endTime);
     const timeFormat = props.timeOutFormat ?? "hh:mm A";
@@ -22,7 +24,8 @@ export default function ReservationPicker(props) {
 
     const topStyle = {
         borderTopLeftRadius: 10,
-        borderTopRightRadius: 10
+        borderTopRightRadius: 10,
+        borderTopWidth: 1
     }
 
     const bottomStyle = {
@@ -49,7 +52,7 @@ export default function ReservationPicker(props) {
                             flex: 1, justifyContent: 'center', alignItems: 'center', paddingVertical: 12
                         }} onPress={() => props.onSelected?.(r)}>
                             <Text>
-                                {customerNameSelector(r)} - {moment(startTimeSelector(r)).format(timeFormat)} to{' '}
+                                {customerFirstNameSelector(r)} {customerLastNameSelector(r)} - {moment(startTimeSelector(r)).format(timeFormat)} to{' '}
                                 {moment(endTimeSelector(r)).format(timeFormat)}
                             </Text>
                         </RectButton>

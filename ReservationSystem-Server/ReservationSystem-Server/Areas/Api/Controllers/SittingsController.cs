@@ -6,7 +6,7 @@ using ReservationSystem_Server.Services;
 namespace ReservationSystem_Server.Areas.Api.Controllers;
 
 [ApiController]
-[Route(ApiInfo.Endpoint + "[controller]")]
+[Route(ApiInfo.Base + "[controller]")]
 public class SittingsController : Controller
 {
     private readonly SittingUtility _sittingUtility;

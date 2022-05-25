@@ -2,5 +2,5 @@
 
 public static class ApiInfo
 {
-    public const string Endpoint = "api/v1/"; 
+    public const string Base = "api/v1/"; 
 }

@@ -36,7 +36,7 @@ async function getSittings() {
 async function getSittingsAsAdmin(jwt, includePast, includeClosed) {
     const queryString = `?includePast=${includePast}&includeClosed=${includeClosed}`;
     //TODO: update endpoint when API is updated
-    const response = await common.fetch(`admin/reservation${queryString}`, "GET", null, jwt);
+    const response = await common.fetch(`admin/sitting${queryString}`, "GET", null, jwt);
 
     if (response.ok) {
         return await response.json();

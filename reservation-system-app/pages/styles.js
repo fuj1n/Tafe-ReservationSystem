@@ -8,6 +8,7 @@ const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
         backgroundColor: '#fff',
+        marginVertical: 6,
         marginHorizontal: 12
     },
     containerItem: {
