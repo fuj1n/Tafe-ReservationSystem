@@ -103,4 +103,23 @@ async function setStatus(jwt, reservationId, statusId) {
     return await common.processError(response);
 }
 
-export default {getReservationsAsAdmin, getStatuses, getStatusById, getOrigins, getOriginById, getStatusBadgeVisuals, setStatus};
+async function createReservationAsAdmin(jwt, reservation) {
+    const response = await common.fetch("admin/reservation/create", "POST", reservation, jwt);
+
+    if (response.ok) {
+        return await response.json();
+    }
+
+    return await common.processError(response);
+}
+
+export default {
+    getReservationsAsAdmin,
+    getStatuses,
+    getStatusById,
+    getOrigins,
+    getOriginById,
+    getStatusBadgeVisuals,
+    setStatus,
+    createReservationAsAdmin
+};

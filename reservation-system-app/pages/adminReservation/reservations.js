@@ -60,7 +60,7 @@ export default function Reservations(props) {
             <Loader loading={loading}>
                 <ErrorDisplay error={error}>
                     <View style={[styles.row, {alignSelf: 'stretch', justifyContent: "flex-start", marginBottom: 5}]}>
-                        <Button variant="success" style={{marginRight: 5}}>Create Reservation</Button>
+                        <Button variant="success" style={{marginRight: 5}} onPress={() => navigation.navigate("Create", {sitting, sittingType})}>Create Reservation</Button>
                         <Button variant="primary" onPress={() => navigation.goBack()}>Back to Sittings</Button>
                     </View>
                     <ReservationPicker reservations={reservations} onSelected={reservation => navigation.navigate("Details", {reservation, sitting, sittingType, status: statuses[reservation.reservationStatusId]})}/>

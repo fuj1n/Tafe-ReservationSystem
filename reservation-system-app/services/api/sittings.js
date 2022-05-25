@@ -45,4 +45,17 @@ async function getSittingsAsAdmin(jwt, includePast, includeClosed) {
     return await common.processError(response);
 }
 
-export default {getSittingTypes, getSittings, getSittingsAsAdmin};
+/**
+ * @returns {Promise<string[] | ErrorDesc>}
+ */
+async function getTimeSlots(sittingId) {
+    const response = await common.fetch(`sittings/timeSlots/${sittingId}`, "GET");
+
+    if (response.ok) {
+        return await response.json();
+    }
+
+    return await common.processError(response);
+}
+
+export default {getSittingTypes, getSittings, getSittingsAsAdmin, getTimeSlots};

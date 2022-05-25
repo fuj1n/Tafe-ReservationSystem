@@ -11,7 +11,7 @@ import componentStyle from "../../components/style";
 
 export default function Details(props) {
     const {navigation, route} = props;
-    const {reservation, sitting, sittingType} = route.params;
+    const {reservation, sitting, sittingType, action} = route.params;
 
     const {loginInfo} = useContext(LoginContext);
 
@@ -87,6 +87,7 @@ export default function Details(props) {
 
     return (
         <ScrollView contentContainerStyle={styles.container} ref={ref}>
+            {action && <StyledText variant="success">Successfully {action} a reservation</StyledText>}
             <View style={[styles.row, {alignSelf: 'stretch', justifyContent: "flex-start", marginBottom: 5}]}>
                 <Button variant="info" style={{marginRight: 5}}>Edit Reservation</Button>
                 <Button variant="primary" onPress={() => navigation.goBack()}>Back to List</Button>

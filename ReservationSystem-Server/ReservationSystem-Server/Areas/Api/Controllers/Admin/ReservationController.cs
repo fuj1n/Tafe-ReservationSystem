@@ -78,7 +78,7 @@ public class ReservationController : Controller
             Notes = model.Notes
         };
 
-        await _reservationUtility.ValidateReservationAsync(reservation, ModelState, true);
+        await _reservationUtility.ValidateReservationAsync(reservation, ModelState, false);
 
         if (!ModelState.IsValid)
         {

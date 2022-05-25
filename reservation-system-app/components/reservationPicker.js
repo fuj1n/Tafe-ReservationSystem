@@ -8,14 +8,14 @@ import StyledText from "./styledText";
  * @typedef ReservationAcceptor function(Reservation) : *
  * @param props {{reservations : Reservation[], timeOutFormat : string, onSelected : function(Reservation),
  * customerFirstNameSelector : ReservationAcceptor, customerLastNameSelector : ReservationAcceptor,
- * startTimeSelector : ReservationAcceptor, endTimeSelector : ReservationAcceptor}}
+ * startTimeSelector : ReservationAcceptor, durationSelector : ReservationAcceptor}}
  */
 export default function ReservationPicker(props) {
     const {reservations} = props;
-    const customerFirstNameSelector = props.customerNameSelector ?? (s => s.customer?.firstName);
-    const customerLastNameSelector = props.customerNameSelector ?? (s => s.customer?.lastName);
-    const startTimeSelector = props.startTimeSelector ?? (s => s.startTime);
-    const endTimeSelector = props.endTimeSelector ?? (s => s.endTime);
+    const customerFirstNameSelector = props.customerNameSelector ?? (r => r.customer?.firstName);
+    const customerLastNameSelector = props.customerNameSelector ?? (r => r.customer?.lastName);
+    const startTimeSelector = props.startTimeSelector ?? (r => r.startTime);
+    const durationSelector = props.durationSelector ?? (r => r.duration);
     const timeFormat = props.timeOutFormat ?? "hh:mm A";
 
     if (!reservations) {
@@ -47,13 +47,13 @@ export default function ReservationPicker(props) {
                 return (
                     <View key={index} style={[{
                         backgroundColor: '#FFF', borderWidth: 1, borderTopWidth: 0, borderColor: 'rgba(0,0,0,.125)'
-                    }, index === reservations.length - 1 ? bottomStyle : index === 0 ? topStyle : null]}>
+                    }, index === reservations.length - 1 ? bottomStyle : null, index === 0 ? topStyle : null]}>
                         <RectButton rippleColor="#cff4fc" style={{
                             flex: 1, justifyContent: 'center', alignItems: 'center', paddingVertical: 12
                         }} onPress={() => props.onSelected?.(r)}>
                             <Text>
                                 {customerFirstNameSelector(r)} {customerLastNameSelector(r)} - {moment(startTimeSelector(r)).format(timeFormat)} to{' '}
-                                {moment(endTimeSelector(r)).format(timeFormat)}
+                                {(moment(startTimeSelector(r)).add(moment.duration(durationSelector(r)))).format(timeFormat)}
                             </Text>
                         </RectButton>
                     </View>
