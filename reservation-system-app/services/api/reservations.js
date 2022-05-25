@@ -113,6 +113,16 @@ async function createReservationAsAdmin(jwt, reservation) {
     return await common.processError(response);
 }
 
+async function editReservationAsAdmin(jwt, reservation) {
+    const response = await common.fetch(`admin/reservation/${reservation.id}/edit`, "PUT", reservation, jwt);
+
+    if (response.ok) {
+        return await response.json();
+    }
+
+    return await common.processError(response);
+}
+
 export default {
     getReservationsAsAdmin,
     getStatuses,
@@ -121,5 +131,6 @@ export default {
     getOriginById,
     getStatusBadgeVisuals,
     setStatus,
-    createReservationAsAdmin
+    createReservationAsAdmin,
+    editReservationAsAdmin
 };

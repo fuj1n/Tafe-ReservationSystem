@@ -124,6 +124,7 @@ public class ReservationController : Controller
 
         Reservation updated = new()
         {
+            Id = id,
             SittingId = model.SittingId,
 
             StartTime = model.StartTime,

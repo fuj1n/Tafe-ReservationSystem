@@ -17,23 +17,23 @@ import {
 import moment from "moment";
 import {View} from "react-native";
 
-export default function Create({route, navigation}) {
-    const {sitting, sittingType} = route.params;
+export default function Edit({route, navigation}) {
+    const {reservation, sitting, sittingType} = route.params;
 
     const {loginInfo} = useContext(LoginContext);
 
     // Form data
-    const [startTime, setStartTime] = useState(moment(sitting.startTime));
-    const [duration, setDuration] = useState("00:30:00");
-    const [origin, setOrigin] = useState(0);
-    const [numGuests, setNumGuests] = useState(1);
+    const [startTime, setStartTime] = useState(moment(moment(reservation.startTime)));
+    const [duration, setDuration] = useState(reservation.duration);
+    const [origin, setOrigin] = useState(reservation.reservationOriginId);
+    const [numGuests, setNumGuests] = useState(reservation.numberOfGuests);
 
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
-    const [email, setEmail] = useState("");
-    const [phone, setPhone] = useState("");
+    const [firstName, setFirstName] = useState(reservation.customer.firstName);
+    const [lastName, setLastName] = useState(reservation.customer.lastName);
+    const [email, setEmail] = useState(reservation.customer.email);
+    const [phone, setPhone] = useState(reservation.customer.phoneNumber);
 
-    const [notes, setNotes] = useState("");
+    const [notes, setNotes] = useState(reservation.notes);
     // End of form data
 
     const [loading, setLoading] = useState(false);
@@ -75,7 +75,8 @@ export default function Create({route, navigation}) {
         setLoading(true);
         setError(null);
 
-        const reservation = {
+        const newReservation = {
+            id: reservation.id,
             sittingId: sitting.id,
             startTime: startTime.toISOString(true),
             duration: duration,
@@ -90,14 +91,14 @@ export default function Create({route, navigation}) {
             notes
         };
 
-        const response = await api.reservations.createReservationAsAdmin(loginInfo.jwt, reservation);
+        const response = await api.reservations.editReservationAsAdmin(loginInfo.jwt, newReservation);
 
         if(response.error) {
             setError(response);
             setLoading(false);
         } else {
             navigation.pop(); // ensure back button goes to reservation list
-            navigation.navigate("Details", {reservation: response, sitting, sittingType, action: "created"});
+            navigation.navigate("Details", {reservation: response, sitting, sittingType, action: "edited"});
         }
     }
 
@@ -126,7 +127,7 @@ export default function Create({route, navigation}) {
                     <TextInput label="Notes" value={notes} onChangeText={setNotes} multiline={true} style={styles.containerItem} />
 
                     <View style={[styles.containerItem, styles.row, {alignSelf: 'stretch', justifyContent: "flex-start"}]}>
-                        <Button variant="success" style={{marginRight: 5}} onPress={submit}>Submit</Button>
+                        <Button variant="success" style={{marginRight: 5}} onPress={submit}>Edit</Button>
                         <Button variant="primary" onPress={() => navigation.goBack()}>Back to Sittings</Button>
                     </View>
                 </Loader>

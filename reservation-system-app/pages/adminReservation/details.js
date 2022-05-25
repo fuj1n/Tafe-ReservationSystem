@@ -89,7 +89,7 @@ export default function Details(props) {
         <ScrollView contentContainerStyle={styles.container} ref={ref}>
             {action && <StyledText variant="success">Successfully {action} a reservation</StyledText>}
             <View style={[styles.row, {alignSelf: 'stretch', justifyContent: "flex-start", marginBottom: 5}]}>
-                <Button variant="info" style={{marginRight: 5}}>Edit Reservation</Button>
+                <Button variant="info" onPress={() => navigation.navigate("Edit", {reservation, sitting, sittingType})} style={{marginRight: 5}}>Edit Reservation</Button>
                 <Button variant="primary" onPress={() => navigation.goBack()}>Back to List</Button>
             </View>
             <ErrorDisplay error={error}/>
@@ -100,7 +100,10 @@ export default function Details(props) {
             </Text>
 
             <Text style={[title, styles.containerItem]}>Reservation Time</Text>
-            <Text style={styles.containerItem}>{moment(reservation.startTime).format("hh:mm AA")}</Text>
+            <Text style={styles.containerItem}>{moment(reservation.startTime).format("hh:mm A")}</Text>
+
+            <Text style={[title, styles.containerItem]}>Reservation Duration</Text>
+            <Text style={styles.containerItem}>{moment.duration(reservation.duration).humanize()}</Text>
 
             <Text style={[title, styles.containerItem]}>Covers</Text>
             <Text style={styles.containerItem}>{reservation.numberOfGuests}</Text>
