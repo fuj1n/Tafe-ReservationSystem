@@ -46,7 +46,7 @@ export default function ReservationPicker(props) {
             {reservations.map((r, index) => {
                 return (
                     <View key={index} style={[{
-                        backgroundColor: '#FFF', borderWidth: 1, borderTopWidth: 0, borderColor: 'rgba(0,0,0,.125)'
+                        backgroundColor: '#f4ebdc', borderWidth: 1, borderTopWidth: 0, borderColor: '#b58d90'
                     }, index === reservations.length - 1 ? bottomStyle : null, index === 0 ? topStyle : null]}>
                         <RectButton rippleColor="#cff4fc" style={{
                             flex: 1, justifyContent: 'center', alignItems: 'center', paddingVertical: 12
