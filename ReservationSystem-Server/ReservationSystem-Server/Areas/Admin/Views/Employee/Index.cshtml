@@ -1,0 +1,47 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model IEnumerable<Microsoft.AspNetCore.Identity.IdentityUser>
+
+@inject UserManager<IdentityUser> UserManager
+
+@{
+    ViewBag.Title = "Employees";
+    Layout = "_Layout";
+}
+
+<h2>Employees</h2>
+
+<a class="btn btn-outline-primary mb-2" asp-action="Create">Create Employee</a>
+
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th style="width: 16.667%">Email</th>
+        <th style="width: 16.667%">Phone Number</th>
+        <th style="width: 16.667%">Roles</th>
+        <th style="width: 50%">Actions</th>
+    </tr>
+    </thead>
+    @foreach (IdentityUser employee in Model!)
+    {
+        <tr>
+            <td>@employee.Email</td>
+            <td>
+                @if (string.IsNullOrWhiteSpace(employee.PhoneNumber))
+                {
+                    <span class="text-danger">None provided</span>
+                }
+                else
+                {
+                    @employee.PhoneNumber
+                }
+            </td>
+            <td>@string.Join(", ", await UserManager.GetRolesAsync(employee))</td>
+            <td class="d-flex btn-group btn-group-sm">
+                <a class="btn btn-primary mv-auto" asp-action="Edit" asp-route-id="@employee.Id">Edit</a>
+                <a class="btn btn-info mv-auto" asp-action="Roles" asp-route-id="@employee.Id">Update Roles</a>
+                <a class="btn btn-warning mv-auto" asp-action="Reset" asp-route-id="@employee.Id">Reset Password</a>
+                <a class="btn btn-danger mv-auto" asp-action="Delete" asp-route-id="@employee.Id">Delete</a>
+            </td>
+        </tr>
+    }
+</table>
