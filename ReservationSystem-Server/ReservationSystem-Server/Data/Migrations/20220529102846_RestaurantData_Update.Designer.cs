@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ReservationSystem_Server.Data;
 
@@ -11,9 +12,10 @@ using ReservationSystem_Server.Data;
 namespace ReservationSystem_Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220529102846_RestaurantData_Update")]
+    partial class RestaurantData_Update
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -557,7 +559,7 @@ namespace ReservationSystem_Server.Migrations
                             Id = 1,
                             Address = "123 Main Street",
                             Email = "email@example.com",
-                            Name = "Bean Scene Café",
+                            Name = "Bean Scene",
                             PhoneNumber = "0412345678"
                         });
                 });

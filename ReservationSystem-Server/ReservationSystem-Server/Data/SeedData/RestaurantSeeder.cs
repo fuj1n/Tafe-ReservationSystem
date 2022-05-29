@@ -12,7 +12,7 @@ public static class RestaurantSeeder
                 new Restaurant
                 {
                         Id = 1,
-                        Name = "Carefront",
+                        Name = "Bean Scene Café",
                         Address = "123 Main Street",
                         PhoneNumber = "0412345678",
                         Email = "email@example.com"

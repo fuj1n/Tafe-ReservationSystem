@@ -144,6 +144,7 @@ builder.Services.AddSwaggerGen(o =>
 builder.Services.AddScoped<CustomerManager>();
 builder.Services.AddScoped<ReservationUtility>();
 builder.Services.AddScoped<SittingUtility>();
+builder.Services.AddScoped<RestaurantProvider>();
 
 // builder.Services.AddScoped<IActionContextAccessor, ActionContextAccessor>();
 // builder.Services.AddScoped<IUrlHelper>(x =>
