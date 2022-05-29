@@ -80,7 +80,6 @@ public class SittingUiTest : UiTestBase
     }
     
     [Test]
-    [Retry(3)]
     public void Test_Create_Sitting_With_Invalid_Data_Shows_Validation_Errors()
     {
         LoginAs(Driver, DefaultAccount.Manager);
@@ -93,6 +92,7 @@ public class SittingUiTest : UiTestBase
         
         Assert.That(() => Driver.FindElement(By.ClassName("validation-summary-errors")), Throws.TypeOf<NoSuchElementException>());
         
+        Thread.Sleep(500);
         Driver.FindElement(By.Id("btn-save")).Click();
 
         Thread.Sleep(500);
@@ -103,7 +103,6 @@ public class SittingUiTest : UiTestBase
     }
 
     [Test]
-    [Retry(3)]
     public void Test_Create_Sitting_With_Valid_Data_Created_Successfully()
     {
         DateOnly sittingDate = DateOnly.FromDateTime(DateTime.Now.AddMonths(1));
@@ -130,9 +129,9 @@ public class SittingUiTest : UiTestBase
         capacity.SendKeys("1337");
         
         sittingType.SendKeys("B");
-        
+
+        Thread.Sleep(500);
         Driver.FindElement(By.Id("btn-save")).Click();
-        
         Thread.Sleep(500);
         wait.Until(IsModalLoaded);
         
@@ -143,6 +142,7 @@ public class SittingUiTest : UiTestBase
         // Wait for modal system to finish up
         Thread.Sleep(500);
         wait.Until(IsModalLoaded);
+        Thread.Sleep(500);
         
         ReadOnlyCollection<IWebElement>? afterRows = Driver.FindElements(By.TagName("tr"));
         Assert.That(afterRows.Count, Is.GreaterThan(beforeRows.Count));

@@ -26,7 +26,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 string? connectionString =
-    DatabaseFinder.GetFirstAvailable(stringsToTry.Select(builder.Configuration.GetConnectionString));
+    DatabaseFinder.GetFirstAvailable(stringsToTry.Select(name => (name, builder.Configuration.GetConnectionString(name))));
 
 if (connectionString == null)
     throw new InvalidOperationException("Could not find the right connection string.");

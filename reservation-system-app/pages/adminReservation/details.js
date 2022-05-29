@@ -137,7 +137,7 @@ export default function Details(props) {
                     <View style={componentStyle.modalView}>
                         <Text>Please select new status</Text>
 
-                        <Dropdown label="New Status:" selectedValue={pendingStatusId} onValueChange={setPendingStatusId}>
+                        <Dropdown label="New Status:" selectedValue={pendingStatusId} onValueChange={setPendingStatusId} style={styles.containerItem}>
                             {Object.entries(statuses).map(([id, label], index) => (
                                 <DropdownItem key={index} value={id} label={label}/>
                             ))}
