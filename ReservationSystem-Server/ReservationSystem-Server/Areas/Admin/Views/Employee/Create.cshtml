@@ -4,7 +4,7 @@
     ViewBag.Title = "Create Employee";
 }
 
-<h1>Create Employee</h1>
+<h2>Create Employee</h2>
 
 <form method="post">
     <div asp-validation-summary="All" class="alert alert-danger"></div>
@@ -22,6 +22,11 @@
         <label asp-for="Password"></label>
         <input asp-for="Password" class="form-control"/>
         <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <div>
+        <label asp-for="ConfirmPassword"></label>
+        <input asp-for="ConfirmPassword" class="form-control"/>
+        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
     </div>
 
     <button type="submit" class="btn btn-primary mt-2">Submit</button>
