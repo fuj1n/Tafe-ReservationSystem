@@ -4,7 +4,7 @@ import styles from "../styles";
 import {ScrollView} from "react-native-gesture-handler";
 import api from "../../services/api";
 import {Text, View} from "react-native";
-import {Badge, Button, ErrorDisplay, Loader, StyledText} from "../../components";
+import {Badge, Button, StyledText} from "../../components";
 import moment from "moment";
 
 export default function Details({navigation, route}) {
