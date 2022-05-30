@@ -19,7 +19,7 @@
 </head>
 <body>
 <header>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3" style="background-color: var(--navbar-bg)">
+    <nav class="navbar navbar-expand-lg navbar-toggleable-lg navbar-light border-bottom box-shadow mb-3" style="background-color: var(--navbar-bg)">
         <div class="container-fluid">
             <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
                 <img src="~/images/Brand.png" width="256" height="256" style="width:40px; height: auto;" alt="Logo of a bean above a coffee cup"/>
@@ -28,8 +28,8 @@
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                <nav class="navbar-nav flex-grow-1 d-flex justify-content-between">
+            <div class="navbar-collapse collapse d-lg-inline-flex flex-grow-1">
+                <nav class="navbar-nav flex-grow-1 d-flex flex-grow-1">
                     <partial name="_Nav"/>
                     <partial name="_LoginPartial"/>
                 </nav>

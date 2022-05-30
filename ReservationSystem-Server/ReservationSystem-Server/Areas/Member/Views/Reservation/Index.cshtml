@@ -1,0 +1,54 @@
+﻿@using ReservationSystem_Server.Data
+@using ReservationSystem_Server.Data.Visual
+@using ReservationSystem_Server.Services
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model ReservationSystem_Server.Data.Reservation[]
+@inject ReservationUtility ReservationUtility
+
+@{
+    ViewBag.Title = "My Reservations";
+    Dictionary<int, ReservationStatusVisual> statusVisuals = await ReservationUtility.GetReservationStatusVisualsAsync();
+}
+
+<h2>My Reservations</h2>
+
+<div class="mb-2">
+    <a asp-area="" asp-controller="Reservation" asp-action="Index" class="btn btn-outline-success">Create Reservation</a>
+</div>
+
+<ul class="list-group">
+    @if (Model!.Length == 0)
+    {
+        <li class="list-group-item list-group-item-danger">No reservations</li>
+    }
+    else
+    {
+        @foreach (Reservation reservation in Model)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>
+                    <a asp-action="Details" asp-route-id="@reservation.Id"
+                       class="list-group-item-action reservation-title" style="cursor: pointer">
+                        @reservation.Customer.FirstName @reservation.Customer.LastName -
+                        @reservation.StartTime.ToShortTimeString() to
+                        @reservation.EndTime.ToShortTimeString()
+                    </a>
+                </span>
+                @{
+                    string badgeClass = statusVisuals.GetValueOrDefault(reservation.ReservationStatusId)?.HtmlBadgeClass ?? "bg-primary";
+                }
+                <span>
+                    <span class="badge rounded-pill bg-primary">
+                        @reservation.Tables.Count table(s) assigned
+                    </span>
+                    <span class="badge rounded-pill bg-primary">
+                        @reservation.ReservationOrigin.Description
+                    </span>
+                    <div class="badge @badgeClass rounded-pill" style="width: 100px;">
+                        @reservation.ReservationStatus.Description
+                    </div>
+                </span>
+            </li>
+        }
+    }
+</ul>
