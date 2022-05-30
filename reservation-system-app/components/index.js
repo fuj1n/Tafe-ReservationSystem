@@ -18,3 +18,7 @@ export {default as ReservationPicker} from './reservationPicker';
 export {default as Loader} from './loader';
 
 export {default as ErrorDisplay} from './errorDisplay';
+
+export {default as Badge} from './badge';
+
+export {default as HorizontalRule} from './horizontalRule';

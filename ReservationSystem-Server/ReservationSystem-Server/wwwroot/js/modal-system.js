@@ -133,10 +133,13 @@ async function _openModal(modal, url, method = 'GET', data = null, retries = 0) 
     }
 
     setTitle($('#modal-name').text());
-
+    
     const modalSize = `modal-${$('#modal-size').text()}`;
     setModalSize(modalSize);
-
+    
+    const dismissText = $('#modal-dismiss-text').text();
+    $('#btn-dismiss').text(dismissText.trim() === '' ? 'Close' : dismissText);
+    
     const action = $('#modal-action');
     const submittable = $('#modal-submit');
     const hasAction = action.length > 0 || submittable.length > 0;

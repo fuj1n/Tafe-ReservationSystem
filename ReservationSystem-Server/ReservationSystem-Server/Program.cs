@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
@@ -26,7 +27,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 string? connectionString =
-    DatabaseFinder.GetFirstAvailable(stringsToTry.Select(builder.Configuration.GetConnectionString));
+    DatabaseFinder.GetFirstAvailable(stringsToTry.Select(name => (name, builder.Configuration.GetConnectionString(name))));
 
 if (connectionString == null)
     throw new InvalidOperationException("Could not find the right connection string.");
@@ -144,13 +145,10 @@ builder.Services.AddSwaggerGen(o =>
 builder.Services.AddScoped<CustomerManager>();
 builder.Services.AddScoped<ReservationUtility>();
 builder.Services.AddScoped<SittingUtility>();
+builder.Services.AddScoped<RestaurantProvider>();
 
-// builder.Services.AddScoped<IActionContextAccessor, ActionContextAccessor>();
-// builder.Services.AddScoped<IUrlHelper>(x =>
-// {
-//         ActionContext?  actionContext = x.GetService<IActionContextAccessor>()?.ActionContext;
-//         return new UrlHelper(actionContext ?? throw new InvalidOperationException());
-// });
+// Used for custom tag helpers
+builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
 WebApplication app = builder.Build();
 

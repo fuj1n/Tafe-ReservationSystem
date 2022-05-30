@@ -5,7 +5,14 @@ import {StyleSheet, View, ActivityIndicator} from 'react-native';
 import {useEffect, useState} from "react";
 import {createDrawerNavigator} from "@react-navigation/drawer";
 import login, {LoginContext, LoginInfo} from './services';
-import {LoginPage, TestPalette, ReservationPage, SittingsPage, AdminReservationPage} from "./pages";
+import {
+    LoginPage,
+    TestPalette,
+    ReservationPage,
+    SittingsPage,
+    AdminReservationPage,
+    MemberReservationPage
+} from "./pages";
 import {getFocusedRouteNameFromRoute, NavigationContainer, DefaultTheme} from "@react-navigation/native";
 
 import moment from "moment";
@@ -16,7 +23,10 @@ const navTheme = {
     ...DefaultTheme,
     colors: {
         ...DefaultTheme.colors,
-        background: 'transparent'
+        background: 'transparent',
+        primary: '#6a1a21',
+        card: '#d7c6b4',
+        border: '#b58d90'
     }
 };
 
@@ -52,7 +62,7 @@ export default function App() {
     if (isLoading) {
         return (
             <View style={[styles.root, styles.loadingContainer]}>
-                <ActivityIndicator size="large" color="#0000ff"/>
+                <ActivityIndicator size="large" color="#6a1a21"/>
             </View>
         );
     }
@@ -76,12 +86,18 @@ export default function App() {
                     <Drawer.Navigator initialRouteName="Home" screenOptions={showHeader}>
                         <Drawer.Screen name="TestPalette" options={{title: "Test Palette"}} component={TestPalette}/>
                         <Drawer.Screen name="Reservation" options={{title: "Reservation"}} component={ReservationPage}/>
+                        {loginInfo.user?.roles.includes("Member") &&
+                            <Drawer.Group>
+                                <Drawer.Screen name="MemberReservation" options={{title: "My Reservations"}} component={MemberReservationPage}/>
+                            </Drawer.Group>
+                        }
                         {loginInfo.user?.roles.includes("Employee") &&
                             <Drawer.Group>
                                 <Drawer.Screen name="AdminReservation" options={{title: "Admin/Reservation"}}
                                                component={AdminReservationPage}/>
                                 <Drawer.Screen name="Sittings" options={{title: "Sittings"}} component={SittingsPage}/>
-                            </Drawer.Group>}
+                            </Drawer.Group>
+                        }
                         <Drawer.Screen name="Login" options={{title: "Login"}} component={LoginPage}/>
                     </Drawer.Navigator>
                 </View>
@@ -94,7 +110,7 @@ export default function App() {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        backgroundColor: '#fff'
+        backgroundColor: '#f4ebdc'
     },
     loadingContainer: {
         alignItems: 'center',

@@ -11,7 +11,7 @@ public class CreateViewModel
     public DateTime SittingEnd { get; set; }
     
     public DateTime StartTime { get; set; }
-    public TimeSpan Duration { get; set; } = TimeSpan.FromMinutes(30);
+    public TimeSpan Duration { get; set; }
 
     public int Origin { get; set; }
     
@@ -25,6 +25,7 @@ public class CreateViewModel
     public string? Email { get; set; }
     public string? Phone { get; set; }
     
+    public TimeSpan DefaultDuration { get; set; }
     public SelectList? AvailableOrigins { get; set; }
     public List<DateTime>? TimeSlots { get; set; }
 }

@@ -92,13 +92,13 @@ function DatePickerContent(props) {
             </View>
             <View style={[style.column, {justifyContent: 'center'}]}>
                 {daysGrid.map((week, weekIdx) => (
-                    <View key={weekIdx} style={[style.row, {justifyContent: 'center', height: 32}]}>
+                    <View key={weekIdx} style={[style.row, {justifyContent: 'center', height: 32, marginVertical: 1}]}>
                         {week && week.map((day, dayIdx) => (
                             <View key={dayIdx}
                                   style={{
                                       backgroundColor: isHomeMonth && day.month() === selectedMonth && day.date() === date.date() ? variants.Primary.color :
-                                          day.month() === selectedMonth ? '#FFFFFF' : '#F5F5F5',
-                                      borderColor: '#DDDDDD',
+                                          day.month() === selectedMonth ? '#f4ebdc' : '#d7c6b4',
+                                      borderColor: '#b58d90',
                                       borderWidth: day.month() === selectedMonth ? 1 : 0,
                                       borderRadius: 5,
                                       opacity: day.month() === selectedMonth ? 1 : 0.5,

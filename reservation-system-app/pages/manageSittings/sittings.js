@@ -2,7 +2,7 @@ import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import SittingsList from "./sittingsList";
 import CreateSitting from "./createSitting";
 import EditSitting from "./editSitting";
-import { SittingDetailsPage } from "..";
+import SittingDetailsPage from "./sittingDetails";
 
 export default function SittingsPage() {
     const Stack = createNativeStackNavigator();

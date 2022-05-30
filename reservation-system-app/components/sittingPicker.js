@@ -50,11 +50,11 @@ export default function SittingPicker(props) {
                     prepend = (
                         <View key={thisDate.unix()} style={{
                             justifyContent: 'center', alignItems: 'center', flex: 1,
-                            paddingVertical: 12, backgroundColor: '#cff4fc', borderTopLeftRadius: radius,
+                            paddingVertical: 12, backgroundColor: '#e1d1d3', borderTopLeftRadius: radius,
                             borderTopRightRadius: radius, borderWidth: 1, borderTopWidth: index === 0 ? 1 : 0,
-                            borderColor: 'rgba(0,0,0,.125)'
+                            borderColor: '#b58d90'
                         }}>
-                            <Text style={{color: '#055160', fontWeight: '700'}}>{currentDate.format(dateFormat)}</Text>
+                            <Text style={{color: '#401014', fontWeight: '700'}}>{currentDate.format(dateFormat)}</Text>
                         </View>
                     );
                 }
@@ -62,7 +62,7 @@ export default function SittingPicker(props) {
                 return [
                     prepend,
                     <View key={index} style={[{
-                        backgroundColor: '#FFF', borderWidth: 1, borderTopWidth: 0, borderColor: 'rgba(0,0,0,.125)'
+                        backgroundColor: '#f4ebdc', borderWidth: 1, borderTopWidth: 0, borderColor: '#b58d90'
                     }, index === sittings.length - 1 ? bottomStyle : null]}>
                         <RectButton rippleColor="#cff4fc" style={{
                             flex: 1, justifyContent: 'center', alignItems: 'center', paddingVertical: 12

@@ -17,7 +17,7 @@ namespace ReservationSystem_Server.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.4")
+                .HasAnnotation("ProductVersion", "6.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -557,7 +557,7 @@ namespace ReservationSystem_Server.Migrations
                             Id = 1,
                             Address = "123 Main Street",
                             Email = "email@example.com",
-                            Name = "Carefront",
+                            Name = "Bean Scene Café",
                             PhoneNumber = "0412345678"
                         });
                 });
@@ -615,6 +615,9 @@ namespace ReservationSystem_Server.Migrations
                     b.Property<int>("Capacity")
                         .HasColumnType("int");
 
+                    b.Property<TimeSpan>("DefaultDuration")
+                        .HasColumnType("time");
+
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime2");
 
@@ -643,6 +646,7 @@ namespace ReservationSystem_Server.Migrations
                         {
                             Id = 1,
                             Capacity = 0,
+                            DefaultDuration = new TimeSpan(0, 0, 30, 0, 0),
                             EndTime = new DateTime(2022, 3, 31, 9, 0, 0, 0, DateTimeKind.Local),
                             IsClosed = false,
                             RestaurantId = 1,
@@ -653,6 +657,7 @@ namespace ReservationSystem_Server.Migrations
                         {
                             Id = 2,
                             Capacity = 0,
+                            DefaultDuration = new TimeSpan(0, 0, 30, 0, 0),
                             EndTime = new DateTime(2022, 3, 31, 14, 0, 0, 0, DateTimeKind.Local),
                             IsClosed = false,
                             RestaurantId = 1,
@@ -663,6 +668,7 @@ namespace ReservationSystem_Server.Migrations
                         {
                             Id = 3,
                             Capacity = 0,
+                            DefaultDuration = new TimeSpan(0, 0, 30, 0, 0),
                             EndTime = new DateTime(2022, 3, 31, 21, 0, 0, 0, DateTimeKind.Local),
                             IsClosed = false,
                             RestaurantId = 1,
@@ -951,6 +957,10 @@ namespace ReservationSystem_Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ReactBadgeVariant")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("ReservationStatusVisuals");
@@ -959,27 +969,32 @@ namespace ReservationSystem_Server.Migrations
                         new
                         {
                             Id = 1,
-                            HtmlBadgeClass = "bg-warning"
+                            HtmlBadgeClass = "bg-warning",
+                            ReactBadgeVariant = "warning"
                         },
                         new
                         {
                             Id = 2,
-                            HtmlBadgeClass = "bg-success"
+                            HtmlBadgeClass = "bg-success",
+                            ReactBadgeVariant = "success"
                         },
                         new
                         {
                             Id = 3,
-                            HtmlBadgeClass = "bg-danger"
+                            HtmlBadgeClass = "bg-danger",
+                            ReactBadgeVariant = "danger"
                         },
                         new
                         {
                             Id = 4,
-                            HtmlBadgeClass = "bg-info"
+                            HtmlBadgeClass = "bg-info",
+                            ReactBadgeVariant = "info"
                         },
                         new
                         {
                             Id = 5,
-                            HtmlBadgeClass = "bg-dark"
+                            HtmlBadgeClass = "bg-dark",
+                            ReactBadgeVariant = "dark"
                         });
                 });
 
@@ -1100,6 +1115,17 @@ namespace ReservationSystem_Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("Customer");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            FirstName = "John",
+                            LastName = "Doe",
+                            UserId = "de52760d-3485-4a2a-b892-4e389dfe44b8",
+                            Email = "U@E.COM",
+                            PhoneNumber = "0412345678"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

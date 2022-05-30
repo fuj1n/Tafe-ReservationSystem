@@ -1,19 +1,25 @@
 ﻿@using ReservationSystem_Server.Data.Visual
 @model ReservationSystem_Server.Data.Visual.RestaurantCarouselItemVisual[]
-
+@inject ReservationSystem_Server.Services.RestaurantProvider RestaurantProvider
 @{
     ViewData["Title"] = "Home Page";
+    
+    ReservationSystem_Server.Data.Restaurant restaurant =
+        await RestaurantProvider.GetRestaurantDataAsync() ?? new ReservationSystem_Server.Data.Restaurant
+        {
+            Name = "No restaurant data found"
+        };
 }
 
 <div class="d-flex flex-column align-items-center justify-content-center mb-3">
     <img src="images/Brand.webp" alt="Logo of a coffee bean above a coffee cup" width="256" height="256" style="width: 48px; height: auto;"/>
-    <span class="display-6 text-center">Bean Scene Café</span>
+    <span class="display-6 text-center">@restaurant.Name</span>
 </div>
 
 <div class="d-flex justify-content-center">
     <div class="carousel slide w-75" id="main-carousel" data-bs-ride="carousel">
         <div class="carousel-indicators">
-            @for (int i = 0; i < Model!.Length; i++)
+            @for (int i = 0; i < Model.Length; i++)
             {
                 string activeClass = i == 0 ? "active" : "";
                 <button type="button" data-bs-target="#main-carousel" data-bs-slide-to="@i" class="@activeClass" aria-label="Move to slide @i"></button>

@@ -60,6 +60,9 @@ export default function FirstScreen(props) {
             <TextInput label="This is a text box:" style={styles.containerItem}
                        placeholder="Enter text here..."/>
 
+            <TextInput label="This is a multiline text box:" style={styles.containerItem}
+                       placeholder="Enter text here..." multiline={true}/>
+
             <Dropdown label="This is a dropdown:" items={dropdownOneItems} selectedValue={dropdownValue}
                       onValueChange={setDropdownValue}/>
             <Dropdown style={styles.containerItem} label="This is a dropdown #2:" items={dropdownTwoItems}

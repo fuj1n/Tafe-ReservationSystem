@@ -1,16 +1,20 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using System.Text.RegularExpressions;
+using Microsoft.Data.SqlClient;
 
 namespace ReservationSystem_Server.Helper;
 
 public static class DatabaseFinder
 {
-    public static string? GetFirstAvailable(IEnumerable<string> connectionStrings)
+    private static readonly Regex StripDb = new("(Database|InitialCatalog)=.+?;", RegexOptions.Compiled); 
+    
+    public static string? GetFirstAvailable(IEnumerable<(string, string)> connectionStrings)
     {
-        foreach (string connectionString in connectionStrings)
+        foreach ((string name, string connectionString) in connectionStrings)
         {
             try
             {
-                using var connection = new SqlConnection(connectionString);
+                Console.WriteLine("Trying connection string " + name);
+                using var connection = new SqlConnection(StripDb.Replace(connectionString, ""));
                 connection.Open();
                 return connectionString;
             }

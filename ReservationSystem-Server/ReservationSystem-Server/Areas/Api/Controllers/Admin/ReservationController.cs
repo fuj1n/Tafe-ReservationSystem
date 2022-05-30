@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReservationSystem_Server.Areas.Api.Models.Reservation.Admin;
 using ReservationSystem_Server.Data;
+using ReservationSystem_Server.Data.Visual;
 using ReservationSystem_Server.Services;
-using SittingModel = ReservationSystem_Server.Areas.Api.Models.Sitting.SittingModel;
 
 namespace ReservationSystem_Server.Areas.Api.Controllers.Admin;
 
@@ -26,54 +26,16 @@ public class ReservationController : Controller
         _customerManager = customerManager;
     }
 
-    // TODO: move both get and get by id to /api/v1/admin/sittings
-    /// <summary>
-    /// Get all sittings based on given criteria
-    /// </summary>
-    /// <param name="includePast">Whether to include past sittings</param>
-    /// <param name="includeClosed">Whether to include closed sittings</param>
-    /// <response code="200">All sittings that match criteria</response>
-    [HttpGet]
-    [ProducesResponseType(typeof(SittingModel[]), StatusCodes.Status200OK)]
-    public async Task<IActionResult> Get(bool includePast = false, bool includeClosed = false)
-    {
-        SittingModel[] sittings = (await _sittingUtility.GetSittingsAsync(includePast, includeClosed))
-            .Select(s => new SittingModel().FromSitting(s)).ToArray();
-
-        return Ok(sittings);
-    }
-
-    /// <summary>
-    /// Get a sitting by id
-    /// </summary>
-    /// <param name="id">The id of the sitting to return</param>
-    /// <response code="200">Returns the sitting</response>
-    /// <response code="404">If the sitting does not exist</response>
-    [HttpGet("{id:int}")]
-    [ProducesResponseType(typeof(SittingModel), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Get(int id)
-    {
-        Sitting? sitting = await _sittingUtility.GetSittingAsync(id);
-
-        if (sitting == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(new SittingModel().FromSitting(sitting));
-    }
-
     /// <summary>
     /// Gets all reservations for a given sitting
     /// </summary>
     /// <param name="id">The id of the sitting</param>
     /// <response code="200">All reservations for the sitting</response>
     /// <response code="404">If the sitting does not exist</response>
-    [HttpGet("list/{id:int}")]
+    [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(ReservationModel[]), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Reservations(int id)
+    public async Task<IActionResult> Get(int id)
     {
         Sitting? sitting = await _sittingUtility.GetSittingAsync(id);
         
@@ -116,7 +78,7 @@ public class ReservationController : Controller
             Notes = model.Notes
         };
 
-        await _reservationUtility.ValidateReservationAsync(reservation, ModelState, true);
+        await _reservationUtility.ValidateReservationAsync(reservation, ModelState, false);
 
         if (!ModelState.IsValid)
         {
@@ -162,6 +124,7 @@ public class ReservationController : Controller
 
         Reservation updated = new()
         {
+            Id = id,
             SittingId = model.SittingId,
 
             StartTime = model.StartTime,
@@ -192,13 +155,14 @@ public class ReservationController : Controller
     /// <param name="id">The id of the reservation</param>
     /// <param name="statusId">The id of the new status</param>
     /// <returns>The updated reservation</returns>
-    [HttpPost("{id:int}/status")]
+    [HttpPut("{id:int}/status")]
     [ProducesResponseType(typeof(ReservationModel), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> SetStatus(int id, int statusId)
     {
-        Reservation? reservation = await _reservationUtility.GetReservationAsync(id);
+        Reservation? reservation = await _reservationUtility.GetReservationAsync(id, q => q
+            .Include(r => r.Customer));
         ReservationStatus? status = await _reservationUtility.GetStatusAsync(statusId);
         
         if(reservation == null)
@@ -223,6 +187,7 @@ public class ReservationController : Controller
     /// <response code="200">Returns all reservation origins</response>
     [HttpGet("origins")]
     [ProducesResponseType(typeof(ReservationOrigin[]), StatusCodes.Status200OK)]
+    [AllowAnonymous]
     public async Task<IActionResult> GetOrigins()
     {
         return Ok(await _reservationUtility.GetOriginsAsync());
@@ -237,6 +202,7 @@ public class ReservationController : Controller
     [HttpGet("origin/{id:int}")]
     [ProducesResponseType(typeof(ReservationOrigin), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [AllowAnonymous]
     public async Task<IActionResult> GetOrigin(int id)
     {
         ReservationOrigin? origin = await _reservationUtility.GetOriginAsync(id);
@@ -270,6 +236,7 @@ public class ReservationController : Controller
     [HttpGet("status/{id:int}")]
     [ProducesResponseType(typeof(ReservationStatus), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [AllowAnonymous]
     public async Task<IActionResult> GetStatus(int id)
     {
         ReservationStatus? status = await _reservationUtility.GetStatusAsync(id);
@@ -279,5 +246,17 @@ public class ReservationController : Controller
         }
 
         return Ok(status);
+    }
+
+    /// <summary>
+    /// Retrieves the reservation status visual badge information
+    /// </summary>
+    /// <response code="200">Returns the reservation status visual badge information</response>
+    [HttpGet("status/badges")]
+    [ProducesResponseType(typeof(ReservationStatusVisual), StatusCodes.Status200OK)]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetStatusBadgeVisuals()
+    {
+        return Ok(await _reservationUtility.GetReservationStatusVisualsAsync());
     }
 }

@@ -1,0 +1,20 @@
+﻿@model ReservationSystem_Server.Data.Restaurant
+
+@{
+    ViewBag.Title = "Restaurant";
+}
+
+<h2>Restaurant Details</h2>
+
+<dl>
+    <dt>Restaurant Name:</dt>
+    <dd>@Model.Name</dd>
+    <dt>Restaurant Address:</dt>
+    <dd>@Model.Address</dd>
+    <dt>Restaurant Phone:</dt>
+    <dd>@Model.PhoneNumber</dd>
+    <dt>Restaurant Email:</dt>
+    <dd>@Model.Email</dd>
+</dl>
+
+<a asp-action="Edit" class="btn btn-outline-primary mt-2">Edit</a>

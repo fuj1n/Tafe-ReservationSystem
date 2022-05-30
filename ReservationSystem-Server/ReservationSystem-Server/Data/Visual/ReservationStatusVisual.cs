@@ -10,4 +10,5 @@ public class ReservationStatusVisual
     public ReservationStatus ReservationStatus { get; set; } = null!;
     
     public string HtmlBadgeClass { get; set; } = "";
+    public string ReactBadgeVariant { get; set; } = "";
 }
