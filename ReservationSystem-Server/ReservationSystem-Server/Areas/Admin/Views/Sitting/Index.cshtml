@@ -69,16 +69,14 @@
                         <a class="btn btn-outline-primary btn-sm rounded-pill modal-for" asp-action="Edit" asp-route-id="@sitting.Id">Edit</a>
                     </td>
                     <td>
-                        <form method="post" asp-action="Close" asp-route-id="@sitting.Id">
                         @if (!sitting.IsClosed)
                         {
-                            <input type="submit" class="btn btn-outline-danger btn-sm rounded-pill" value="Close" />
+                            <a class="btn btn-outline-danger btn-sm rounded-pill modal-for" asp-action="Close" asp-route-id="@sitting.Id">Close</a>
                         }
                         else
                         {
-                            <input type="submit" class="btn btn-outline-danger btn-sm rounded-pill disabled" value="Close" />
+                            <button class="btn btn-outline-danger btn-sm rounded-pill disabled">Close</button>
                         }
-                        </form>
                     </td>
                 </tr>
             }
