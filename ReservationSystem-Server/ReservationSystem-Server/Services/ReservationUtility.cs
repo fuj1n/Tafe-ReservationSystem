@@ -81,8 +81,9 @@ public class ReservationUtility
     /// <param name="reservation">The reservation to validate</param>
     /// <param name="modelState">The model state to store result in</param>
     /// <param name="requireAvailable">Whether the availability validation runs (shouldn't for edit operation)</param>
+    /// <param name="allowDurationAlter">Whether to allow the duration to be altered from the default value</param>
     public async Task ValidateReservationAsync(Reservation reservation, ModelStateDictionary modelState,
-        bool requireAvailable)
+        bool requireAvailable, bool allowDurationAlter = false)
     {
         Sitting? sitting = await _sittingUtility.GetSittingAsync(reservation.SittingId);
 
@@ -104,9 +105,13 @@ public class ReservationUtility
         if (requireAvailable && _sittingUtility.EvaluateAvailability(sitting))
             modelState.AddModelError(nameof(Reservation.SittingId), "The given sitting is not available");
         
-        if (!GetTimeSlots(sitting.StartTime, sitting.EndTime, TimeSpan.FromMinutes(30)).Contains(reservation.StartTime))
+        if (!GetTimeSlots(sitting.StartTime, sitting.EndTime, sitting.DefaultDuration).Contains(reservation.StartTime))
             modelState.AddModelError(nameof(Reservation.StartTime),
-                $"The start time must be between {sitting.StartTime} and {sitting.EndTime} in 30 minute intervals");
+                $"The start time must be between {sitting.StartTime} and {sitting.EndTime} in {sitting.DefaultDuration} intervals");
+        
+        if(!allowDurationAlter && reservation.Duration != sitting.DefaultDuration)
+            modelState.AddModelError(nameof(Reservation.Duration),
+                $"The duration must be {sitting.DefaultDuration}");
     }
 
     /// <summary>

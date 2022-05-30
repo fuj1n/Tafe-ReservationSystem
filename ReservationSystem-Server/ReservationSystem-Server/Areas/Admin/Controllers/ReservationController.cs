@@ -18,8 +18,6 @@ public class ReservationController : Controller
     private readonly ReservationUtility _reservationUtility;
     private readonly SittingUtility _sittingUtility;
 
-    private readonly TimeSpan _timeSlotLength = TimeSpan.FromMinutes(30);
-
     public ReservationController(ApplicationDbContext context, CustomerManager customerManager,
         ReservationUtility reservationUtility, SittingUtility sittingUtility)
     {
@@ -87,9 +85,11 @@ public class ReservationController : Controller
             SittingEnd = sitting.EndTime,
 
             StartTime = sitting.StartTime,
+            Duration = sitting.DefaultDuration,
+            DefaultDuration = sitting.DefaultDuration,
 
             AvailableOrigins = await _reservationUtility.GetOriginsAsSelectListAsync(),
-            TimeSlots = _reservationUtility.GetTimeSlots(sitting.StartTime, sitting.EndTime, _timeSlotLength)
+            TimeSlots = _reservationUtility.GetTimeSlots(sitting.StartTime, sitting.EndTime, sitting.DefaultDuration)
         };
 
         return View(model);
@@ -114,12 +114,12 @@ public class ReservationController : Controller
             ReservationStatusId = 1
         };
 
-        await _reservationUtility.ValidateReservationAsync(reservation, ModelState, false);
+        await _reservationUtility.ValidateReservationAsync(reservation, ModelState, false, true);
         
         if (!ModelState.IsValid)
         {
             model.AvailableOrigins = await _reservationUtility.GetOriginsAsSelectListAsync();
-            model.TimeSlots = _reservationUtility.GetTimeSlots(model.SittingStart, model.SittingEnd, _timeSlotLength);
+            model.TimeSlots = _reservationUtility.GetTimeSlots(model.SittingStart, model.SittingEnd, model.DefaultDuration);
             return View(model);
         }
         
@@ -164,7 +164,7 @@ public class ReservationController : Controller
 
             AvailableOrigins = await _reservationUtility.GetOriginsAsSelectListAsync(),
             TimeSlots = _reservationUtility.GetTimeSlots(reservation.Sitting.StartTime, reservation.Sitting.EndTime,
-                _timeSlotLength)
+                reservation.Sitting.DefaultDuration)
         };
 
         return View(model);
@@ -201,12 +201,12 @@ public class ReservationController : Controller
             ReservationStatusId = 1
         };
 
-        await _reservationUtility.ValidateReservationAsync(updated, ModelState, false);
+        await _reservationUtility.ValidateReservationAsync(updated, ModelState, false, true);
         
         if (!ModelState.IsValid)
         {
             model.AvailableOrigins = await _reservationUtility.GetOriginsAsSelectListAsync();
-            model.TimeSlots = _reservationUtility.GetTimeSlots(sitting.StartTime, sitting.EndTime, _timeSlotLength);
+            model.TimeSlots = _reservationUtility.GetTimeSlots(sitting.StartTime, sitting.EndTime, sitting.DefaultDuration);
             return View(model);
         }
 
