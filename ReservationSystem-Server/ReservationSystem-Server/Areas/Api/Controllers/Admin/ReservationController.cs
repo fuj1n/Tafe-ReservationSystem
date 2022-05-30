@@ -187,6 +187,7 @@ public class ReservationController : Controller
     /// <response code="200">Returns all reservation origins</response>
     [HttpGet("origins")]
     [ProducesResponseType(typeof(ReservationOrigin[]), StatusCodes.Status200OK)]
+    [AllowAnonymous]
     public async Task<IActionResult> GetOrigins()
     {
         return Ok(await _reservationUtility.GetOriginsAsync());
@@ -201,6 +202,7 @@ public class ReservationController : Controller
     [HttpGet("origin/{id:int}")]
     [ProducesResponseType(typeof(ReservationOrigin), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [AllowAnonymous]
     public async Task<IActionResult> GetOrigin(int id)
     {
         ReservationOrigin? origin = await _reservationUtility.GetOriginAsync(id);
@@ -252,6 +254,7 @@ public class ReservationController : Controller
     /// <response code="200">Returns the reservation status visual badge information</response>
     [HttpGet("status/badges")]
     [ProducesResponseType(typeof(ReservationStatusVisual), StatusCodes.Status200OK)]
+    [AllowAnonymous]
     public async Task<IActionResult> GetStatusBadgeVisuals()
     {
         return Ok(await _reservationUtility.GetReservationStatusVisualsAsync());

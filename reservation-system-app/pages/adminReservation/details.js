@@ -30,7 +30,7 @@ export default function Details(props) {
 
     useFocusEffect(useCallback(() => {
         async function getOrigin() {
-            const response = await api.reservations.getOriginById(loginInfo.jwt, reservation.reservationOriginId);
+            const response = await api.reservations.getOriginById(reservation.reservationOriginId);
 
             if (response.error) {
                 return "Cannot determine origin";
@@ -50,7 +50,7 @@ export default function Details(props) {
         }
 
         async function getVisuals() {
-            const response = await api.reservations.getStatusBadgeVisuals(loginInfo.jwt);
+            const response = await api.reservations.getStatusBadgeVisuals();
 
             if (response.error) {
                 return {};

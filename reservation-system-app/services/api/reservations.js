@@ -14,6 +14,19 @@ async function getReservationsAsAdmin(jwt, sittingId) {
 }
 
 /**
+ * @returns {Promise<* | ErrorDesc>} Array of reservations
+ */
+async function getReservationsAsMember(jwt) {
+    const response = await common.fetch(`member/reservation`, "GET", null, jwt);
+
+    if(response.ok) {
+        return await response.json();
+    }
+
+    return await common.processError(response);
+}
+
+/**
  * @returns {Promise<Object.<string, string> | ErrorDesc>} A status id to description map
  */
 async function getStatuses() {
@@ -46,8 +59,8 @@ async function getStatusById(statusId) {
 /**
  * @returns {Promise<Object.<string, string> | ErrorDesc>} An origin id to description map
  */
-async function getOrigins(jwt) {
-    const response = await common.fetch("admin/reservation/origins", "GET", null, jwt);
+async function getOrigins() {
+    const response = await common.fetch("admin/reservation/origins", "GET");
 
     if (response.ok) {
         const result = await response.json();
@@ -63,8 +76,8 @@ async function getOrigins(jwt) {
 /**
  * @returns {Promise<string | ErrorDesc>}
  */
-async function getOriginById(jwt, originId) {
-    const response = await common.fetch(`admin/reservation/origin/${originId}`, "GET", null, jwt);
+async function getOriginById(originId) {
+    const response = await common.fetch(`admin/reservation/origin/${originId}`, "GET");
 
     if (response.ok) {
         return (await response.json()).description;
@@ -80,8 +93,8 @@ async function getOriginById(jwt, originId) {
  * @property {string} reactBadgeVariant
  * @returns {Promise<Object.<string, StatusBadgeVisual> | ErrorDesc>}
  */
-async function getStatusBadgeVisuals(jwt) {
-    const response = await common.fetch("admin/reservation/status/badges", "GET", null, jwt);
+async function getStatusBadgeVisuals() {
+    const response = await common.fetch("admin/reservation/status/badges", "GET");
 
     if (response.ok) {
         return await response.json();
@@ -125,6 +138,7 @@ async function editReservationAsAdmin(jwt, reservation) {
 
 export default {
     getReservationsAsAdmin,
+    getReservationsAsMember,
     getStatuses,
     getStatusById,
     getOrigins,

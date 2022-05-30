@@ -12,8 +12,8 @@ import StyledText from "./styledText";
  */
 export default function ReservationPicker(props) {
     const {reservations} = props;
-    const customerFirstNameSelector = props.customerNameSelector ?? (r => r.customer?.firstName);
-    const customerLastNameSelector = props.customerNameSelector ?? (r => r.customer?.lastName);
+    const customerFirstNameSelector = props.customerFirstNameSelector ?? (r => r.customer?.firstName);
+    const customerLastNameSelector = props.customerLastNameSelector ?? (r => r.customer?.lastName);
     const startTimeSelector = props.startTimeSelector ?? (r => r.startTime);
     const durationSelector = props.durationSelector ?? (r => r.duration);
     const timeFormat = props.timeOutFormat ?? "hh:mm A";

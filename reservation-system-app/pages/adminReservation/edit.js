@@ -45,7 +45,7 @@ export default function Edit({route, navigation}) {
 
     useFocusEffect(useCallback(() => {
         async function getOrigins() {
-            const origins = await api.reservations.getOrigins(loginInfo.jwt);
+            const origins = await api.reservations.getOrigins();
 
             if(origins.error) {
                 setBlockingError(origins);
