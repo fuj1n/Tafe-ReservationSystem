@@ -102,6 +102,7 @@ namespace ReservationSystem_Server.Areas.Api.Controllers.Admin
             {
                 StartTime = vm.StartTime,
                 EndTime = vm.EndTime,
+                DefaultDuration = vm.DefaultDuration,
                 Capacity = vm.Capacity,
                 SittingTypeId = vm.SittingTypeId,
                 RestaurantId = 1
@@ -131,6 +132,7 @@ namespace ReservationSystem_Server.Areas.Api.Controllers.Admin
             }
             sitting.StartTime = vm.StartTime;
             sitting.EndTime = vm.EndTime;
+            sitting.DefaultDuration = vm.DefaultDuration;
             sitting.Capacity = vm.Capacity;
             sitting.SittingTypeId = vm.SittingTypeId;
 

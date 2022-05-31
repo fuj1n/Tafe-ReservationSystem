@@ -16,8 +16,7 @@ export default function SittingDetails(props) {
 
     const [sittingTypes, setSittingTypes] = useState({});
 
-    const { sitting }= route.params;
-    const [operation, setOperation] = useState(route.params.operation);
+    const { sitting, operation } = route.params;
     const [isClosed, setIsClosed] = useState(sitting.isClosed);
 
     const { loginInfo } = useContext(LoginContext);
@@ -42,7 +41,7 @@ export default function SittingDetails(props) {
             .catch(() => { });
         if (response.ok) {
             setIsClosed(true);
-            setOperation("closed")
+            navigation.navigate("SittingDetails", { sitting: sitting, operation: "closed" });
         }
     }
 
@@ -52,8 +51,9 @@ export default function SittingDetails(props) {
             <Text>Type: {sittingTypes[sitting.sittingTypeId]}</Text>
             <Text>Start Time: {moment(sitting.startTime).format("hh:mm A")}</Text>
             <Text>End Time: {moment(sitting.endTime).format("hh:mm A")}</Text>
+            <Text>Default Duration: {moment.duration(sitting.defaultDuration).humanize()}</Text>
             <Text>Capacity: {sitting.capacity}</Text>
-            <Text>Is Closed: {isClosed.toString()}</Text>
+            <Text>Status: {isClosed ? "Closed" : "Open"}</Text>
             <View style={{ flexDirection: 'row' }}>
                 <Button style={{ flex: 1 }} variant="primary"
                     onPress={() => navigation.navigate("EditSitting", { sitting })}>Edit</Button>

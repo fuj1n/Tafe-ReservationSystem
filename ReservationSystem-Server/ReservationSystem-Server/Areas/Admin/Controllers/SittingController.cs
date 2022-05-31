@@ -45,6 +45,7 @@ namespace ReservationSystem_Server.Areas.Admin.Controllers
             {
                 StartTime = dt,
                 EndTime = dt,
+                DefaultDuration = TimeSpan.FromMinutes(30),
                 SittingTypes = new SelectList(await _context.SittingTypes.ToListAsync(), "Id", "Description")
             };
             return View(vm);
@@ -59,6 +60,7 @@ namespace ReservationSystem_Server.Areas.Admin.Controllers
             {
                 StartTime = vm.StartTime,
                 EndTime = vm.EndTime,
+                DefaultDuration = vm.DefaultDuration,
                 Capacity = vm.Capacity,
                 SittingTypeId = vm.SittingTypeId,
                 RestaurantId = 1
@@ -95,6 +97,7 @@ namespace ReservationSystem_Server.Areas.Admin.Controllers
                 Id = id,
                 StartTime = DateTimeTruncate(sitting.StartTime),
                 EndTime = DateTimeTruncate(sitting.EndTime),
+                DefaultDuration = sitting.DefaultDuration,
                 Capacity = sitting.Capacity,
                 SittingTypeId = sitting.SittingTypeId,
                 SittingTypes = new SelectList(await _context.SittingTypes.ToListAsync(), "Id", "Description")
@@ -128,6 +131,7 @@ namespace ReservationSystem_Server.Areas.Admin.Controllers
             }
             sitting.StartTime = vm.StartTime;
             sitting.EndTime = vm.EndTime;
+            sitting.DefaultDuration = vm.DefaultDuration;
             sitting.Capacity = vm.Capacity;
             sitting.SittingTypeId = vm.SittingTypeId;
 

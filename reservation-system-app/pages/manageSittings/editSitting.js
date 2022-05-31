@@ -14,6 +14,7 @@ export default function EditSitting(props) {
     const { sitting } = route.params;
     const [startTime, setStartTime] = useState(sitting.startTime);
     const [endTime, setEndTime] = useState(sitting.endTime);
+    const [defaultDuration, setDefaultDuration] = useState(sitting.defaultDuration);
     const [capacity, setCapacity] = useState(sitting.capacity);
     const [sittingType, setSittingType] = useState(sitting.sittingTypeId);
 
@@ -48,6 +49,7 @@ export default function EditSitting(props) {
             "id": sitting.id,
             "startTime": startTime,
             "endTime": endTime,
+            "defaultDuration": defaultDuration,
             "capacity": capacity,
             "sittingTypeId": sittingType,
         };
@@ -57,6 +59,7 @@ export default function EditSitting(props) {
             setError(await api.common.processError(response));
         }
         else {
+            navigation.pop();
             navigation.navigate("SittingDetails", { sitting: await response.json(), operation: "edited" });
         }
     }
@@ -66,6 +69,7 @@ export default function EditSitting(props) {
             <ErrorDisplay error={error} />  
             <DatePicker label="Start Time: " style={styles.containerItem} value={startTime} onChange={setStartTime} />
             <DatePicker label="End Time: " style={styles.containerItem} value={endTime} onChange={setEndTime} />
+            <TextInput label="Default Duration" value={defaultDuration} onChangeText={setDefaultDuration} />
             <TextInput label="Capacity: " value={capacity} onChangeText={setCapacity} keyboardType="numeric" />
             <Dropdown style={styles.containerItem} label="Sitting Type:" items={sittingTypesDropdown}
                 selectedValue={sittingType} onValueChange={setSittingType} />
