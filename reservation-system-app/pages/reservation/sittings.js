@@ -53,7 +53,9 @@ export default function SittingsPage(props) {
    return (
     <ScrollView contentContainerStyle={styles.container} ref={ref}>
         <Text style={{textAlign:"center",fontWeight:'bold'}}>Please select a sitting</Text>
-       <SittingPicker sittings={sittings} sittingTypeSelector={s=>s.sittingType} onSelected={onButtonPressed}/>
+       <SittingPicker sittings={sittings} sittingTypeSelector={s=>s.sittingType} onSelected={onButtonPressed} 
+       noSittingsMessage="No sittings found, please contact the restaurant for further information"/>
+
     </ScrollView>
 
    );
@@ -82,22 +84,23 @@ export default function SittingsPage(props) {
         const date = new Date(parseInt(ticks)); //values for keys always stored as strings, must convert to Int
         return date.toLocaleDateString();  // convert it to a formatted date based on locale
     };
-        console.log (Object.entries(sittingsByDate)); //array of key value pair where the ticks is the key and the value is the sittings array
     
-    return (
-        <ScrollView contentContainerStyle={styles.container} ref={ref}>
+    //     console.log (Object.entries(sittingsByDate)); //array of key value pair where the ticks is the key and the value is the sittings array
+    
+    // return (
+    //     <ScrollView contentContainerStyle={styles.container} ref={ref}>
           
-            {Object.entries(sittingsByDate).map(([ticks,sittingsList])=>(  //separates objects into an array of entries
-                <View style={{alignItems:"stretch"}} key={parseInt(ticks)}>
+    //         {Object.entries(sittingsByDate).map(([ticks,sittingsList])=>(  //separates objects into an array of entries
+    //             <View style={{alignItems:"stretch"}} key={parseInt(ticks)}>
 
-                    <Text style={[styles.containerItem,{textAlign:"center", fontWeight: "bold"}]}>{format(ticks)}</Text> 
-                    {sittingsList.map((s)=>( 
-                        <Row key={s.id} sitting={s} navigation={navigation}/> //{fromat{ticks} = returns the formatted date of ticks*/}, mapping sitting list to an array of row components
-                    ))}
+    //                 <Text style={[styles.containerItem,{textAlign:"center", fontWeight: "bold"}]}>{format(ticks)}</Text> 
+    //                 {sittingsList.map((s)=>( 
+    //                     <Row key={s.id} sitting={s} navigation={navigation}/> //{fromat{ticks} = returns the formatted date of ticks*/}, mapping sitting list to an array of row components
+    //                 ))}
 
-                </View>
-            ))}                     
+    //             </View>
+    //         ))}                     
 
-        </ScrollView>
-    );
+    //     </ScrollView>
+    // );
 }

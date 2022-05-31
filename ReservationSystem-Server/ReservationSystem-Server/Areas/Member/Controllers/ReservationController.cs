@@ -39,6 +39,7 @@ public class ReservationController : Controller
             .Include(r => r.ReservationOrigin)
             .Include(r => r.ReservationStatus)
             .Include(r => r.Customer)
+            .Include(r => r.Tables)
             .Include(r => r.Sitting).ThenInclude(s => s.SittingType)
         );
         

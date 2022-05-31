@@ -91,7 +91,7 @@ export default function CreateReservation(props) {
                 onValueChange={setNoOfGuests} />
             {noOfGuests > 10 &&
                 <StyledText variant="danger">
-                    For reservations of more than 10 people, please contact the restaurant at 0412345678.
+                    Bookings of more than 10 must be made by contacting the restaurant
                 </StyledText>}
 
             <TextInput label="First Name" style={styles.containerItem} placeholder="Your First Name" value={firstName} onChangeText={setFirstName}/>
@@ -100,7 +100,7 @@ export default function CreateReservation(props) {
             <TextInput label="Phone" style={styles.containerItem} placeholder="Your Phone Number" value={phone} onChangeText={setPhone}/>
             <TextInput label="Notes" style={styles.containerItem} placeholder="Any additional requests" value={notes} onChangeText={setNotes}/>
 
-            <Button variant="primary" onPress={onSubmit}>Submit</Button>
+            <Button disabled={noOfGuestsValues>10} variant="primary" onPress={onSubmit}>Submit</Button>
             {error.map((e, index) => (
                 <StyledText key={index} variant="danger">{e}</StyledText>
             ))}

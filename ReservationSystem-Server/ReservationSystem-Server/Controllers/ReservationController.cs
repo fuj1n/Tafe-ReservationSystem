@@ -41,8 +41,8 @@ namespace ReservationSystem_Server.Controllers
                 StartTime = sitting.StartTime,
                 SittingEndTime = sitting.EndTime,
                 SittingType = sitting.SittingType.Description,
-                Duration = TimeSpan.FromMinutes (30), 
-                TimeSlots = _utility.GetTimeSlots(sitting.StartTime, sitting.EndTime, TimeSpan.FromMinutes(30))
+                DefaultDuration = sitting.DefaultDuration, 
+                TimeSlots = _utility.GetTimeSlots(sitting.StartTime, sitting.EndTime, sitting.DefaultDuration)
             };
 
             if (customer != null)
@@ -59,9 +59,14 @@ namespace ReservationSystem_Server.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Models.Reservation.CreateVM model)
         {
+            //if (model.NoOfPeople > 10)
+            //{
+            //    ModelState.AddModelError("NoOfPeople", "Bookings of more than 10 must be made by contacting the restaurant");
+            //}
+
             if (!ModelState.IsValid)
             {
-                model.TimeSlots = _utility.GetTimeSlots(model.SittingStartTime, model.SittingEndTime, TimeSpan.FromMinutes(30));
+                model.TimeSlots = _utility.GetTimeSlots(model.SittingStartTime, model.SittingEndTime, model.DefaultDuration);
                 return View(model);
             }
 
@@ -74,7 +79,7 @@ namespace ReservationSystem_Server.Controllers
             var reservation = new Reservation
             {
                 StartTime = model.StartTime,
-                Duration = TimeSpan.FromMinutes(30),
+                Duration = model.DefaultDuration,
                 Notes = model.Notes,
                 NumberOfPeople = model.NoOfPeople,
                 SittingId = model.SittingId,
@@ -83,6 +88,7 @@ namespace ReservationSystem_Server.Controllers
                 ReservationOriginId = 4
             };
 
+            
             _context.Reservations.Add(reservation);
             await _context.SaveChangesAsync();
             return RedirectToAction("Confirmation", new {id=reservation.Id});
