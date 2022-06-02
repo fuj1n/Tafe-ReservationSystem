@@ -1,0 +1,141 @@
+2022-06-02 10:51:14.063 +10:00 [INF] User profile is available. Using 'C:\Users\3c3a1bbb5fd5e60c\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2022-06-02 10:51:14.774 +10:00 [INF] Now listening on: https://localhost:7264
+2022-06-02 10:51:14.779 +10:00 [INF] Now listening on: http://localhost:5264
+2022-06-02 10:51:14.782 +10:00 [INF] Application started. Press Ctrl+C to shut down.
+2022-06-02 10:51:14.784 +10:00 [INF] Hosting environment: Development
+2022-06-02 10:51:14.786 +10:00 [INF] Content root path: E:\TAFE\Dip Software\Programming\Project\Tafe-ReservationSystem\ReservationSystem-Server\ReservationSystem-Server\
+2022-06-02 10:51:15.295 +10:00 [INF] Request starting HTTP/2 GET https://localhost:7264/ - -
+2022-06-02 10:51:15.465 +10:00 [INF] Executing endpoint 'ReservationSystem_Server.Controllers.HomeController.Index (ReservationSystem-Server)'
+2022-06-02 10:51:15.477 +10:00 [INF] Route matched with {action = "Index", controller = "Home", area = "", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Index() on controller ReservationSystem_Server.Controllers.HomeController (ReservationSystem-Server).
+2022-06-02 10:51:16.258 +10:00 [INF] Entity Framework Core 6.0.5 initialized 'ApplicationDbContext' using provider 'Microsoft.EntityFrameworkCore.SqlServer:6.0.4' with options: None
+2022-06-02 10:51:16.544 +10:00 [INF] Executed DbCommand (27ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [r].[Id], [r].[ImageUrl], [r].[RestaurantId], [r].[Text]
+FROM [RestaurantCarouselItemVisuals] AS [r]
+WHERE [r].[RestaurantId] = 1
+2022-06-02 10:51:25.641 +10:00 [INF] Executing ViewResult, running view Index.
+2022-06-02 10:51:25.699 +10:00 [INF] Executed DbCommand (12ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [r].[Id], [r].[Address], [r].[Email], [r].[Name], [r].[PhoneNumber]
+FROM [Restaurants] AS [r]
+WHERE [r].[Id] = @__p_0
+2022-06-02 10:51:26.917 +10:00 [INF] Executed ViewResult - view Index executed in 10328.3485ms.
+2022-06-02 10:51:26.924 +10:00 [INF] Executed action ReservationSystem_Server.Controllers.HomeController.Index (ReservationSystem-Server) in 11443.2356ms
+2022-06-02 10:51:26.925 +10:00 [INF] Request starting HTTP/2 GET https://localhost:7264/scss/customBootstrap.css - -
+2022-06-02 10:51:26.925 +10:00 [INF] Request starting HTTP/2 GET https://localhost:7264/css/site.css?v=lrnOwUoqwGFRDvpcF-sEiFdXu5mA0GD_EFkteuSSphg - -
+2022-06-02 10:51:26.930 +10:00 [INF] Executed endpoint 'ReservationSystem_Server.Controllers.HomeController.Index (ReservationSystem-Server)'
+2022-06-02 10:51:26.934 +10:00 [INF] Request starting HTTP/2 GET https://localhost:7264/js/site.js?v=4q1jwFhaPaZgr8WAUSrux6hAuh0XDg9kPS3xIVq36I0 - -
+2022-06-02 10:51:26.940 +10:00 [INF] The file /js/site.js was not modified
+2022-06-02 10:51:26.940 +10:00 [INF] The file /scss/customBootstrap.css was not modified
+2022-06-02 10:51:26.940 +10:00 [INF] The file /css/site.css was not modified
+2022-06-02 10:51:26.947 +10:00 [INF] Request finished HTTP/2 GET https://localhost:7264/scss/customBootstrap.css - - - 304 - text/css 20.5990ms
+2022-06-02 10:51:26.947 +10:00 [INF] Request finished HTTP/2 GET https://localhost:7264/css/site.css?v=lrnOwUoqwGFRDvpcF-sEiFdXu5mA0GD_EFkteuSSphg - - - 304 - text/css 21.4094ms
+2022-06-02 10:51:26.947 +10:00 [INF] Request finished HTTP/2 GET https://localhost:7264/js/site.js?v=4q1jwFhaPaZgr8WAUSrux6hAuh0XDg9kPS3xIVq36I0 - - - 304 - application/javascript 12.7802ms
+2022-06-02 10:51:26.951 +10:00 [INF] Request starting HTTP/2 GET https://localhost:7264/images/Brand.png - -
+2022-06-02 10:51:26.956 +10:00 [INF] Request finished HTTP/2 GET https://localhost:7264/ - - - 200 - text/html;+charset=utf-8 11661.8864ms
+2022-06-02 10:51:26.956 +10:00 [INF] The file /images/Brand.png was not modified
+2022-06-02 10:51:26.969 +10:00 [INF] Request starting HTTP/2 GET https://localhost:7264/images/Brand.webp - -
+2022-06-02 10:51:26.969 +10:00 [INF] Request finished HTTP/2 GET https://localhost:7264/images/Brand.png - - - 304 - image/png 18.5167ms
+2022-06-02 10:51:26.971 +10:00 [INF] Request starting HTTP/2 GET https://localhost:7264/images/home-carousel/ArabicaBeans.webp - -
+2022-06-02 10:51:26.979 +10:00 [INF] The file /images/Brand.webp was not modified
+2022-06-02 10:51:27.017 +10:00 [INF] The file /images/home-carousel/ArabicaBeans.webp was not modified
+2022-06-02 10:51:27.018 +10:00 [INF] Request starting HTTP/2 GET https://localhost:7264/images/home-carousel/BlueberryMuffin.webp - -
+2022-06-02 10:51:27.020 +10:00 [INF] Request finished HTTP/2 GET https://localhost:7264/images/Brand.webp - - - 304 - image/webp 51.4174ms
+2022-06-02 10:51:27.023 +10:00 [INF] Request starting HTTP/2 GET https://localhost:7264/images/home-carousel/Cakes.webp - -
+2022-06-02 10:51:27.023 +10:00 [INF] Request finished HTTP/2 GET https://localhost:7264/images/home-carousel/ArabicaBeans.webp - - - 304 - image/webp 53.1400ms
+2022-06-02 10:51:27.025 +10:00 [INF] The file /images/home-carousel/BlueberryMuffin.webp was not modified
+2022-06-02 10:51:27.029 +10:00 [INF] The file /images/home-carousel/Cakes.webp was not modified
+2022-06-02 10:51:27.025 +10:00 [INF] Request starting HTTP/2 GET https://localhost:7264/images/home-carousel/Cappuccino.webp - -
+2022-06-02 10:51:27.033 +10:00 [INF] Request finished HTTP/2 GET https://localhost:7264/images/home-carousel/BlueberryMuffin.webp - - - 304 - image/webp 14.3830ms
+2022-06-02 10:51:27.035 +10:00 [INF] Request starting HTTP/2 GET https://localhost:7264/images/home-carousel/Counter.webp - -
+2022-06-02 10:51:27.035 +10:00 [INF] Request finished HTTP/2 GET https://localhost:7264/images/home-carousel/Cakes.webp - - - 304 - image/webp 12.2848ms
+2022-06-02 10:51:27.038 +10:00 [INF] Request starting HTTP/2 GET https://localhost:7264/images/home-carousel/FunctionArea.webp - -
+2022-06-02 10:51:27.041 +10:00 [INF] The file /images/home-carousel/Counter.webp was not modified
+2022-06-02 10:51:27.037 +10:00 [INF] The file /images/home-carousel/Cappuccino.webp was not modified
+2022-06-02 10:51:27.045 +10:00 [INF] The file /images/home-carousel/FunctionArea.webp was not modified
+2022-06-02 10:51:27.047 +10:00 [INF] Request finished HTTP/2 GET https://localhost:7264/images/home-carousel/Counter.webp - - - 304 - image/webp 11.1276ms
+2022-06-02 10:51:27.050 +10:00 [INF] Request starting HTTP/2 GET https://localhost:7264/images/home-carousel/MainArea.webp - -
+2022-06-02 10:51:27.051 +10:00 [INF] Request starting HTTP/2 GET https://localhost:7264/images/home-carousel/OutdoorGarden.webp - -
+2022-06-02 10:51:27.053 +10:00 [INF] Request starting HTTP/2 GET https://localhost:7264/images/home-carousel/ToastedSandwich2.webp - -
+2022-06-02 10:51:27.055 +10:00 [INF] The file /images/home-carousel/MainArea.webp was not modified
+2022-06-02 10:51:27.056 +10:00 [INF] The file /images/home-carousel/OutdoorGarden.webp was not modified
+2022-06-02 10:51:27.058 +10:00 [INF] The file /images/home-carousel/ToastedSandwich2.webp was not modified
+2022-06-02 10:51:27.060 +10:00 [INF] Request finished HTTP/2 GET https://localhost:7264/images/home-carousel/MainArea.webp - - - 304 - image/webp 9.2839ms
+2022-06-02 10:51:27.062 +10:00 [INF] Request finished HTTP/2 GET https://localhost:7264/images/home-carousel/OutdoorGarden.webp - - - 304 - image/webp 11.1556ms
+2022-06-02 10:51:27.064 +10:00 [INF] Request finished HTTP/2 GET https://localhost:7264/images/home-carousel/ToastedSandwich2.webp - - - 304 - image/webp 10.6785ms
+2022-06-02 10:51:27.051 +10:00 [INF] Request finished HTTP/2 GET https://localhost:7264/images/home-carousel/FunctionArea.webp - - - 304 - image/webp 12.7978ms
+2022-06-02 10:51:27.048 +10:00 [INF] Request finished HTTP/2 GET https://localhost:7264/images/home-carousel/Cappuccino.webp - - - 304 - image/webp 23.1191ms
+2022-06-02 10:51:55.325 +10:00 [INF] Request starting HTTP/2 GET https://localhost:7264/ - -
+2022-06-02 10:51:55.329 +10:00 [INF] Executing endpoint 'ReservationSystem_Server.Controllers.HomeController.Index (ReservationSystem-Server)'
+2022-06-02 10:51:55.332 +10:00 [INF] Route matched with {action = "Index", controller = "Home", area = "", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Index() on controller ReservationSystem_Server.Controllers.HomeController (ReservationSystem-Server).
+2022-06-02 10:51:55.348 +10:00 [INF] Entity Framework Core 6.0.5 initialized 'ApplicationDbContext' using provider 'Microsoft.EntityFrameworkCore.SqlServer:6.0.4' with options: None
+2022-06-02 10:51:55.355 +10:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [r].[Id], [r].[ImageUrl], [r].[RestaurantId], [r].[Text]
+FROM [RestaurantCarouselItemVisuals] AS [r]
+WHERE [r].[RestaurantId] = 1
+2022-06-02 10:51:55.359 +10:00 [INF] Executing ViewResult, running view Index.
+2022-06-02 10:51:55.362 +10:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [r].[Id], [r].[Address], [r].[Email], [r].[Name], [r].[PhoneNumber]
+FROM [Restaurants] AS [r]
+WHERE [r].[Id] = @__p_0
+2022-06-02 10:51:55.377 +10:00 [INF] Executed ViewResult - view Index executed in 18.7321ms.
+2022-06-02 10:51:55.380 +10:00 [INF] Executed action ReservationSystem_Server.Controllers.HomeController.Index (ReservationSystem-Server) in 45.5948ms
+2022-06-02 10:51:55.382 +10:00 [INF] Executed endpoint 'ReservationSystem_Server.Controllers.HomeController.Index (ReservationSystem-Server)'
+2022-06-02 10:51:55.385 +10:00 [INF] Request finished HTTP/2 GET https://localhost:7264/ - - - 200 - text/html;+charset=utf-8 59.7373ms
+2022-06-02 10:51:57.593 +10:00 [INF] Request starting HTTP/2 GET https://localhost:7264/Home/Contact - -
+2022-06-02 10:51:57.597 +10:00 [INF] Executing endpoint 'ReservationSystem_Server.Controllers.HomeController.Contact (ReservationSystem-Server)'
+2022-06-02 10:51:57.605 +10:00 [INF] Route matched with {action = "Contact", controller = "Home", area = "", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Contact(Boolean) on controller ReservationSystem_Server.Controllers.HomeController (ReservationSystem-Server).
+2022-06-02 10:51:57.917 +10:00 [INF] Executing ViewResult, running view Contact.
+2022-06-02 10:51:57.952 +10:00 [INF] Entity Framework Core 6.0.5 initialized 'ApplicationDbContext' using provider 'Microsoft.EntityFrameworkCore.SqlServer:6.0.4' with options: None
+2022-06-02 10:51:57.958 +10:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [r].[Id], [r].[Address], [r].[Email], [r].[Name], [r].[PhoneNumber]
+FROM [Restaurants] AS [r]
+WHERE [r].[Id] = @__p_0
+2022-06-02 10:51:57.967 +10:00 [INF] Executed ViewResult - view Contact executed in 350.7933ms.
+2022-06-02 10:51:57.971 +10:00 [INF] Executed action ReservationSystem_Server.Controllers.HomeController.Contact (ReservationSystem-Server) in 362.1096ms
+2022-06-02 10:51:57.973 +10:00 [INF] Executed endpoint 'ReservationSystem_Server.Controllers.HomeController.Contact (ReservationSystem-Server)'
+2022-06-02 10:51:57.977 +10:00 [INF] Request finished HTTP/2 GET https://localhost:7264/Home/Contact - - - 200 - text/html;+charset=utf-8 383.8844ms
+2022-06-02 10:52:46.094 +10:00 [INF] User profile is available. Using 'C:\Users\3c3a1bbb5fd5e60c\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2022-06-02 10:52:46.525 +10:00 [INF] Now listening on: https://localhost:7264
+2022-06-02 10:52:46.527 +10:00 [INF] Now listening on: http://localhost:5264
+2022-06-02 10:52:46.531 +10:00 [INF] Application started. Press Ctrl+C to shut down.
+2022-06-02 10:52:46.536 +10:00 [INF] Hosting environment: Development
+2022-06-02 10:52:46.539 +10:00 [INF] Content root path: E:\TAFE\Dip Software\Programming\Project\Tafe-ReservationSystem\ReservationSystem-Server\ReservationSystem-Server\
+2022-06-02 10:52:47.107 +10:00 [INF] Request starting HTTP/2 GET https://localhost:7264/ - -
+2022-06-02 10:52:47.181 +10:00 [INF] Executing endpoint 'ReservationSystem_Server.Controllers.HomeController.Index (ReservationSystem-Server)'
+2022-06-02 10:52:47.193 +10:00 [INF] Route matched with {action = "Index", controller = "Home", area = "", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Index() on controller ReservationSystem_Server.Controllers.HomeController (ReservationSystem-Server).
+2022-06-02 10:52:47.897 +10:00 [INF] Entity Framework Core 6.0.5 initialized 'ApplicationDbContext' using provider 'Microsoft.EntityFrameworkCore.SqlServer:6.0.4' with options: None
+2022-06-02 10:52:48.172 +10:00 [INF] Executed DbCommand (25ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [r].[Id], [r].[ImageUrl], [r].[RestaurantId], [r].[Text]
+FROM [RestaurantCarouselItemVisuals] AS [r]
+WHERE [r].[RestaurantId] = 1
+2022-06-02 10:52:50.440 +10:00 [INF] Executing ViewResult, running view Index.
+2022-06-02 10:52:50.494 +10:00 [INF] Executed DbCommand (12ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [r].[Id], [r].[Address], [r].[Email], [r].[Name], [r].[PhoneNumber]
+FROM [Restaurants] AS [r]
+WHERE [r].[Id] = @__p_0
+2022-06-02 10:52:51.659 +10:00 [INF] Executed ViewResult - view Index executed in 3447.3787ms.
+2022-06-02 10:52:51.665 +10:00 [INF] Executed action ReservationSystem_Server.Controllers.HomeController.Index (ReservationSystem-Server) in 4469.0923ms
+2022-06-02 10:52:51.668 +10:00 [INF] Executed endpoint 'ReservationSystem_Server.Controllers.HomeController.Index (ReservationSystem-Server)'
+2022-06-02 10:52:51.682 +10:00 [INF] Request finished HTTP/2 GET https://localhost:7264/ - - - 200 - text/html;+charset=utf-8 4575.6793ms
+2022-06-02 10:53:18.648 +10:00 [INF] User profile is available. Using 'C:\Users\3c3a1bbb5fd5e60c\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2022-06-02 10:53:19.080 +10:00 [INF] Now listening on: https://localhost:7264
+2022-06-02 10:53:19.082 +10:00 [INF] Now listening on: http://localhost:5264
+2022-06-02 10:53:19.085 +10:00 [INF] Application started. Press Ctrl+C to shut down.
+2022-06-02 10:53:19.087 +10:00 [INF] Hosting environment: Development
+2022-06-02 10:53:19.090 +10:00 [INF] Content root path: E:\TAFE\Dip Software\Programming\Project\Tafe-ReservationSystem\ReservationSystem-Server\ReservationSystem-Server\
+2022-06-02 10:53:19.293 +10:00 [INF] Request starting HTTP/2 GET https://localhost:7264/ - -
+2022-06-02 10:53:19.356 +10:00 [INF] Executing endpoint 'ReservationSystem_Server.Controllers.HomeController.Index (ReservationSystem-Server)'
+2022-06-02 10:53:19.368 +10:00 [INF] Route matched with {action = "Index", controller = "Home", area = "", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Index() on controller ReservationSystem_Server.Controllers.HomeController (ReservationSystem-Server).
+2022-06-02 10:53:20.040 +10:00 [INF] Entity Framework Core 6.0.5 initialized 'ApplicationDbContext' using provider 'Microsoft.EntityFrameworkCore.SqlServer:6.0.4' with options: None
+2022-06-02 10:53:20.303 +10:00 [INF] Executed DbCommand (24ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [r].[Id], [r].[ImageUrl], [r].[RestaurantId], [r].[Text]
+FROM [RestaurantCarouselItemVisuals] AS [r]
+WHERE [r].[RestaurantId] = 1
+2022-06-02 10:53:22.603 +10:00 [INF] Executing ViewResult, running view Index.
+2022-06-02 10:53:22.659 +10:00 [INF] Executed DbCommand (12ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [r].[Id], [r].[Address], [r].[Email], [r].[Name], [r].[PhoneNumber]
+FROM [Restaurants] AS [r]
+WHERE [r].[Id] = @__p_0
+2022-06-02 10:53:23.827 +10:00 [INF] Executed ViewResult - view Index executed in 3482.6374ms.
+2022-06-02 10:53:23.833 +10:00 [INF] Executed action ReservationSystem_Server.Controllers.HomeController.Index (ReservationSystem-Server) in 4460.801ms
+2022-06-02 10:53:23.837 +10:00 [INF] Executed endpoint 'ReservationSystem_Server.Controllers.HomeController.Index (ReservationSystem-Server)'
+2022-06-02 10:53:23.850 +10:00 [INF] Request finished HTTP/2 GET https://localhost:7264/ - - - 200 - text/html;+charset=utf-8 4557.3221ms

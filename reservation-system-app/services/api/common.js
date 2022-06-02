@@ -6,6 +6,10 @@ import Constants from "expo-constants";
  */
 const url = Constants.manifest.extra.apiUrl;
 
+function resource(path) {
+  return `${url}${path}`;
+}
+
 /**
  * @typedef {Object} ErrorDesc
  * @property {boolean} error
@@ -116,6 +120,7 @@ async function processError(response) {
 
 export default {
     url,
+    resource,
     fetch: apiFetch,
     processError
 };

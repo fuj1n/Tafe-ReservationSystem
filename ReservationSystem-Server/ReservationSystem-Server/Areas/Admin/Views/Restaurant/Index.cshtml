@@ -6,15 +6,19 @@
 
 <h2>Restaurant Details</h2>
 
-<dl>
-    <dt>Restaurant Name:</dt>
-    <dd>@Model.Name</dd>
-    <dt>Restaurant Address:</dt>
-    <dd>@Model.Address</dd>
-    <dt>Restaurant Phone:</dt>
-    <dd>@Model.PhoneNumber</dd>
-    <dt>Restaurant Email:</dt>
-    <dd>@Model.Email</dd>
-</dl>
-
-<a asp-action="Edit" class="btn btn-outline-primary mt-2">Edit</a>
+<div class="row">
+    <dl class="col-md-3">
+        <dt>Restaurant Name:</dt>
+        <dd>@Model!.Name</dd>
+        <dt>Restaurant Address:</dt>
+        <dd>@Model.Address</dd>
+        <dt>Restaurant Phone:</dt>
+        <dd>@Model.PhoneNumber</dd>
+        <dt>Restaurant Email:</dt>
+        <dd>@Model.Email</dd>
+    </dl>
+    <div class="col-md-3 gap-2 d-flex flex-column flex-wrap">
+        <a asp-action="Edit" class="btn btn-outline-primary">Edit Details</a>
+        <a asp-controller="LayoutBuilder" asp-action="Index" class="btn btn-outline-primary">Edit Restaurant Layout</a>
+    </div>
+</div>

@@ -16,6 +16,7 @@ using ReservationSystem_Server.Configuration;
 using ReservationSystem_Server.Data;
 using ReservationSystem_Server.Helper;
 using ReservationSystem_Server.Services;
+using Serilog;
 
 string[] stringsToTry =
 {
@@ -23,9 +24,23 @@ string[] stringsToTry =
     "DefaultConnection",
 };
 
+// Configure serilog from appsettings.json and appsettings.<ENV>.json
+IConfigurationRoot loggerConfiguration = new ConfigurationBuilder()
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json")
+    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json",
+        true)
+    .Build();
+
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(loggerConfiguration)
+    .CreateLogger();
+
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Host.UseSerilog();
+
 string? connectionString =
     DatabaseFinder.GetFirstAvailable(stringsToTry.Select(name => (name, builder.Configuration.GetConnectionString(name))));
 

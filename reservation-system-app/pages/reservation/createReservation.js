@@ -2,7 +2,7 @@ import { useRef, useState, useEffect, useContext } from "react";
 import { Text, ScrollView, View, ActivityIndicator, StyleSheet } from "react-native";
 import { useScrollToTop } from "@react-navigation/native";
 import styles from "../styles";
-import { Button, TimeSlotPicker, Dropdown, StyledText, TextInput } from "../../components";
+import {Button, TimeSlotPicker, Dropdown, StyledText, TextInput, Loader} from "../../components";
 import login, { LoginContext } from "../../services";
 import moment from "moment";
 
@@ -74,9 +74,7 @@ export default function CreateReservation(props) {
 
     if (isLoading) {
         return (
-            <View style={[tempstyles.root, tempstyles.loadingContainer]}>
-                <ActivityIndicator size="large" color="#0000ff" />
-            </View>
+            <Loader loading={true}/>
         );
     }
 

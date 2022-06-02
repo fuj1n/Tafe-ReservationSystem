@@ -1,9 +1,9 @@
 import 'react-native-gesture-handler';
 
 import {StatusBar} from 'expo-status-bar';
-import {StyleSheet, View, ActivityIndicator} from 'react-native';
-import {useEffect, useState} from "react";
-import {createDrawerNavigator} from "@react-navigation/drawer";
+import {StyleSheet, View, ActivityIndicator, Image, Text} from 'react-native';
+import {useContext, useEffect, useState} from "react";
+import {createDrawerNavigator, DrawerContentScrollView, DrawerItem, DrawerItemList} from "@react-navigation/drawer";
 import login, {LoginContext, LoginInfo} from './services';
 import {
     LoginPage,
@@ -11,13 +11,17 @@ import {
     ReservationPage,
     SittingsPage,
     AdminReservationPage,
-    MemberReservationPage
+    MemberReservationPage, HomePage
 } from "./pages";
 import {getFocusedRouteNameFromRoute, NavigationContainer, DefaultTheme} from "@react-navigation/native";
 
 import moment from "moment";
 import 'moment/min/locales';
 import * as Localization from "expo-localization";
+import api from "./services/api";
+
+import brand from "./assets/brand.png";
+import {Button} from "./components";
 
 const navTheme = {
     ...DefaultTheme,
@@ -41,14 +45,80 @@ function configureLocale() {
     });
 }
 
+function LoginPane({navigation, state}) {
+    const {loginInfo, setLoginInfo} = useContext(LoginContext);
+
+    function logout() {
+        login.logout().then(setLoginInfo);
+    }
+
+    if (!loginInfo.isLoggedIn) {
+        const loginFocused = state.routes[state.index].name === 'Login';
+
+        return (
+            <DrawerItem label="Log In" focused={loginFocused} onPress={() => navigation.navigate("Login")}/>
+        )
+    }
+
+    return (
+        <View style={loginContainer}>
+            <Button onPress={logout}>Log Out</Button>
+        </View>
+    )
+}
+
+function DrawerContent(props) {
+    const restaurant = useContext(api.restaurant.RestaurantContext);
+
+    // Set height to 0 for all pages that have the hidden option set to true
+    const propsWithHiddenPages = {
+        ...props,
+        descriptors: Object.entries(props.descriptors)
+            .map(([key, descriptor]) => {
+                if (descriptor.options.hidden) return [key, {
+                    ...descriptor,
+                    options: {...descriptor.options, drawerItemStyle: {height: 0}}
+                }];
+                return [key, descriptor];
+            })
+            .reduce((acc, [key, descriptor]) => {
+                acc[key] = descriptor;
+                return acc;
+            }, {})
+    };
+
+    return (
+        <>
+            <DrawerContentScrollView {...props} style={{flex: 1}}>
+                <View style={[styles.drawerItem, {marginVertical: 12, flexDirection: 'row', alignItems: 'center'}]}>
+                    <Image source={brand} style={{width: 32, height: 32, marginRight: 10}}/>
+                    <Text style={{fontWeight: '700'}}>{restaurant.name}</Text>
+                </View>
+                <DrawerItemList {...propsWithHiddenPages} />
+            </DrawerContentScrollView>
+            <LoginPane {...props} style={{justifySelf: 'bottom'}}/>
+        </>
+    );
+}
+
 export default function App() {
     const [loginInfo, setLoginInfo] = useState(new LoginInfo());
+    const [restaurant, setRestaurant] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const Drawer = createDrawerNavigator();
+    const RestaurantContext = api.restaurant.RestaurantContext;
 
     useEffect(async () => {
         configureLocale();
         moment.locale(Localization.locales); // Configure moment to use the device locale
+
+        const restaurant = await api.restaurant.getRestaurant();
+
+        if (restaurant.error) {
+            setRestaurant({name: "Could not fetch restaurant information"});
+        } else {
+            setRestaurant(restaurant);
+        }
 
         const loginInfo = await login.getLogin();
 
@@ -82,25 +152,33 @@ export default function App() {
     return (
         <NavigationContainer theme={navTheme}>
             <LoginContext.Provider value={{loginInfo, setLoginInfo}}>
-                <View style={styles.root}>
-                    <Drawer.Navigator initialRouteName="Home" screenOptions={showHeader}>
-                        <Drawer.Screen name="TestPalette" options={{title: "Test Palette"}} component={TestPalette}/>
-                        <Drawer.Screen name="Reservation" options={{title: "Reservation"}} component={ReservationPage}/>
-                        {loginInfo.user?.roles.includes("Member") &&
-                            <Drawer.Group>
-                                <Drawer.Screen name="MemberReservation" options={{title: "My Reservations"}} component={MemberReservationPage}/>
-                            </Drawer.Group>
-                        }
-                        {loginInfo.user?.roles.includes("Employee") &&
-                            <Drawer.Group>
-                                <Drawer.Screen name="AdminReservation" options={{title: "Admin/Reservation"}}
-                                               component={AdminReservationPage}/>
-                                <Drawer.Screen name="Sittings" options={{title: "Sittings"}} component={SittingsPage}/>
-                            </Drawer.Group>
-                        }
-                        <Drawer.Screen name="Login" options={{title: "Login"}} component={LoginPage}/>
-                    </Drawer.Navigator>
-                </View>
+                <RestaurantContext.Provider value={restaurant}>
+                    <View style={styles.root}>
+                        <Drawer.Navigator initialRouteName="Home" screenOptions={showHeader}
+                                          drawerContent={DrawerContent}>
+                            <Drawer.Screen name={'Home'} component={HomePage}/>
+                            <Drawer.Screen name="Reservation" options={{title: "Reservation"}}
+                                           component={ReservationPage}/>
+                            {loginInfo.user?.roles.includes("Member") &&
+                                <Drawer.Group>
+                                    <Drawer.Screen name="MemberReservation" options={{title: "My Reservations"}}
+                                                   component={MemberReservationPage}/>
+                                </Drawer.Group>
+                            }
+                            {loginInfo.user?.roles.includes("Employee") &&
+                                <Drawer.Group>
+                                    <Drawer.Screen name="AdminReservation" options={{title: "Admin/Reservation"}}
+                                                   component={AdminReservationPage}/>
+                                    <Drawer.Screen name="Sittings" options={{title: "Sittings"}}
+                                                   component={SittingsPage}/>
+                                    <Drawer.Screen name="TestPalette" options={{title: "Test Palette"}}
+                                                   component={TestPalette}/>
+                                </Drawer.Group>
+                            }
+                            <Drawer.Screen name="Login" options={{title: "Login", hidden: true}} component={LoginPage}/>
+                        </Drawer.Navigator>
+                    </View>
+                </RestaurantContext.Provider>
             </LoginContext.Provider>
             <StatusBar style="auto"/>
         </NavigationContainer>
@@ -115,5 +193,10 @@ const styles = StyleSheet.create({
     loadingContainer: {
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    drawerItem: {
+        marginHorizontal: 10,
+        marginVertical: 4,
+        overflow: 'hidden',
     },
 });

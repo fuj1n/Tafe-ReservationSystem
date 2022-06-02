@@ -8,6 +8,7 @@
 <span class="d-none" id="modal-name">Update Status</span>
 
 <form asp-action="UpdateStatus" method="post" id="modal-submit">
+    <div asp-validation-summary="All" class="alert alert-danger"></div>
     <select asp-for="StatusId" asp-items="Model!.Statuses" class="form-select"></select>
     <div class="visually-hidden invisible" aria-hidden="true">
         <input type="hidden" asp-for="ReservationId"/>

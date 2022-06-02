@@ -1,9 +1,10 @@
 import {useRef, useContext, useState, useEffect} from "react";
-import {ScrollView, View, Text} from "react-native";
+import {ScrollView, View, Text, Image} from "react-native";
 import {useScrollToTop} from "@react-navigation/native";
 import styles from "../styles";
 import { Button, SittingPicker } from "../../components";
 import login, { LoginContext } from "../../services";
+import brand from "../../assets/brand.png";
 
 
 
@@ -51,7 +52,10 @@ export default function SittingsPage(props) {
     }
 
    return (
-    <ScrollView contentContainerStyle={styles.container} ref={ref}>
+    <ScrollView contentContainerStyle={[]} ref={ref}>
+        <View style={{flex: 1, justifyContent: "center", flexDirection: "row"}}>
+            <Image source={brand} style={{width: 32, height: 32}}/>
+        </View>
         <Text style={{textAlign:"center",fontWeight:'bold'}}>Please select a sitting</Text>
        <SittingPicker sittings={sittings} sittingTypeSelector={s=>s.sittingType} onSelected={onButtonPressed}/>
     </ScrollView>
