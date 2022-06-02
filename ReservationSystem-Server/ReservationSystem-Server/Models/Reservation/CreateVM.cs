@@ -15,6 +15,7 @@ namespace ReservationSystem_Server.Models.Reservation
         public TimeSpan DefaultDuration { get ; set; }
 
         [Range(0, 10, ErrorMessage = "Bookings of more than 10 must be made by contacting the restaurant")]
+        [Required(ErrorMessage = "Number of guests must be at least 1")]
         public int NoOfPeople { get; set; }
 
         [Required]

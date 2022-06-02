@@ -59,10 +59,10 @@ namespace ReservationSystem_Server.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Models.Reservation.CreateVM model)
         {
-            //if (model.NoOfPeople > 10)
-            //{
-            //    ModelState.AddModelError("NoOfPeople", "Bookings of more than 10 must be made by contacting the restaurant");
-            //}
+            if (model.NoOfPeople < 1)
+            {
+                ModelState.AddModelError("NoOfPeople", "Number of guests must be at least 1");
+            }
 
             if (!ModelState.IsValid)
             {
