@@ -42,5 +42,6 @@
       <Folder Include="Areas\Identity\Data" />
       <Folder Include="Areas\Member\Data" />
       <Folder Include="Areas\Member\Models" />
+      <Folder Include="Properties\PublishProfiles\" />
     </ItemGroup>
 </Project>

@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Reflection;
 using System.Text;
@@ -20,9 +21,13 @@ using Serilog;
 
 string[] stringsToTry =
 {
-    "DefaultConnectionExpress",
     "DefaultConnection",
+    "DefaultConnectionExpress",
 };
+
+// Set culture to AU
+Thread.CurrentThread.CurrentUICulture =
+    Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("en-AU");
 
 // Configure serilog from appsettings.json and appsettings.<ENV>.json
 IConfigurationRoot loggerConfiguration = new ConfigurationBuilder()
