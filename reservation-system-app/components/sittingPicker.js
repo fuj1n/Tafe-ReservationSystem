@@ -8,7 +8,7 @@ import StyledText from "./styledText";
  * @typedef SittingAcceptor function(Sitting) : *
  * @param props {{sittings : Sitting[], dateOutFormat : string, timeOutFormat : string, onSelected : function(Sitting),
  * sittingTypeSelector : SittingAcceptor, startTimeSelector : SittingAcceptor,
- * endTimeSelector : SittingAcceptor}}
+ * endTimeSelector : SittingAcceptor, noSittingsMessage : string}}
  */
 export default function SittingPicker(props) {
     const {sittings} = props;
@@ -17,6 +17,7 @@ export default function SittingPicker(props) {
     const endTimeSelector = props.endTimeSelector ?? (s => s.endTime);
     const dateFormat = props.dateOutFormat ?? "DD/MM/YYYY";
     const timeFormat = props.timeOutFormat ?? "hh:mm A";
+    const noSittingsMessage = props.noSittingsMessage ?? "No sittings available";
 
     if (!sittings) {
         throw new Error('SittingPicker requires sittings');
@@ -32,7 +33,7 @@ export default function SittingPicker(props) {
     if(sittings.length === 0) {
         return (
             <View style={{alignItems: "center"}}>
-                <StyledText variant="danger">No sittings available</StyledText>
+                <StyledText variant="danger">{noSittingsMessage}</StyledText>
             </View>
         );
     }

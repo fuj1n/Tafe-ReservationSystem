@@ -7,6 +7,11 @@
 <h1>Please select a sitting</h1>
 
 <div class="list-group">
+    @if (Model.Count() == 0)
+        {
+            <p class="list-group-item list-group-item-danger" >No sittings found, please contact the restaurant for further information</p>
+        }
+
     @{
         DateOnly lastDate = new DateOnly(); /*creates a new date that is 01/01/0001*/
     }
@@ -20,6 +25,8 @@
                 @thisDate.ToShortDateString()
             </span>
         }
+
+        
         <a class="list-group-item list-group-item-action" , asp-action="Create" , asp-route-sittingId="@sitting.Id">
             @sitting.SittingType.Description
             from @sitting.StartTime.ToShortTimeString()

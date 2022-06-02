@@ -58,8 +58,8 @@ namespace ReservationSystem_Server.Areas.Api.Controllers
             {
 
                 SittingId = sitting.Id,
-                Duration = TimeSpan.FromMinutes(30),
-                TimeSlots = _reservationUtility.GetTimeSlots(sitting.StartTime, sitting.EndTime, TimeSpan.FromMinutes(30))
+                Duration = sitting.DefaultDuration,
+                TimeSlots = _reservationUtility.GetTimeSlots(sitting.StartTime, sitting.EndTime, sitting.DefaultDuration)
             };
 
             return Ok(details);
@@ -91,9 +91,14 @@ namespace ReservationSystem_Server.Areas.Api.Controllers
         [ProducesResponseType(typeof(string[]), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Create(CreateVM model)
         {
+            //if (model.NoOfPeople > 10)
+            //{
+            //    ModelState.AddModelError("NoOfPeople", "Bookings of more than 10 must be made with a restaurant staff, please contact restaurant using details below");
+            //}
+
             if (!ModelState.IsValid)  //ModelState contains all the errors
             {
-                return BadRequest(ModelState.Values.SelectMany(v => v.Errors)); //For every value in ModelState, selects all lists of errors and returns them as 1 long list
+                return BadRequest(ModelState); //For every value in ModelState, selects all lists of errors and returns them as 1 long list removed .Values.SelectMany(v => v.Errors
             }
 
             var sitting = await _sittingUtility.GetSittingAsync(model.SittingId, s =>
@@ -115,7 +120,7 @@ namespace ReservationSystem_Server.Areas.Api.Controllers
             var reservation = new Reservation
             {
                 StartTime = model.StartTime,
-                Duration = TimeSpan.FromMinutes(30),
+                Duration = sitting.DefaultDuration,
                 Notes = model.Notes,
                 NumberOfPeople = model.NoOfPeople,
                 SittingId = model.SittingId,
@@ -132,7 +137,7 @@ namespace ReservationSystem_Server.Areas.Api.Controllers
                 
                 SittingType = sitting.SittingType.Description,
                 StartTime = model.StartTime,
-                Duration = TimeSpan.FromMinutes(30),
+                Duration = sitting.DefaultDuration,
                 NoOfPeople = model.NoOfPeople,
                 FirstName = model.FirstName,
                 LastName = model.LastName,

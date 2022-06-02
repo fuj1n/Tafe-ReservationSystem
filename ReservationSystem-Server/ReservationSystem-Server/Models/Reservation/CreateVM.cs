@@ -12,9 +12,9 @@ namespace ReservationSystem_Server.Models.Reservation
         public string SittingType { get; set; }
 
         public DateTime StartTime { get; set; }  //Sitting End time not needed in VM as user do not input this
-        public TimeSpan Duration { get ; set; }
+        public TimeSpan DefaultDuration { get ; set; }
 
-        [Range(0,1000)]
+        [Range(0, 10, ErrorMessage = "Bookings of more than 10 must be made by contacting the restaurant")]
         public int NoOfPeople { get; set; }
 
         [Required]
