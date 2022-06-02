@@ -23,8 +23,7 @@ public class SittingModel : IOutputModel
 
     [Required]
     public int RestaurantId { get; set; }
-    [ReadOnly(true)]
-    public TimeSpan DefaultDuration => TimeSpan.FromMinutes(30); //TODO: make this configurable on sitting
+    public TimeSpan DefaultDuration { get; set; } = TimeSpan.FromMinutes(30);
 
     public LinkModel[] Links => new[]
     {
@@ -46,6 +45,7 @@ public class SittingModel : IOutputModel
         Capacity = sitting.Capacity;
         SittingTypeId = sitting.SittingTypeId;
         RestaurantId = sitting.RestaurantId;
+        DefaultDuration = sitting.DefaultDuration;
 
         return this;
     }
@@ -62,5 +62,6 @@ public class SittingModel : IOutputModel
         sitting.Capacity = Capacity;
         sitting.SittingTypeId = SittingTypeId;
         sitting.RestaurantId = RestaurantId;
+        sitting.DefaultDuration = DefaultDuration;
     }
 }

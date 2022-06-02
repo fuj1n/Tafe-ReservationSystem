@@ -35,8 +35,9 @@
                 <th>Type</th>
                 <th>Start Time</th>
                 <th>End Time</th>
+                <th>Default Duration</th>
                 <th>Capacity</th>
-                <th>Is Closed</th>
+                <th>Status</th>
                 <th></th>
                 <th></th>
             </tr>
@@ -48,12 +49,21 @@
             @foreach (var sitting in Model!)
             {
                 DateOnly thisDate = DateOnly.FromDateTime(sitting.StartTime);
+                string status;
+                @if (sitting.IsClosed)
+                {
+                    status = "Closed";
+                }
+                else
+                {
+                    status = "Open";
+                }
 
                 @if (lastDate != thisDate)
                 {
                     lastDate = thisDate;
                     <tr class="fw-bold list-group-item-primary">
-                        <td colspan="7" class="text-center">
+                        <td colspan="8" class="text-center">
                             @thisDate.ToShortDateString()
                         </td>
                     </tr>
@@ -63,8 +73,11 @@
                     <td>@sitting.SittingType.Description </td>
                     <td>@sitting.StartTime.ToShortTimeString()</td>
                     <td>@sitting.EndTime.ToShortTimeString()</td>
+                    <td>@sitting.DefaultDuration</td>
                     <td>@sitting.Capacity</td>
-                    <td>@sitting.IsClosed</td>
+                    <td>
+                        @status
+                    </td>
                     <td>
                         <a class="btn btn-outline-primary btn-sm rounded-pill modal-for" asp-action="Edit" asp-route-id="@sitting.Id">Edit</a>
                     </td>

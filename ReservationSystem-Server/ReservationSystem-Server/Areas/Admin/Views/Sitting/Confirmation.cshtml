@@ -28,9 +28,12 @@
     <dt>End Time</dt>
     <dd>@Model?.EndTime.ToShortTimeString()</dd>
     
+    <dt>Default Duration</dt>
+    <dd>@Model?.DefaultDuration</dd>
+    
     <dt>Capacity</dt>
-    <dd>@Model.Capacity</dd>
+    <dd>@Model?.Capacity</dd>
     
     <dt>Sitting Type</dt>
-    <dd>@Model.SittingType.Description</dd>
+    <dd>@Model?.SittingType.Description</dd>
 </dl>

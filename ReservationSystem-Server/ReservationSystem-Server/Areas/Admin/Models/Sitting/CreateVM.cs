@@ -11,6 +11,7 @@ namespace ReservationSystem_Server.Areas.Admin.Models.Sitting
         public DateTime StartTime { get; set; }
         //[ValidateNever]
         public DateTime EndTime { get; set; }
+        public TimeSpan DefaultDuration { get; set; }
         [Range(0, 10000)]
         public int Capacity { get; set; }
         [Required(ErrorMessage = "Please select a sitting type")]

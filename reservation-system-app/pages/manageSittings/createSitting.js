@@ -16,6 +16,7 @@ export default function CreateSitting(props) {
     const { navigation } = props;
     const [startTime, setStartTime] = useState(moment().startOf('hour').toISOString(true));
     const [endTime, setEndTime] = useState(moment().startOf('hour').toISOString(true));
+    const [defaultDuration, setDefaultDuration] = useState("00:30:00");
     const [capacity, setCapacity] = useState(0);
     const [sittingType, setSittingType] = useState(0);
     const [sittingTypes, setSittingTypes] = useState([]);
@@ -45,6 +46,7 @@ export default function CreateSitting(props) {
         const body = {
             "startTime": startTime,
             "endTime": endTime,
+            "defaultDuration": defaultDuration,
             "capacity": capacity,
             "sittingTypeId": sittingType,
         };
@@ -54,6 +56,7 @@ export default function CreateSitting(props) {
             setError(await api.common.processError(response));
         }
         else {
+            navigation.pop();
             navigation.navigate("SittingDetails", { sitting: await response.json(), operation: "created" });
         }
     }
@@ -63,6 +66,7 @@ export default function CreateSitting(props) {
             <ErrorDisplay error={error} />
             <DatePicker label="Start Time: " style={styles.containerItem} value={startTime} onChange={setStartTime} />
             <DatePicker label="End Time: " style={styles.containerItem} value={endTime} onChange={setEndTime} />
+            <TextInput label="Default Duration: " value={defaultDuration} onChangeText={setDefaultDuration} />
             <TextInput label="Capacity: " value={capacity} onChangeText={setCapacity} keyboardType="numeric" />
             <Dropdown style={styles.containerItem} label="Sitting Type:" items={sittingTypesDropdown}
                 selectedValue={sittingType} onValueChange={setSittingType} />
