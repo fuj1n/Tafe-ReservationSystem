@@ -176,9 +176,13 @@ public class ReservationUtility
         List<DateTime> timeSlots = new();
 
         TimeSpan sittingDuration = endTime - startTime;
-
+        TimeSpan lastTime = new(-1);
+        
         for (TimeSpan time = new(0); time < sittingDuration; time += slotLength)
         {
+            if (lastTime == time)
+                throw new ArgumentException("Time not advancing, slot length probably too small");
+            lastTime = time;
             timeSlots.Add(startTime + time);
         }
 

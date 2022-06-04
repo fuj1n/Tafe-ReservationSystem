@@ -111,7 +111,7 @@ async function _openModal(modal, url, method = 'GET', data = null, retries = 0) 
         if(retries < 3) {
             await _openModal(modal, url, method, data, retries + 1);
         } else {
-            openError(`${error.message}`);
+            openError(`${response.status} ${response.statusText}`);
         }
         
         return;
