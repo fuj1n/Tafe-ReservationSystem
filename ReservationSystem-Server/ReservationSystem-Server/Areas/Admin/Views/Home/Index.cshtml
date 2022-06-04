@@ -3,7 +3,7 @@
 
 <div class="w-25 m-auto">
     <div class="row mb-2 gap-2">
-        <a class="col btn btn-outline-primary" asp-controller="Sitting" asp-action="Create">Create a Sitting</a>
+        <a class="col btn btn-outline-primary" asp-controller="Sitting" asp-action="Index" asp-route-modal="@Url.Action("Create", "Sitting")">Create a Sitting</a>
         <a class="col btn btn-outline-primary" asp-controller="Sitting" asp-action="Index">Manage Sittings</a>
     </div>
     <div class="row mb-2">
