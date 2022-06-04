@@ -221,4 +221,7 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 
+// Slim down the internal logs
+app.UseSerilogRequestLogging();
+
 app.Run();

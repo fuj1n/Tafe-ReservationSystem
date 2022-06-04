@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using Microsoft.Data.SqlClient;
+using Serilog;
 
 namespace ReservationSystem_Server.Helper;
 
@@ -13,7 +14,7 @@ public static class DatabaseFinder
         {
             try
             {
-                Console.WriteLine("Trying connection string " + name);
+                Log.Information("Trying connection string {Name}", name);
                 using var connection = new SqlConnection(StripDb.Replace(connectionString, ""));
                 connection.Open();
                 return connectionString;
