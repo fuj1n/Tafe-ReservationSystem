@@ -12,9 +12,6 @@ public class SittingsController : Controller
     private readonly SittingUtility _sittingUtility;
     private readonly ReservationUtility _reservationUtility;
 
-    //TODO configurable from sitting
-    private static readonly TimeSpan TimeSlotLength = TimeSpan.FromMinutes(30);
-
     public SittingsController(SittingUtility sittingUtility, ReservationUtility reservationUtility)
     {
         _sittingUtility = sittingUtility;
@@ -86,7 +83,7 @@ public class SittingsController : Controller
             return NotFound();
         }
 
-        return Ok(_reservationUtility.GetTimeSlots(sitting.StartTime, sitting.EndTime, TimeSlotLength));
+        return Ok(_reservationUtility.GetTimeSlots(sitting.StartTime, sitting.EndTime, sitting.DefaultDuration));
     }
 
     [HttpGet("sittingTypes")]
