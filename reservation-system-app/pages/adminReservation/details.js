@@ -5,7 +5,6 @@ import {GestureHandlerRootView, ScrollView} from "react-native-gesture-handler";
 import {Modal, Text, View} from "react-native";
 import moment from "moment";
 import api from "../../services/api";
-import {LoginContext} from "../../services";
 import {Badge, Button, Dropdown, DropdownItem, ErrorDisplay, StyledText} from "../../components";
 import componentStyle from "../../components/style";
 
@@ -13,7 +12,7 @@ export default function Details(props) {
     const {navigation, route} = props;
     const {reservation, sitting, sittingType, action} = route.params;
 
-    const {loginInfo} = useContext(LoginContext);
+    const {loginInfo} = useContext(api.login.LoginContext);
 
     const [origin, setOrigin] = useState("Loading...");
 

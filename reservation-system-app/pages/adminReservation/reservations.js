@@ -3,7 +3,6 @@ import {useFocusEffect, useScrollToTop} from "@react-navigation/native";
 import styles from "../styles";
 import {ScrollView} from "react-native-gesture-handler";
 import {Button, Loader, ReservationPicker, StyledText} from "../../components";
-import {LoginContext} from "../../services";
 import api from "../../services/api";
 import ErrorDisplay from "../../components/errorDisplay";
 import {View} from "react-native";
@@ -15,7 +14,7 @@ export default function Reservations(props) {
     const ref = useRef(null);
     useScrollToTop(ref);
 
-    const {loginInfo} = useContext(LoginContext);
+    const {loginInfo} = useContext(api.login.LoginContext);
 
     const [statuses, setStatuses] = useState({});
 

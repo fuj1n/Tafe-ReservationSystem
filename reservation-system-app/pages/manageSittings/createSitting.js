@@ -2,16 +2,15 @@ import { useRef, useState, useContext, useCallback } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { useScrollToTop, useFocusEffect } from "@react-navigation/native";
 import styles from "../styles";
-import login, { LoginContext } from "../../services";
+import api from "../../services/api";
 import { DatePicker, TextInput, Dropdown, Button, StyledText, ErrorDisplay } from "../../components";
 import moment from "moment";
-import api from "../../services/api";
 
 export default function CreateSitting(props) {
     const ref = useRef(null);
     useScrollToTop(ref);
 
-    const { loginInfo } = useContext(LoginContext);
+    const { loginInfo } = useContext(api.login.LoginContext);
 
     const { navigation } = props;
     const [startTime, setStartTime] = useState(moment().startOf('hour').toISOString(true));
@@ -25,7 +24,7 @@ export default function CreateSitting(props) {
     useFocusEffect(
         useCallback(() => {
             async function getTypes() {
-                const response = await login.apiFetch("admin/sitting/sittingTypes", "GET", null, loginInfo.jwt)
+                const response = await api.common.fetch("admin/sitting/sittingTypes", "GET", null, loginInfo.jwt)
                     .catch(() => { });
                 //console.log(response);
                 if (response.ok) {
@@ -51,7 +50,7 @@ export default function CreateSitting(props) {
             "sittingTypeId": sittingType,
         };
         setError(null);
-        const response = await login.apiFetch("admin/sitting/create", "POST", body, loginInfo.jwt);
+        const response = await api.common.fetch("admin/sitting/create", "POST", body, loginInfo.jwt);
         if (!response.ok) {
             setError(await api.common.processError(response));
         }

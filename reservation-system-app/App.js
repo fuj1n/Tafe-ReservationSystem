@@ -4,7 +4,6 @@ import {StatusBar} from 'expo-status-bar';
 import {StyleSheet, View, ActivityIndicator, Image, Text} from 'react-native';
 import {useContext, useEffect, useState} from "react";
 import {createDrawerNavigator, DrawerContentScrollView, DrawerItem, DrawerItemList} from "@react-navigation/drawer";
-import login, {LoginContext, LoginInfo} from './services';
 import {
     LoginPage,
     TestPalette,
@@ -46,10 +45,10 @@ function configureLocale() {
 }
 
 function LoginPane({navigation, state}) {
-    const {loginInfo, setLoginInfo} = useContext(LoginContext);
+    const {loginInfo, setLoginInfo} = useContext(api.login.LoginContext);
 
     function logout() {
-        login.logout().then(setLoginInfo);
+        api.login.logout().then(setLoginInfo);
     }
 
     if (!loginInfo.isLoggedIn) {
@@ -61,7 +60,7 @@ function LoginPane({navigation, state}) {
     }
 
     return (
-        <View style={loginContainer}>
+        <View>
             <Button onPress={logout}>Log Out</Button>
         </View>
     )
@@ -102,7 +101,7 @@ function DrawerContent(props) {
 }
 
 export default function App() {
-    const [loginInfo, setLoginInfo] = useState(new LoginInfo());
+    const [loginInfo, setLoginInfo] = useState(new api.login.LoginInfo());
     const [restaurant, setRestaurant] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const Drawer = createDrawerNavigator();
@@ -120,7 +119,7 @@ export default function App() {
             setRestaurant(restaurant);
         }
 
-        const loginInfo = await login.getLogin();
+        const loginInfo = await api.login.getLogin();
 
         if (loginInfo.isLoggedIn) {
             setLoginInfo(loginInfo);
@@ -148,6 +147,8 @@ export default function App() {
 
         return {headerShown: false};
     }
+
+    const LoginContext = api.login.LoginContext;
 
     return (
         <NavigationContainer theme={navTheme}>

@@ -1,27 +1,23 @@
-/**
- * This file acts as a template for creating pages, and acts as minimum required code to have a working page with
- * scrollable content.
- */
 import {useContext, useRef, useState} from "react";
 import {ScrollView, Text} from "react-native";
 import {useScrollToTop} from "@react-navigation/native";
 import styles from "./styles";
 import {Button, StyledText, TextInput} from "../components";
-import login, {LoginContext} from "../services";
+import api from "../services/api";
 
 function LoggedIn() {
-    const {loginInfo, setLoginInfo} = useContext(LoginContext);
+    const {loginInfo, setLoginInfo} = useContext(api.login.LoginContext);
 
     return(
         <>
             <Text style={styles.containerItem}>Logged in as {loginInfo.user.username}</Text>
-            <Button variant="danger" onPress={async () => setLoginInfo(await login.logout())} style={styles.containerItem}>Logout</Button>
+            <Button variant="danger" onPress={async () => setLoginInfo(await api.login.logout())} style={styles.containerItem}>Logout</Button>
         </>
     )
 }
 
 export default function Login() {
-    const {loginInfo, setLoginInfo} = useContext(LoginContext);
+    const {loginInfo, setLoginInfo} = useContext(api.login.LoginContext);
 
     const ref = useRef(null);
     useScrollToTop(ref);
@@ -33,7 +29,8 @@ export default function Login() {
     async function doLogin() {
         setError("");
 
-        const info = await login.login(username, password);
+        const info = await api.login.login(username, password);
+        console.log(info);
         if(info.isLoggedIn) {
             setLoginInfo(info);
         } else {

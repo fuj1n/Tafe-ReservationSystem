@@ -3,7 +3,6 @@ import { Text, ScrollView, View, ActivityIndicator, StyleSheet } from "react-nat
 import { useScrollToTop } from "@react-navigation/native";
 import styles from "../styles";
 import { Button, TimeSlotPicker, Dropdown, StyledText, TextInput } from "../../components";
-import login, { LoginContext } from "../../services";
 import moment from "moment";
 
 
@@ -25,12 +24,12 @@ export default function ConfirmReservation(props) {
             <Text style={styles.containerItem}>Phone: {returnedBody.phone}</Text>
             <Text style={styles.containerItem}>Email: {returnedBody.email}</Text>
             <Text style={styles.containerItem}>Notes: {returnedBody.notes}</Text>
-            
+
             <Text>Thank you very much for your booking</Text>
 
-       
-            
-            
+
+
+
         </ScrollView>
     );
 }

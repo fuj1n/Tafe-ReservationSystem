@@ -1,16 +1,16 @@
 import { useRef, useState, useEffect, useContext } from "react";
-import { Text, ScrollView, View, ActivityIndicator, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { useScrollToTop } from "@react-navigation/native";
 import styles from "../styles";
 import {Button, TimeSlotPicker, Dropdown, StyledText, TextInput, Loader} from "../../components";
-import login, { LoginContext } from "../../services";
+import api from "../../services/api";
 import moment from "moment";
 
 
 export default function CreateReservation(props) {
     const ref = useRef(null);
     useScrollToTop(ref);
-    const {navigation, route} = props; 
+    const {navigation, route} = props;
     const { sitting } = route.params;
 
     const [details, setDetails] = useState({});
@@ -31,11 +31,13 @@ export default function CreateReservation(props) {
     }
     noOfGuestsValues.push({ label: "More than 10", value: 10000 });
 
+    const { loginInfo } = useContext(api.login.LoginContext); // pull variable loginInfo out of LoginContext
+
     async function onSubmit() {
         const body = {
             sittingId: sitting.id,
             firstName, lastName, email, notes,
-            startTime: startTime.toISOString(true), 
+            startTime: startTime.toISOString(true),
             noOfPeople: noOfGuests,
             phoneNumber: phone,
             sittingStartTime: moment().toISOString(),
@@ -46,10 +48,10 @@ export default function CreateReservation(props) {
 
         setError([]);
 
-        const response = await login.apiFetch("reservation/create", "POST", body, loginInfo.jwt);
+        const response = await api.common.fetch("reservation/create", "POST", body, loginInfo.jwt);
         if(response.ok) {
             navigation.navigate("ConfirmReservation",{returnedBody: await response.json()}); //navigates to CreateReservation page for the sitting that was clicked
-        } else {    
+        } else {
             if(response.status === 400) {
                 const data = await response.json();
                 setError(Object.values(data.errors).reduce((total, current) => [...total, ...current], []));
@@ -58,9 +60,8 @@ export default function CreateReservation(props) {
 
     }
 
-    const { loginInfo } = useContext(LoginContext); // pull variable loginInfo out of LoginContext
     useEffect(async () => {
-        const response = await login.apiFetch(`reservation/details?sittingId=${sitting.id}`, 'GET', null, loginInfo.jwt);  //useEffect runs everytime the page re-renders
+        const response = await api.common.fetch(`reservation/details?sittingId=${sitting.id}`, 'GET', null, loginInfo.jwt);  //useEffect runs everytime the page re-renders
 
         if (response.ok) {  //if response status is "okay"
             const data = await response.json();
@@ -84,7 +85,7 @@ export default function CreateReservation(props) {
             <TimeSlotPicker label="Please select a time" timeSlots={details?.timeSlots} value={startTime} setValue={setStartTime} />
 
             {/* <Text>No. of Guests</Text> */}
-            
+
             <Dropdown label="Number of Guests" items={noOfGuestsValues} selectedValue={noOfGuests}
                 onValueChange={setNoOfGuests} />
             {noOfGuests > 10 &&

@@ -4,7 +4,6 @@ import {useFocusEffect, useScrollToTop} from "@react-navigation/native";
 import styles from "../styles";
 import {ScrollView} from "react-native-gesture-handler";
 import {ErrorDisplay, Loader, SittingPicker, Toggle} from "../../components";
-import {LoginContext} from "../../services";
 import api from "../../services/api";
 
 export default function Sittings(props) {
@@ -13,7 +12,7 @@ export default function Sittings(props) {
     const ref = useRef(null);
     useScrollToTop(ref);
 
-    const {loginInfo} = useContext(LoginContext);
+    const {loginInfo} = useContext(api.login.LoginContext);
 
     const [sittings, setSittings] = useState([]);
     const [sittingTypes, setSittingTypes] = useState({});

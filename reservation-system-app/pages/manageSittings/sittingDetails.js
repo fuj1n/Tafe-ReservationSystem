@@ -3,7 +3,7 @@ import { ScrollView, Text, View } from "react-native";
 import { useScrollToTop, useFocusEffect } from "@react-navigation/native";
 import styles from "../styles";
 import { Button, StyledText } from "../../components";
-import login, { LoginContext } from "../../services/login"
+import login, { LoginContext } from "../../services/api/login"
 import moment from "moment";
 import api from "../../services/api"
 import sittings from "../../services/api/sittings";

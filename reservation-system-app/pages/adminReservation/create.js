@@ -2,7 +2,6 @@ import {useCallback, useContext, useRef, useState} from "react";
 import {useFocusEffect, useScrollToTop} from "@react-navigation/native";
 import styles from "../styles";
 import {ScrollView} from "react-native-gesture-handler";
-import {LoginContext} from "../../services";
 import api from "../../services/api";
 import {
     Button,
@@ -20,7 +19,7 @@ import {View} from "react-native";
 export default function Create({route, navigation}) {
     const {sitting, sittingType} = route.params;
 
-    const {loginInfo} = useContext(LoginContext);
+    const {loginInfo} = useContext(api.login.LoginContext);
 
     // Form data
     const [startTime, setStartTime] = useState(moment(sitting.startTime));

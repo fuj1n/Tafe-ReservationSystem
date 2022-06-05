@@ -3,7 +3,6 @@ import { ScrollView, View } from "react-native";
 import { useScrollToTop, useFocusEffect } from "@react-navigation/native";
 import styles from "../styles";
 import { DatePicker, TextInput, Dropdown, Button, StyledText, ErrorDisplay } from "../../components";
-import login, { LoginContext } from "../../services";
 import api from "../../services/api";
 
 export default function EditSitting(props) {
@@ -22,12 +21,12 @@ export default function EditSitting(props) {
 
     const [sittingTypes, setSittingTypes] = useState([]);
 
-    const { loginInfo } = useContext(LoginContext);
+    const { loginInfo } = useContext(api.login.LoginContext);
 
     useFocusEffect(
         useCallback(() => {
             async function getTypes() {
-                const response = await login.apiFetch("admin/sitting/sittingTypes", "GET", null, loginInfo.jwt)
+                const response = await api.common.fetch("admin/sitting/sittingTypes", "GET", null, loginInfo.jwt)
                     .catch(() => { });
                 //console.log(response);
                 if (response.ok) {
@@ -54,7 +53,7 @@ export default function EditSitting(props) {
             "sittingTypeId": sittingType,
         };
         setError(null);
-        const response = await login.apiFetch("admin/sitting/edit", "PUT", body, loginInfo.jwt);
+        const response = await api.common.fetch("admin/sitting/edit", "PUT", body, loginInfo.jwt);
         if (!response.ok) {
             setError(await api.common.processError(response));
         }
@@ -66,7 +65,7 @@ export default function EditSitting(props) {
 
     return (
         <ScrollView contentContainerStyle={styles.container} ref={ref}>
-            <ErrorDisplay error={error} />  
+            <ErrorDisplay error={error} />
             <DatePicker label="Start Time: " style={styles.containerItem} value={startTime} onChange={setStartTime} />
             <DatePicker label="End Time: " style={styles.containerItem} value={endTime} onChange={setEndTime} />
             <TextInput label="Default Duration" value={defaultDuration} onChangeText={setDefaultDuration} />

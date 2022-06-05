@@ -1,15 +1,9 @@
 import {createContext} from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-/**
- * The endpoint URL for the API
- * @type {string}
- */
-const endpoint = "https://localhost:7264/api/v1/";
+import common from "./common";
 
 /**
  * The login state
- * @
  */
 export class LoginInfo {
     /**
@@ -64,7 +58,7 @@ async function getLoginFromToken(jwt) {
         return new LoginInfo();
     }
 
-    const response = await apiFetch("user/me", "GET", null, jwt);
+    const response = await common.fetch("user/me", "GET", null, jwt);
     if (response.status !== 200) {
         return new LoginInfo(errorToString(response));
     }
@@ -89,8 +83,8 @@ async function getLoginFromToken(jwt) {
  * @returns {Promise<LoginInfo>} The login state, isLoggedIn is true if the login was successful
  */
 async function login(username, password) {
-    const response = await apiFetch("token", "POST", {email: username, password: password});
-    if (response.status !== 200) {
+    const response = await common.fetch("token", "POST", {email: username, password: password});
+    if (!response.ok) {
         return new LoginInfo(errorToString(response));
     }
 
@@ -109,35 +103,6 @@ async function logout() {
     return new LoginInfo();
 }
 
-/**
- * Perform an API call with optinal authorization
- * @param url {string} The text to append to the endpoint URL
- * @param method {string} The HTTP method to use (GET, POST, etc.)
- * @param [body] {object | null} The body of the request or null if not applicable (i.e. GET)
- * @param [jwt] {string | null} The JWT token or null if not applicable
- * @returns {Promise<Response>}
- */
-async function apiFetch(url, method, body, jwt) {
-    return fetch(`${endpoint}${url}`, {
-        method: method,
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": jwt ? `Bearer ${jwt}` : ""
-        },
-        body: body ? JSON.stringify(body) : null
-
-    }).catch(error => {
-        // Return a response anyway so that it can be handled elsewhere
-        let response = new Response(null, {
-            status: 499,
-            statusText: error.message,
-            ok: false
-        });
-        response.internalError = true;
-        return response;
-    });
-}
-
 function errorToString(response) {
     if(response.internalError) {
         return response.statusText;
@@ -151,4 +116,4 @@ function errorToString(response) {
     }
 }
 
-export default {login, logout, getLogin, apiFetch};
+export default {login, logout, getLogin, LoginContext, LoginInfo};

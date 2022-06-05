@@ -80,10 +80,11 @@ function getStatusCodeMessage(code) {
 /**
  * Processes the error response from the API and maps it into consistent format
  * @param response {Response} The response from the API
+ * @param overrides {Object.<string, string>} A custom look-up table for error messages based on status code
  * @returns {Promise<ErrorDesc>} An object with error flag set
  */
-async function processError(response) {
-    let error = {error: true, message: getStatusCodeMessage(response.status) ?? "An unknown error occurred"};
+async function processError(response, overrides = {}) {
+    let error = {error: true, message: overrides[response.status] ?? getStatusCodeMessage(response.status) ?? "An unknown error occurred"};
 
     if (response.internalError) {
         error.message = response.statusText;
