@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 
 import {StatusBar} from 'expo-status-bar';
-import {StyleSheet, View, ActivityIndicator, Image, Text} from 'react-native';
+import {StyleSheet, View, ActivityIndicator, Image, Text, Alert, Platform} from 'react-native';
 import {useContext, useEffect, useState} from "react";
 import {createDrawerNavigator, DrawerContentScrollView, DrawerItem, DrawerItemList} from "@react-navigation/drawer";
 import {
@@ -13,6 +13,7 @@ import {
     MemberReservationPage, HomePage
 } from "./pages";
 import {getFocusedRouteNameFromRoute, NavigationContainer, DefaultTheme} from "@react-navigation/native";
+import appStyles from './pages/styles';
 
 import moment from "moment";
 import 'moment/min/locales';
@@ -47,8 +48,20 @@ function configureLocale() {
 function LoginPane({navigation, state}) {
     const {loginInfo, setLoginInfo} = useContext(api.login.LoginContext);
 
-    function logout() {
-        api.login.logout().then(setLoginInfo);
+    async function logout() {
+        if(Platform.OS === 'web') {
+            if(confirm('Are you sure you would like to log out?')) {
+                api.login.logout().then(setLoginInfo);
+            }
+
+            return;
+        }
+
+        Alert.alert('Log out?', 'Are you sure you would like to log out?',
+            [
+                {text: 'Cancel', style: 'cancel'},
+                {text: 'Log Out', style: 'destructive', onPress: () => api.login.logout().then(setLoginInfo)}
+            ], {cancelable: true});
     }
 
     if (!loginInfo.isLoggedIn) {
@@ -59,9 +72,23 @@ function LoginPane({navigation, state}) {
         )
     }
 
+    let userIdentity;
+    if(loginInfo.user.person) {
+        const person = loginInfo.user.person;
+        userIdentity = `${person.firstName} ${person.lastName}`;
+    } else {
+        const roles = [...loginInfo.user.roles];
+        if((roles.includes("Admin") || roles.includes("Manager")) && roles.includes("Employee")) {
+            roles.splice(roles.indexOf("Employee"), 1);
+        }
+
+        userIdentity = roles[0];
+    }
+
     return (
-        <View>
-            <Button onPress={logout}>Log Out</Button>
+        <View style={[styles.drawerItem, appStyles.row, {alignItems: 'center', justifyContent: 'space-between'}]}>
+            <Text style={appStyles.containerItem}>Hello {userIdentity}!</Text>
+            <Button onPress={logout} variant="danger">Log Out</Button>
         </View>
     )
 }

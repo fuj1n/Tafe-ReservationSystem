@@ -19,12 +19,6 @@ using ReservationSystem_Server.Helper;
 using ReservationSystem_Server.Services;
 using Serilog;
 
-string[] stringsToTry =
-{
-    "DefaultConnection",
-    "DefaultConnectionExpress",
-};
-
 // Set culture to AU
 Thread.CurrentThread.CurrentUICulture =
     Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("en-AU");
@@ -46,8 +40,23 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Host.UseSerilog();
 
-string? connectionString =
-    DatabaseFinder.GetFirstAvailable(stringsToTry.Select(name => (name, builder.Configuration.GetConnectionString(name))));
+string[] stringsToTry =
+{
+    "DefaultConnectionExpress",
+    "DefaultConnection",
+};
+
+string? connectionString;
+
+if (builder.Environment.IsDevelopment())
+{
+    connectionString = DatabaseFinder.GetFirstAvailable(
+        stringsToTry.Select(name => (name, builder.Configuration.GetConnectionString(name))));
+}
+else
+{
+    connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+}
 
 if (connectionString == null)
     throw new InvalidOperationException("Could not find the right connection string.");

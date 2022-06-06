@@ -67,10 +67,24 @@ export default function CreateReservation(props) {
             const data = await response.json();
             data.timeSlots = data.timeSlots.map(ts => moment(ts));
             setDetails(data); //setting details to data
+
             setStartTime(data.timeSlots[0]); //default start time to value of the first timeslot
             setIsLoading(false);
         }
 
+        async function getUserInfo() {
+            const response = await api.common.fetch("reservation/userinfo", 'GET', null, loginInfo.jwt);
+            if(response.ok && response.status !== 204) {
+                const userInfo = await response.json();
+
+                setFirstName(userInfo.firstName);
+                setLastName(userInfo.lastName);
+                setEmail(userInfo.email);
+                setPhone(userInfo.phoneNumber);
+            }
+        }
+
+        await getUserInfo();
     }, []);
 
     if (isLoading) {

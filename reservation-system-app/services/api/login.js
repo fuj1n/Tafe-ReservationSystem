@@ -17,7 +17,7 @@ export class LoginInfo {
     jwt;
 
     /**
-     * @type {{authorized : boolean, username : string, roles : string[]}}
+     * @type {{authorized : boolean, username : string, roles : string[], person : any | undefined}}
      */
     user;
 

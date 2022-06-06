@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ReservationSystem_Server.Areas.Api.Models;
+using ReservationSystem_Server.Services;
 
 namespace ReservationSystem_Server.Areas.Api.Controllers;
 
@@ -9,10 +10,12 @@ namespace ReservationSystem_Server.Areas.Api.Controllers;
 public class UserController : Controller
 {
     private readonly UserManager<IdentityUser> _userManager;
+    private readonly CustomerManager _customerManager;
 
-    public UserController(UserManager<IdentityUser> userManager)
+    public UserController(UserManager<IdentityUser> userManager, CustomerManager customerManager)
     {
         _userManager = userManager;
+        _customerManager = customerManager;
     }
 
     [HttpGet("me")]
@@ -28,7 +31,8 @@ public class UserController : Controller
         {
             Authorized = true,
             Username = user.UserName,
-            Roles = (await _userManager.GetRolesAsync(user)).ToArray()
+            Roles = (await _userManager.GetRolesAsync(user)).ToArray(),
+            Person = await _customerManager.FindCustomerAsync(user)
         };
     }
 }
