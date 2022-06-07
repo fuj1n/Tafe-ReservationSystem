@@ -175,6 +175,7 @@ builder.Services.AddScoped<CustomerManager>();
 builder.Services.AddScoped<ReservationUtility>();
 builder.Services.AddScoped<SittingUtility>();
 builder.Services.AddScoped<RestaurantProvider>();
+builder.Services.AddScoped<LayoutUtility>();
 
 // Used for custom tag helpers
 builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();

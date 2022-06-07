@@ -40,7 +40,7 @@ public class SittingUtility
     /// <returns></returns>
     public async Task<Sitting?> GetSittingAsync(int id, Func<IQueryable<Sitting>, IQueryable<Sitting>>? filter = null)
     {
-        return await _context.Sittings.ApplyFilter(filter).Where(s => s.Id == id).FirstOrDefaultAsync();
+        return await _context.Sittings.ApplyFilter(filter).FirstOrDefaultAsync(s => s.Id == id);
     }
 
     /// <summary>
