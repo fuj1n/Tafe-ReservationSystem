@@ -3,17 +3,16 @@ import { useScrollToTop, useFocusEffect } from "@react-navigation/native";
 import { ScrollView, View, Text } from "react-native";
 import { Button, SittingPicker, Toggle, Loader } from "../../components";
 import styles from "../styles";
-import login, { LoginContext } from "../../services/api/login"
+import { LoginContext } from "../../services/api/login"
 import api from "../../services/api"
 import ErrorDisplay from "../../components/errorDisplay"
-import moment from "moment";
 
 function Sitting(props) {
     const { sitting, navigation, setChanged } = props;
     const { loginInfo, setLoginInfo } = useContext(LoginContext);
 
     async function close() {
-        const response = await login.apiFetch(`admin/sitting/close?id=${sitting.id}`, "PUT", null, loginInfo.jwt)
+        const response = await api.common.fetch(`admin/sitting/close?id=${sitting.id}`, "PUT", null, loginInfo.jwt)
             .catch(() => { });
         if (response.ok) {
             setChanged(true);
