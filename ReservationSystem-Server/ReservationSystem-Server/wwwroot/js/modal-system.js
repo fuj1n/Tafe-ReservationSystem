@@ -36,6 +36,9 @@ function displayModal() {
 }
 
 function hideModal() {
+    const params = new URLSearchParams(window.location.search);
+    params.delete('modal');
+    history.replaceState(null, '', `${window.location.origin}${window.location.pathname}?${params}`);
     $('#modal').modal('hide');
 }
 
@@ -81,6 +84,10 @@ function openModal(url, method = 'GET', data = null) {
 }
 
 async function _openModal(modal, url, method = 'GET', data = null, retries = 0) {
+    const params = new URLSearchParams(window.location.search);
+    params.set('modal', url);
+    history.replaceState(null, '', `${window.location.origin}${window.location.pathname}?${params}`);
+    
     const isUrlAbsolute = new RegExp('^(?:[a-z]+:)?//', 'i');
 
     const submitBtn = $('#btn-save');
@@ -106,14 +113,16 @@ async function _openModal(modal, url, method = 'GET', data = null, retries = 0) 
         url += '?' + params.toString();
     }
     
-    const response = await fetch(url, { mode: 'same-origin', method: method, body: method !== "GET" ? data : null});
+    const response = await fetch(url, { mode: 'same-origin', method: method, body: method !== "GET" ? data : null})
+        .catch(async err => {
+            if(retries < 3) {
+                await _openModal(modal, url, method, data, retries + 1);
+            } else {
+                openError(err);
+            }
+        });
     if(!response.ok) {
-        if(retries < 3) {
-            await _openModal(modal, url, method, data, retries + 1);
-        } else {
-            openError(`${response.status} ${response.statusText}`);
-        }
-        
+        openError(`${response.status} ${response.statusText}`);
         return;
     }
     
@@ -187,6 +196,8 @@ function autoBindModals() {
 }
 
 $(() => {
+    $('#btn-dismiss').on('click', hideModal);
+    
     autoBindModals();
 
     const searchParams = new URLSearchParams(window.location.search);
