@@ -197,6 +197,7 @@ function autoBindModals() {
 
 $(() => {
     $('#btn-dismiss').on('click', hideModal);
+    $('#modal').on('hidden.bs.modal', hideModal);
     
     autoBindModals();
 

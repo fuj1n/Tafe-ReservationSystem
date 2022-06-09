@@ -15,28 +15,23 @@ namespace ReservationSystem_Server.Areas.Api.Controllers
     {
         private readonly IConfiguration _config;
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
 
-        public TokenController(IConfiguration config, UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager)
+        public TokenController(IConfiguration config, UserManager<IdentityUser> userManager)
         {
             _config = config;
             _userManager = userManager;
-            _signInManager = signInManager;
         }
 
         [HttpPost]
         public async Task<IActionResult> PostJwt(SignInDto signInDto)
         {
-            SignInResult result =
-                await _signInManager.PasswordSignInAsync(signInDto.Email, signInDto.Password, true, false);
-
-            if (!result.Succeeded)
+            IdentityUser user = await _userManager.FindByEmailAsync(signInDto.Email);
+            
+            if (user == null || !await _userManager.CheckPasswordAsync(user, signInDto.Password))
             {
                 return BadRequest("Invalid credentials");
             }
 
-            IdentityUser user = await _userManager.FindByEmailAsync(signInDto.Email);
             List<Claim> claims = new()
             {
                 // Originally, this used strings with incorrect names as claim types

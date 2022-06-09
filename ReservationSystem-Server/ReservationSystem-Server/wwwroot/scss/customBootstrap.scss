@@ -31,6 +31,10 @@ $input-disabled-bg: shade-color($body-bg, 10%);
 // Modal
 $modal-content-bg: $body-bg;
 
+// Nav tabs
+$nav-tabs-border-color: $border-color;
+$nav-tabs-link-active-border-color: $primary;
+
 @import "bootstrap/bootstrap";
 
 .form-group {
