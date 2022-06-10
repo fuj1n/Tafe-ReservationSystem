@@ -31,7 +31,7 @@
       "favicon": "./assets/favicon.png"
     },
     "extra": {
-      "apiUrl": "https://localhost:7264/api/v1/"
+      "apiUrl": "https://beanscene22.azurewebsites.net/api/v1/"
     }
   }
 }

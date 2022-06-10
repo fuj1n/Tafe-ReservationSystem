@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<!-- This document is not used in actual app, and is there for development purposes -->
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Layout Builder UI Test</title>
+    <link rel="stylesheet" href="/customBootstrap.css"/>
+    <link rel="stylesheet" href="/site.css"/>
+</head>
+<body>
+<header>
+    <nav class="navbar navbar-expand-lg navbar-toggleable-lg navbar-light border-bottom box-shadow mb-3" style="background-color: var(--navbar-bg)">
+        <div class="container-fluid">
+            <a class="navbar-brand">
+                Layout Builder UI Test
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse d-lg-inline-flex flex-grow-1">
+                <nav class="navbar-nav flex-grow-1 d-flex flex-grow-1">
+                    <div class="d-flex flex-nowrap">
+                        <div class="nav-item">
+                            <a href="#" class="nav-link" style="color: #941925">Exit Admin Area</a>
+                        </div>
+                        <div class="nav-item">
+                            <a href="#" class="nav-link">Admin Home</a>
+                        </div>
+                        <div class="nav-item">
+                            <a href="#" class="nav-link">Sittings</a>
+                        </div>
+                        <div class="nav-item">
+                            <a href="#" class="nav-link">Reservations</a>
+                        </div>
+                        <div class="nav-item">
+                            <a href="#" class="nav-link">Employees</a>
+                        </div>
+                        <div class="nav-item">
+                            <a href="#" class="nav-link">Restaurant</a>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="container">
+    <!--suppress HtmlUnknownTag -->
+    <config
+        baseurl="https://localhost:7264/Admin/LayoutBuilder/"
+        root="/"
+        isdevelopment="true"
+    ></config>
+    <main role="main" class="pb-3" style="min-height: 200px" id="root"></main>
+</div>
+
+<footer class="border-top border-primary footer">
+    <div class="container mt-2">
+        <b>@restaurant.Name</b>
+        <span class="d-block">Address: @restaurant.Address</span>
+        <span class="d-block">Phone: @restaurant.PhoneNumber</span>
+        <span class="d-block">Email: @restaurant.Email</span>
+
+
+        <span>&copy; 2022 - @restaurant.Name</span>
+    </div>
+</footer>
+</body>
+</html>

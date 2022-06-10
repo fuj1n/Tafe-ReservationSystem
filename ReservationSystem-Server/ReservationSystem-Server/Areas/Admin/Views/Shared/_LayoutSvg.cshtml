@@ -1,4 +1,4 @@
-﻿@*The distiller is a partial view that renders the restaurant server-side without any client-side JS necessary*@
+﻿@*A distiller that renders the restaurant server-side without any client-side JS necessary*@
 
 @using ReservationSystem_Server.Areas.Admin.Models
 @using System.Drawing
@@ -11,19 +11,19 @@
     LayoutModel layout = await LayoutUtility.BuildLayoutModel();
 
     Queue<IHtmlContent> topmost = new();
-    
+
     // Transform child from parent percentage coordinate to SVG percentage coordinate
     LayoutModel.Rect Transform(LayoutModel.Rect parent, LayoutModel.Rect child)
     {
         return new LayoutModel.Rect(
             parent.X + (child.X * parent.Width / 100),
             parent.Y + (child.Y * parent.Height / 100),
-            child.Width/* * parent.Width / 100*/, // size is relative to the canvas, so we don't transform it
-            child.Height/* * parent.Height / 100*/,
+            child.Width /* * parent.Width / 100*/, // size is relative to the canvas, so we don't transform it
+            child.Height /* * parent.Height / 100*/,
             child.Color
             );
     }
-    
+
     IHtmlContent DrawRect(LayoutModel.Rect rect)
     {
         string c = ColorTranslator.ToHtml(rect.Color);
@@ -47,21 +47,21 @@
 }
 
 <svg>
-    <rect fill="#6c757d" x="0" y="0" width="100%" height="100%" />
+    <rect fill="#6c757d" x="0" y="0" width="100%" height="100%"/>
     @foreach (LayoutModel.Area area in layout.Areas)
     {
         @DrawRect(area.Rect)
         topmost.Enqueue(DrawLabel(area.Rect.X + 1.25f, area.Rect.Y + 1.25f, area.Name, area.Rect.Color.Darken(2)));
 
-        if (!layout.Tables.ContainsKey(area.Id)) break;
-        
-        foreach(LayoutModel.Table table in layout.Tables[area.Id])
+        if (!layout.Tables.ContainsKey(area.Id)) continue;
+
+        foreach (LayoutModel.Table table in layout.Tables[area.Id])
         {
-            if(!layout.TableTypes.ContainsKey(table.TableTypeId))
+            if (!layout.TableTypes.ContainsKey(table.TableTypeId))
             {
                 LayoutModel.Rect relative = new(table.Position.X, table.Position.Y, 5, 5, Color.Red);
                 LayoutModel.Rect absolute = Transform(area.Rect, relative);
-                
+
                 @DrawRect(absolute)
                 @DrawCenterLabel(absolute, "Invalid table type", Color.Red.Darken(2))
                 continue;
@@ -70,23 +70,24 @@
             LayoutModel.TableType tableType = layout.TableTypes[table.TableTypeId];
             LayoutModel.Rect tableRect = new(table.Position.X, table.Position.Y, tableType.CanvasSize.X, tableType.CanvasSize.Y, Color.Transparent);
             tableRect = Transform(area.Rect, tableRect);
-            
+
             float accX = 0, accY = 0;
-            
-            foreach(LayoutModel.Rect rect in tableType.Rectangles)
+
+            foreach (LayoutModel.Rect rect in tableType.Rectangles)
             {
                 LayoutModel.Rect absolute = Transform(tableRect, rect);
                 accX += absolute.X + absolute.Width / 2;
                 accY += absolute.Y + absolute.Height / 2;
-                
+
                 @DrawRect(absolute)
             }
-            
+
             LayoutModel.Rect tableLabel = new(accX / tableType.Rectangles.Length, accY / tableType.Rectangles.Length, 0, 0, Color.Transparent);
             @DrawCenterLabel(tableLabel, table.Name, Color.Black)
         }
-
-        while (topmost.TryDequeue(out IHtmlContent? next))
-            @next
+    }
+    @while (topmost.TryDequeue(out IHtmlContent? next))
+    {
+        @next
     }
 </svg>

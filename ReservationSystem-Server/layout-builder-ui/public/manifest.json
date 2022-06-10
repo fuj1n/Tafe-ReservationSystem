@@ -1,0 +1,10 @@
+{
+  "short_name": "Layout Builder UI",
+  "name": "Layout Builder UI for Reservation System Server",
+  "icons": [
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}

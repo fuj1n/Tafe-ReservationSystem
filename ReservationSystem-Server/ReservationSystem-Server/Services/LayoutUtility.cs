@@ -19,12 +19,15 @@ public class LayoutUtility
         LayoutModel model = new()
         {
             Areas = await _context.RestaurantAreas
-                // .Join(_context.Rest)
                 .Select(a =>
                     new LayoutModel.Area
                     {
                         Id = a.Id,
-                        Name = a.Name
+                        Name = a.Name,
+                        Rect = LayoutModel.Rect.FromRectangleVisual(
+                            _context.RestaurantAreaVisuals
+                                .Select(v => new {v.AreaId, v.Rect})
+                                .FirstOrDefault(v => v.AreaId == a.Id)!.Rect)
                     })
                 .ToArrayAsync(),
             Tables = tables.Aggregate(new Dictionary<int, List<LayoutModel.Table>>(),

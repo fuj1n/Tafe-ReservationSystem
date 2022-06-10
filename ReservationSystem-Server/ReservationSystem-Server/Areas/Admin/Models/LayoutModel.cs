@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using System.Numerics;
 using JetBrains.Annotations;
+using ReservationSystem_Server.Data.Visual.Layout;
 
 namespace ReservationSystem_Server.Areas.Admin.Models;
 
@@ -44,6 +45,31 @@ public class LayoutModel
             Width = width;
             Height = height;
             Color = color;
+        }
+
+        public static Rect FromRectangleVisual(RectangleVisual? visual)
+        {
+            if (visual is null)
+                return new Rect(50 - 25 / 2F, 50 - 25 / 2F, 25, 25, Color.Chocolate);
+            
+            Color color = Color.FromArgb(visual.A, visual.R, visual.G, visual.B);
+            return new Rect(visual.X, visual.Y, visual.Width, visual.Height, color);
+        }
+        
+        public static RectangleVisual ToRectangleVisual(Rect rect)
+        {
+            return new RectangleVisual
+            {
+                X = rect.X,
+                Y = rect.Y,
+                Width = rect.Width,
+                Height = rect.Height,
+                
+                R = rect.Color.R,
+                G = rect.Color.G,
+                B = rect.Color.B,
+                A = rect.Color.A,
+            };
         }
     }
     
