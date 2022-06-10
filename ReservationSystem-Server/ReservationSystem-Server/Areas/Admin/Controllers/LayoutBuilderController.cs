@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using ReservationSystem_Server.Areas.Admin.Models;
 using ReservationSystem_Server.Areas.Admin.Models.LayoutBuilder;
 using ReservationSystem_Server.Data;
@@ -71,7 +70,7 @@ public class LayoutBuilderController : Controller
 
                 _context.RestaurantAreas.Add(area);
                 await _context.SaveChangesAsync();
-                
+
                 model.Id = area.Id;
             }
             else
@@ -96,7 +95,7 @@ public class LayoutBuilderController : Controller
             else
             {
                 RectangleVisual changedRect = LayoutModel.Rect.ToRectangleVisual(model.Rect);
-                
+
                 visual.Rect.X = changedRect.X;
                 visual.Rect.Y = changedRect.Y;
                 visual.Rect.Width = changedRect.Width;
@@ -109,12 +108,28 @@ public class LayoutBuilderController : Controller
         }
 
         // ToArray as EF couldn't translate areas.All({lambda})
-        foreach (RestaurantArea area in (await _context.RestaurantAreas.ToArrayAsync()).Where(a => areas.All(m => a.Id != m.Id)))
+        foreach (RestaurantArea area in (await _context.RestaurantAreas.Include(a => a.Tables).ToArrayAsync()).Where(a =>
+                     areas.All(m => a.Id != m.Id)))
         {
+            RestaurantAreaVisual? visual =
+                await _context.RestaurantAreaVisuals
+                    .Include(v => v.Rect)
+                    .FirstOrDefaultAsync(v => v.AreaId == area.Id);
+
+            if (visual != null)
+            {
+                _context.RectangleVisuals.Remove(visual.Rect);
+                _context.RestaurantAreaVisuals.Remove(visual);
+            }
+
+            _context.RestaurantAreaVisuals.RemoveRange(
+                await _context.RestaurantAreaVisuals.Where(v => v.AreaId == area.Id).ToArrayAsync());
+            
+            _context.Tables.RemoveRange(area.Tables);
             _context.RestaurantAreas.Remove(area);
         }
 
         await _context.SaveChangesAsync();
-        return Ok();
+        return NoContent();
     }
 }
