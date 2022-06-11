@@ -13,4 +13,6 @@ public class RectangleVisual
     public byte G { get; set; }
     public byte B { get; set; }
     public byte A { get; set; }
+    
+    public int? TableTypeVisualId { get; set; }
 }

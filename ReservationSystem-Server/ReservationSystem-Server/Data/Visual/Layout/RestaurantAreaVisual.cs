@@ -9,5 +9,6 @@ public class RestaurantAreaVisual
     public int AreaId { get; set; }
     public RestaurantArea Area { get; set; } = null!;
     
+    public int RectId { get; set; }
     public RectangleVisual Rect { get; set; } = null!;
 }
