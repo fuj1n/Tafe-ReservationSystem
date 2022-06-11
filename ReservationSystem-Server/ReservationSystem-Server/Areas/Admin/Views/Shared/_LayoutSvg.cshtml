@@ -13,29 +13,37 @@
     Queue<IHtmlContent> topmost = new();
 
     // Transform child from parent percentage coordinate to SVG percentage coordinate
-    LayoutModel.Rect Transform(LayoutModel.Rect parent, LayoutModel.Rect child)
+    LayoutModel.Rect Transform(LayoutModel.Rect parent, LayoutModel.Rect child, bool scale = false)
     {
-        return new LayoutModel.Rect(
+        LayoutModel.Rect newRect = new(
             parent.X + (child.X * parent.Width / 100),
             parent.Y + (child.Y * parent.Height / 100),
             child.Width /* * parent.Width / 100*/, // size is relative to the canvas, so we don't transform it
             child.Height /* * parent.Height / 100*/,
             child.Color
             );
+
+        if (!scale)
+            return newRect;
+
+        newRect.Width = newRect.Width * parent.Width / 100;
+        newRect.Height = newRect.Height * parent.Height / 100;
+
+        return newRect;
     }
 
     IHtmlContent DrawRect(LayoutModel.Rect rect)
     {
         string c = ColorTranslator.ToHtml(rect.Color);
 
-        return new HtmlString($"<rect x='{rect.X}%' y='{rect.Y}%' width='{rect.Width}%' height='{rect.Height}%' fill='{c}' />");
+        return new HtmlString($"<rect x='{rect.X}%' y='{rect.Y}%' width='{rect.Width}%' height='{rect.Height}%' fill='{c}'/>");
     }
 
     IHtmlContent DrawLabel(float x, float y, string text, Color color)
     {
         string c = ColorTranslator.ToHtml(color);
 
-        return new HtmlString($"<text x='{x}%' y='{y}%' fill='{c}' font-weight='700' dominant-baseline='hanging' class='user-select-none'>{text}</text>");
+        return new HtmlString($"<text x='{x}%' y='{y}%' fill='{c}' stroke='#000' font-weight='700' dominant-baseline='hanging' class='user-select-none'>{text}</text>");
     }
 
     IHtmlContent DrawCenterLabel(LayoutModel.Rect within, string text, Color color)
@@ -72,17 +80,26 @@
             tableRect = Transform(area.Rect, tableRect);
 
             float accX = 0, accY = 0;
-
-            foreach (LayoutModel.Rect rect in tableType.Rectangles)
+            foreach(LayoutModel.Rect rect in tableType.Rectangles)
             {
-                LayoutModel.Rect absolute = Transform(tableRect, rect);
+                LayoutModel.Rect absolute = Transform(tableRect, rect, true);
                 accX += absolute.X + absolute.Width / 2;
                 accY += absolute.Y + absolute.Height / 2;
-
-                @DrawRect(absolute)
             }
+            
+            accX /= tableType.Rectangles.Length;
+            accY /= tableType.Rectangles.Length;
 
-            LayoutModel.Rect tableLabel = new(accX / tableType.Rectangles.Length, accY / tableType.Rectangles.Length, 0, 0, Color.Transparent);
+            <g style="transform: translate(@accX%, @accY%) rotate(@string.Concat(table.Rotation, "deg")) translate(-@accX%, -@accY%)" data-table-id="@table.Id">
+                @foreach (LayoutModel.Rect rect in tableType.Rectangles)
+                {
+                    LayoutModel.Rect absolute = Transform(tableRect, rect, true);
+
+                    @DrawRect(absolute)
+                }
+            </g>
+
+            LayoutModel.Rect tableLabel = new(accX, accY, 0, 0, Color.Transparent);
             @DrawCenterLabel(tableLabel, table.Name, Color.Black)
         }
     }

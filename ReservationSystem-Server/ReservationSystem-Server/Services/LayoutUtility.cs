@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Numerics;
+using Microsoft.EntityFrameworkCore;
 using ReservationSystem_Server.Areas.Admin.Models;
 using ReservationSystem_Server.Data;
+using ReservationSystem_Server.Data.Visual.Layout;
 
 namespace ReservationSystem_Server.Services;
 
@@ -15,7 +17,7 @@ public class LayoutUtility
 
     public async Task<LayoutModel> BuildLayoutModel()
     {
-        Table[] tables = await _context.Tables.ToArrayAsync();
+        TableVisual[] tables = await _context.TableVisuals.Include(v => v.Table).ToArrayAsync();
         LayoutModel model = new()
         {
             Areas = await _context.RestaurantAreas
@@ -31,19 +33,29 @@ public class LayoutUtility
                     })
                 .ToArrayAsync(),
             Tables = tables.Aggregate(new Dictionary<int, List<LayoutModel.Table>>(),
-                (acc, t) =>
+                (acc, v) =>
                 {
-                    if (!acc.ContainsKey(t.AreaId))
-                        acc.Add(t.AreaId, new List<LayoutModel.Table>());
-                    acc[t.AreaId].Add(new LayoutModel.Table
+                    if (!acc.ContainsKey(v.Table.AreaId))
+                        acc.Add(v.Table.AreaId, new List<LayoutModel.Table>());
+                    acc[v.Table.AreaId].Add(new LayoutModel.Table
                     {
-                        Id = t.Id,
-                        Name = t.Name,
-                        AreaId = t.AreaId
+                        Id = v.Table.Id,
+                        Name = v.Table.Name,
+                        AreaId = v.Table.AreaId,
+                        Position = new Vector2(v.X, v.Y),
+                        Rotation = v.Rotation,
+                        TableTypeId = v.TableTypeId
                     });
 
                     return acc;
-                })
+                }),
+            TableTypes = await _context.TableTypeVisuals.Include(v => v.Rects).ToDictionaryAsync(v => v.Id, v => new LayoutModel.TableType
+            {
+                Id = v.Id,
+                Name = v.Name,
+                CanvasSize = new Vector2(v.Width, v.Height),
+                Rectangles = v.Rects.Select(LayoutModel.Rect.FromRectangleVisual).ToArray()
+            })
         };
 
         return model;

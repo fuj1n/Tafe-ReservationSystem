@@ -11,21 +11,8 @@ public class LayoutModel
     public Area[] Areas { get; set; } = Array.Empty<Area>();
     
     //TODO: editable table types
-    public Dictionary<int, TableType> TableTypes { get; set; } = new()
-    {
-        {1, new TableType
-        {
-            Id = 1,
-            Name = "Square",
-            Rectangles = new []
-            {
-                new Rect(0, 0, 5, 5, Color.Chocolate),
-                new Rect(-5, 4, 1, 4, Color.Maroon),
-                new Rect(50, 4, 1, 4, Color.Maroon),
-            }
-        }}
-    };
-    public Dictionary<int, List<Table>> Tables { get; set; } = new();
+    public Dictionary<int, TableType> TableTypes { get; set; } = null!;
+    public Dictionary<int, List<Table>> Tables { get; set; } = null!;
 
     [PublicAPI]
     public struct Rect
@@ -102,5 +89,6 @@ public class LayoutModel
         public int TableTypeId { get; set; } = 1;
         
         public Vector2 Position { get; set; } = Vector2.One * 50;
+        public int Rotation { get; set; }
     }
 }
