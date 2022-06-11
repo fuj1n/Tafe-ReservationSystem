@@ -16,7 +16,8 @@ function Area({area, selected, select, updateArea}) {
             <SvgDraw.Rect rect={area.rect} extra={extra}/>
             <SvgDraw.Label x={area.rect.x + 1.25} y={area.rect.y + 1.25} text={area.name}
                            color={SvgDraw.darkenColor(area.rect.color, 2)}/>
-            <SvgDraw.ResizeHandle rect={area.rect} updateRect={newRect => updateArea(area.id, {rect: newRect})}/>
+            <SvgDraw.MoveResizeHandle rect={area.rect} updateRect={newRect => updateArea(area.id, {rect: newRect})}
+                canMove canResize/>
         </g>
     );
 }
@@ -26,7 +27,6 @@ export default function AreasLayoutPage() {
     const [areas, setAreas] = useState([]);
     const [error, setError] = useState(null);
     const [blockingError, setBlockingError] = useState(null);
-    const [dirty, setDirty] = useState(false);
     const [generation, setGeneration] = useState(0);
 
     const [selection, setSelection] = useState(null);
@@ -59,7 +59,6 @@ export default function AreasLayoutPage() {
             return area;
         });
         setAreas(newAreas);
-        setDirty(true);
     }
 
     function getColorForPicker(color) {
@@ -103,8 +102,7 @@ export default function AreasLayoutPage() {
                 width: 25,
                 height: 25,
                 color: {r: 192, g: 168, b: 0, a: 255}
-            },
-            isNew: true
+            }
         }];
         setAreas(newAreas);
         setSelection(id);
@@ -115,7 +113,6 @@ export default function AreasLayoutPage() {
         const response = await api.layout.putAreaLayout(areas);
         if (response.ok) {
             setError(null);
-            setDirty(false);
             setGeneration(generation + 1);
         } else {
             setError(await api.common.processError(response));

@@ -78,7 +78,7 @@ function Label({x, y, text, color, extra}) {
     );
 }
 
-function MoveResizeHandle({rect, updateRect, canMove = true, canResize}) {
+function MoveResizeHandle({rect, updateRect, canMove, canResize}) {
     const [resizingHandle, setResizingHandle] = useState(null);
 
     const corners = [
@@ -198,7 +198,7 @@ const SvgDraw = {
     Rect,
     Circle,
     Label,
-    ResizeHandle: MoveResizeHandle
+    MoveResizeHandle
 };
 
 export default SvgDraw;

@@ -107,7 +107,7 @@ public class LayoutBuilderController : Controller
             }
         }
 
-        // ToArray as EF couldn't translate areas.All({lambda})
+        // ToArray as EF couldn't translate areas.All(...)
         foreach (RestaurantArea area in (await _context.RestaurantAreas.Include(a => a.Tables).ToArrayAsync()).Where(a =>
                      areas.All(m => a.Id != m.Id)))
         {
@@ -129,6 +129,84 @@ public class LayoutBuilderController : Controller
             _context.RestaurantAreas.Remove(area);
         }
 
+        await _context.SaveChangesAsync();
+        return NoContent();
+    }
+
+    [HttpGet("TableTypes")]
+    public async Task<IActionResult> GetTableTypes()
+    {
+        return Ok(await _context.TableTypeVisuals
+            .Include(v => v.Rects)
+            .Select(v => new TableTypeModel
+            {
+                Id = v.Id,
+                Name = v.Name,
+                Seats = v.Seats,
+                Width = v.Width,
+                Height = v.Height,
+                Rects = v.Rects.Select(r => LayoutModel.Rect.FromRectangleVisual(r)).ToArray()
+            })
+            .ToArrayAsync());
+    }
+    
+    [HttpPut("TableTypes")]
+    public async Task<IActionResult> PutTableTypes(TableTypeModel[] tables)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        foreach (TableTypeModel model in tables)
+        {
+            TableTypeVisual? existing = await _context.TableTypeVisuals.Include(v => v.Rects).FirstOrDefaultAsync(v => v.Id == model.Id);
+            if (existing == null)
+            {
+                model.Id = 0;
+                _context.TableTypeVisuals.Add(new TableTypeVisual
+                {
+                    Name = model.Name,
+                    Seats = model.Seats,
+                    Width = model.Width,
+                    Height = model.Height,
+                    Rects = model.Rects.Select(LayoutModel.Rect.ToRectangleVisual).ToList()
+                });
+            }
+            else
+            {
+                existing.Name = model.Name;
+                existing.Seats = model.Seats;
+                existing.Width = model.Width;
+                existing.Height = model.Height;
+                
+                _context.RectangleVisuals.RemoveRange(existing.Rects);
+                existing.Rects.Clear();
+                foreach (LayoutModel.Rect rect in model.Rects)
+                {
+                    existing.Rects.Add(new RectangleVisual
+                    {
+                        X = rect.X,
+                        Y = rect.Y,
+                        Width = rect.Width,
+                        Height = rect.Height,
+                        R = rect.Color.R,
+                        G = rect.Color.G,
+                        B = rect.Color.B,
+                        A = rect.Color.A
+                    });
+                }
+            }
+        }
+        
+        // ToArray as EF couldn't translate tables.All(...)
+        foreach (TableTypeVisual tableType in (await _context.TableTypeVisuals.Include(t => t.Rects).ToArrayAsync())
+                 .Where(t => tables.All(tt => tt.Id != t.Id)))
+        {
+            _context.RectangleVisuals.RemoveRange(tableType.Rects);
+            _context.TableTypeVisuals.Remove(tableType);
+        }
+        
         await _context.SaveChangesAsync();
         return NoContent();
     }

@@ -12,6 +12,7 @@ public abstract class VisualDbContext : IdentityDbContext
     // Layout
     public DbSet<RectangleVisual> RectangleVisuals => Set<RectangleVisual>();
     public DbSet<RestaurantAreaVisual> RestaurantAreaVisuals => Set<RestaurantAreaVisual>();
+    public DbSet<TableTypeVisual> TableTypeVisuals => Set<TableTypeVisual>();
 
     protected VisualDbContext(DbContextOptions options)
         : base(options)

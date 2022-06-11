@@ -74,13 +74,12 @@ async function processError(response, overrides = {}) {
     if (response.isInternalError) {
         error.message = response.statusText;
     } else {
-        if(response.status >= 500) {
-            error.message = "An internal error occurred";
-
-            return error;
+        let errorObject;
+        try {
+            errorObject = await response.json();
+        } catch(e) {
+            console.error(e);
         }
-
-        const errorObject = await response.json();
 
         if (!errorObject) {
             return error;
