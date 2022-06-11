@@ -164,8 +164,8 @@ function MoveResizeHandle({rect, updateRect, canMove, canResize, moveOffset}) {
     const moveCorners = [
         {
             x: rect.x + rect.width / 2 + (moveOffset?.x ?? 0), y: rect.y + rect.height / 2 + (moveOffset?.y ?? 0), handle: 'move', updateRect: (newX, newY) => ({
-                x: newX - rect.width / 2 - moveOffset?.x ?? 0,
-                y: newY - rect.height / 2 - moveOffset?.y ?? 0,
+                x: newX - rect.width / 2 - (moveOffset?.x ?? 0),
+                y: newY - rect.height / 2 - (moveOffset?.y ?? 0),
                 width: rect.width,
                 height: rect.height
             })
