@@ -43,19 +43,19 @@
     {
         string c = ColorTranslator.ToHtml(color);
 
-        return new HtmlString($"<text x='{x}%' y='{y}%' fill='{c}' stroke='#000' font-weight='700' dominant-baseline='hanging' class='user-select-none'>{text}</text>");
+        return new HtmlString($"<text x='{x}%' y='{y}%' fill='{c}' stroke='#000' font-weight='700' dominant-baseline='hanging' class='user-select-none' pointer-events='none'>{text}</text>");
     }
 
     IHtmlContent DrawCenterLabel(LayoutModel.Rect within, string text, Color color)
     {
         string c = ColorTranslator.ToHtml(color);
 
-        return new HtmlString($"<text x='{within.X + within.Width / 2}%' y='{within.Y + within.Height / 2}%' fill='{c}' font-weight='700' text-anchor='middle' dominant-baseline='middle' class='user-select-none'>{text}</text>");
+        return new HtmlString($"<text x='{within.X + within.Width / 2}%' y='{within.Y + within.Height / 2}%' fill='{c}' font-weight='700' text-anchor='middle' dominant-baseline='middle' class='user-select-none' pointer-events='none'>{text}</text>");
     }
 }
 
 <svg>
-    <rect fill="#6c757d" x="0" y="0" width="100%" height="100%"/>
+    <rect fill="#6c757d33" x="0" y="0" width="100%" height="100%"/>
     @foreach (LayoutModel.Area area in layout.Areas)
     {
         @DrawRect(area.Rect)
@@ -90,7 +90,9 @@
             accX /= tableType.Rectangles.Length;
             accY /= tableType.Rectangles.Length;
 
+            
             <g style="transform: translate(@accX%, @accY%) rotate(@string.Concat(table.Rotation, "deg")) translate(-@accX%, -@accY%)" data-table-id="@table.Id">
+            <rect name="background" x="@(tableRect.X - 0.4)%" y="@(tableRect.Y - 0.4)%" width="@(tableRect.Width + 0.8)%" height="@(tableRect.Height + 0.8)%" fill="transparent"/>
                 @foreach (LayoutModel.Rect rect in tableType.Rectangles)
                 {
                     LayoutModel.Rect absolute = Transform(tableRect, rect, true);
