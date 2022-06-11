@@ -45,4 +45,16 @@
       <Folder Include="Areas\Member\Models" />
       <Folder Include="Properties\PublishProfiles\" />
     </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Areas\Admin\Views\LayoutBuilder\Index.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Areas\Admin\Views\LayoutBuilder\Index.cshtml" />
+    </ItemGroup>
+
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+      <Exec Command="../layout-builder-ui/build" />
+    </Target>
 </Project>

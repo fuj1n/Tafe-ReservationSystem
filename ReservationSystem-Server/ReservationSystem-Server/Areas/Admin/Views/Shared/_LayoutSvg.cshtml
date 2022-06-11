@@ -1,0 +1,112 @@
+﻿@*A distiller that renders the restaurant server-side without any client-side JS necessary*@
+
+@using ReservationSystem_Server.Areas.Admin.Models
+@using System.Drawing
+@using Microsoft.AspNetCore.Html
+@using ReservationSystem_Server.Helper
+@using ReservationSystem_Server.Services
+@inject LayoutUtility LayoutUtility
+
+@{
+    LayoutModel layout = await LayoutUtility.BuildLayoutModel();
+
+    Queue<IHtmlContent> topmost = new();
+
+    // Transform child from parent percentage coordinate to SVG percentage coordinate
+    LayoutModel.Rect Transform(LayoutModel.Rect parent, LayoutModel.Rect child, bool scale = false)
+    {
+        LayoutModel.Rect newRect = new(
+            parent.X + (child.X * parent.Width / 100),
+            parent.Y + (child.Y * parent.Height / 100),
+            child.Width /* * parent.Width / 100*/, // size is relative to the canvas, so we don't transform it
+            child.Height /* * parent.Height / 100*/,
+            child.Color
+            );
+
+        if (!scale)
+            return newRect;
+
+        newRect.Width = newRect.Width * parent.Width / 100;
+        newRect.Height = newRect.Height * parent.Height / 100;
+
+        return newRect;
+    }
+
+    IHtmlContent DrawRect(LayoutModel.Rect rect)
+    {
+        string c = ColorTranslator.ToHtml(rect.Color);
+
+        return new HtmlString($"<rect x='{rect.X}%' y='{rect.Y}%' width='{rect.Width}%' height='{rect.Height}%' fill='{c}'/>");
+    }
+
+    IHtmlContent DrawLabel(float x, float y, string text, Color color)
+    {
+        string c = ColorTranslator.ToHtml(color);
+
+        return new HtmlString($"<text x='{x}%' y='{y}%' fill='{c}' stroke='#000' font-weight='700' dominant-baseline='hanging' class='user-select-none' pointer-events='none'>{text}</text>");
+    }
+
+    IHtmlContent DrawCenterLabel(LayoutModel.Rect within, string text, Color color)
+    {
+        string c = ColorTranslator.ToHtml(color);
+
+        return new HtmlString($"<text x='{within.X + within.Width / 2}%' y='{within.Y + within.Height / 2}%' fill='{c}' font-weight='700' text-anchor='middle' dominant-baseline='middle' class='user-select-none' pointer-events='none'>{text}</text>");
+    }
+}
+
+<svg>
+    <rect fill="#6c757d33" x="0" y="0" width="100%" height="100%"/>
+    @foreach (LayoutModel.Area area in layout.Areas)
+    {
+        @DrawRect(area.Rect)
+        topmost.Enqueue(DrawLabel(area.Rect.X + 1.25f, area.Rect.Y + 1.25f, area.Name, area.Rect.Color.Darken(2)));
+
+        if (!layout.Tables.ContainsKey(area.Id)) continue;
+
+        foreach (LayoutModel.Table table in layout.Tables[area.Id])
+        {
+            if (!layout.TableTypes.ContainsKey(table.TableTypeId))
+            {
+                LayoutModel.Rect relative = new(table.Position.X, table.Position.Y, 5, 5, Color.Red);
+                LayoutModel.Rect absolute = Transform(area.Rect, relative);
+
+                @DrawRect(absolute)
+                @DrawCenterLabel(absolute, "Invalid table type", Color.Red.Darken(2))
+                continue;
+            }
+
+            LayoutModel.TableType tableType = layout.TableTypes[table.TableTypeId];
+            LayoutModel.Rect tableRect = new(table.Position.X, table.Position.Y, tableType.CanvasSize.X, tableType.CanvasSize.Y, Color.Transparent);
+            tableRect = Transform(area.Rect, tableRect);
+
+            float accX = 0, accY = 0;
+            foreach(LayoutModel.Rect rect in tableType.Rectangles)
+            {
+                LayoutModel.Rect absolute = Transform(tableRect, rect, true);
+                accX += absolute.X + absolute.Width / 2;
+                accY += absolute.Y + absolute.Height / 2;
+            }
+            
+            accX /= tableType.Rectangles.Length;
+            accY /= tableType.Rectangles.Length;
+
+            
+            <g style="transform: translate(@accX%, @accY%) rotate(@string.Concat(table.Rotation, "deg")) translate(-@accX%, -@accY%)" data-table-id="@table.Id">
+            <rect name="background" x="@(tableRect.X - 0.4)%" y="@(tableRect.Y - 0.4)%" width="@(tableRect.Width + 0.8)%" height="@(tableRect.Height + 0.8)%" fill="transparent"/>
+                @foreach (LayoutModel.Rect rect in tableType.Rectangles)
+                {
+                    LayoutModel.Rect absolute = Transform(tableRect, rect, true);
+
+                    @DrawRect(absolute)
+                }
+            </g>
+
+            LayoutModel.Rect tableLabel = new(accX, accY, 0, 0, Color.Transparent);
+            @DrawCenterLabel(tableLabel, table.Name, Color.Black)
+        }
+    }
+    @while (topmost.TryDequeue(out IHtmlContent? next))
+    {
+        @next
+    }
+</svg>

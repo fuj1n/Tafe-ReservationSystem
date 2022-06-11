@@ -76,3 +76,18 @@ body {
     transform: rotate(360deg);
   }
 }
+
+.marchingAnts {
+  animation-name: march-up;
+  animation-duration: 100s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+@keyframes march-up {
+  from {
+    stroke-dashoffset: 0
+  }
+  to {
+    stroke-dashoffset: 100%
+  }
+}

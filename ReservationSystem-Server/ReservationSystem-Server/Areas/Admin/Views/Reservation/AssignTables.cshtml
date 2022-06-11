@@ -1,4 +1,5 @@
 ﻿@using ReservationSystem_Server.Areas.Admin.Models.Reservation
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model ReservationSystem_Server.Areas.Admin.Models.Reservation.AssignTablesViewModel
 
 @{
@@ -6,31 +7,38 @@
     Layout = "";
 }
 
+<style>
+    [name="background"] {
+        transition:  fill 1s ease-in-out;
+    }
+
+    .assigned {
+        fill: var(--bs-green);
+        transition:  fill 1s ease-in-out;
+    }
+</style>
+
 @* <a asp-action="Sitting" asp-route-id="@Model!.SittingId" class="btn btn-outline-danger mb-2">Back to Sitting</a> *@
 
 <span class="d-none" id="modal-name">Assign Tables</span>
 <span class="d-none" id="modal-size">lg</span>
 
 <form asp-action="AssignTables" method="post" id="modal-submit">
-    <div class="list-group list-group-horizontal-lg flex-wrap">
-        @for (int i = 0; i < Model!.Tables.Count; i++)
-        {
-            AssignTablesViewModel.Table table = Model.Tables[i];
-            <label class="list-group-item border-start" style="width: 100px;">
-                <input class="form-check-input me-1" type="checkbox" asp-for="Tables[i].IsAssigned" />
-                @table.Name
-            </label>
-        }
+    <div class="d-flex align-items-center pb-2 gap-2">
+        <div style="width: 24px; height: 24px; border: var(--bs-green) 2px solid"></div>
+        = Selected
     </div>
-    
+    <div class="ratio ratio-1x1">
+        <partial name="_LayoutSvg"/>
+    </div>
+
     <div class="visually-hidden invisible" aria-hidden="true">
         <input type="hidden" asp-for="ReservationId"/>
         <input type="hidden" asp-for="SittingId"/>
-        
-        @for (int i = 0; i < Model.Tables.Count; i++)
-        {
-            <input type="hidden" asp-for="Tables[i].Id"/>
-            <input type="hidden" asp-for="Tables[i].Name"/>
-        }
     </div>
 </form>
+
+<script>
+    window.model = @Json.Serialize(Model);
+</script>
+<script defer src="~/js/assign-tables.js"></script>

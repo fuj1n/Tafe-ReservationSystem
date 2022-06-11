@@ -1,0 +1,11 @@
+﻿@{
+    ViewBag.Title = "Layout Builder";
+}
+
+<config
+    baseurl="@Url.Action("", "LayoutBuilder", new { Area = "Admin" }, Context.Request.Scheme)/"
+    root="@Url.Action("", "LayoutBuilder", new { Area = "Admin" })">
+</config>
+<div id="root"></div>
+
+<script defer src="~/js/layout-builder.gen.js"></script>

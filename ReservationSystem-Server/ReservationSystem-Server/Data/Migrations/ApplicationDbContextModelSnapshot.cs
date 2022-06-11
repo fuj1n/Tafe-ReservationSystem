@@ -948,6 +948,459 @@ namespace ReservationSystem_Server.Migrations
                         });
                 });
 
+            modelBuilder.Entity("ReservationSystem_Server.Data.Visual.Layout.RectangleVisual", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<byte>("A")
+                        .HasColumnType("tinyint");
+
+                    b.Property<byte>("B")
+                        .HasColumnType("tinyint");
+
+                    b.Property<byte>("G")
+                        .HasColumnType("tinyint");
+
+                    b.Property<float>("Height")
+                        .HasColumnType("real");
+
+                    b.Property<byte>("R")
+                        .HasColumnType("tinyint");
+
+                    b.Property<int?>("TableTypeVisualId")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Width")
+                        .HasColumnType("real");
+
+                    b.Property<float>("X")
+                        .HasColumnType("real");
+
+                    b.Property<float>("Y")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TableTypeVisualId");
+
+                    b.ToTable("RectangleVisuals");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            A = (byte)255,
+                            B = (byte)254,
+                            G = (byte)19,
+                            Height = 25f,
+                            R = (byte)144,
+                            Width = 25f,
+                            X = 48.241886f,
+                            Y = 34.69217f
+                        },
+                        new
+                        {
+                            Id = 2,
+                            A = (byte)255,
+                            B = (byte)33,
+                            G = (byte)211,
+                            Height = 25f,
+                            R = (byte)126,
+                            Width = 25f,
+                            X = 48.138847f,
+                            Y = 9.550489f
+                        },
+                        new
+                        {
+                            Id = 3,
+                            A = (byte)255,
+                            B = (byte)194,
+                            G = (byte)227,
+                            Height = 37.986217f,
+                            R = (byte)80,
+                            Width = 43.75644f,
+                            X = 4.620685f,
+                            Y = 9.3089905f
+                        },
+                        new
+                        {
+                            Id = 4,
+                            A = (byte)255,
+                            B = (byte)42,
+                            G = (byte)87,
+                            Height = 89.64534f,
+                            R = (byte)139,
+                            TableTypeVisualId = 1,
+                            Width = 99.94848f,
+                            X = 0.051519834f,
+                            Y = 5.225631f
+                        },
+                        new
+                        {
+                            Id = 5,
+                            A = (byte)255,
+                            B = (byte)27,
+                            G = (byte)2,
+                            Height = 9.997585f,
+                            R = (byte)208,
+                            TableTypeVisualId = 1,
+                            Width = 86.17336f,
+                            X = 6.7168984f,
+                            Y = 0.012075072f
+                        },
+                        new
+                        {
+                            Id = 6,
+                            A = (byte)255,
+                            B = (byte)27,
+                            G = (byte)2,
+                            Height = 10.218387f,
+                            R = (byte)208,
+                            TableTypeVisualId = 1,
+                            Width = 86.37944f,
+                            X = 7.9694743f,
+                            Y = 89.76178f
+                        });
+                });
+
+            modelBuilder.Entity("ReservationSystem_Server.Data.Visual.Layout.RestaurantAreaVisual", b =>
+                {
+                    b.Property<int>("AreaId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RectId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AreaId");
+
+                    b.HasIndex("RectId");
+
+                    b.ToTable("RestaurantAreaVisuals");
+
+                    b.HasData(
+                        new
+                        {
+                            AreaId = 1,
+                            RectId = 1
+                        },
+                        new
+                        {
+                            AreaId = 2,
+                            RectId = 2
+                        },
+                        new
+                        {
+                            AreaId = 3,
+                            RectId = 3
+                        });
+                });
+
+            modelBuilder.Entity("ReservationSystem_Server.Data.Visual.Layout.TableTypeVisual", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<float>("Height")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Seats")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Width")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TableTypeVisuals");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Height = 7f,
+                            Name = "2-seater",
+                            Seats = 2,
+                            Width = 5f
+                        });
+                });
+
+            modelBuilder.Entity("ReservationSystem_Server.Data.Visual.Layout.TableVisual", b =>
+                {
+                    b.Property<int>("TableId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rotation")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TableTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<float>("X")
+                        .HasColumnType("real");
+
+                    b.Property<float>("Y")
+                        .HasColumnType("real");
+
+                    b.HasKey("TableId");
+
+                    b.HasIndex("TableTypeId");
+
+                    b.ToTable("TableVisuals");
+
+                    b.HasData(
+                        new
+                        {
+                            TableId = 2,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 47.552807f,
+                            Y = 39.464195f
+                        },
+                        new
+                        {
+                            TableId = 3,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 73.20969f,
+                            Y = 69.44874f
+                        },
+                        new
+                        {
+                            TableId = 4,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 39.92787f,
+                            Y = 70.47913f
+                        },
+                        new
+                        {
+                            TableId = 5,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 3.5548687f,
+                            Y = 70.47913f
+                        },
+                        new
+                        {
+                            TableId = 6,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 71.04585f,
+                            Y = 38.12468f
+                        },
+                        new
+                        {
+                            TableId = 7,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 26.120556f,
+                            Y = 39.567234f
+                        },
+                        new
+                        {
+                            TableId = 8,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 2.833591f,
+                            Y = 38.22772f
+                        },
+                        new
+                        {
+                            TableId = 9,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 70.32458f,
+                            Y = 1.7516744f
+                        },
+                        new
+                        {
+                            TableId = 10,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 38.691395f,
+                            Y = 1.9577538f
+                        },
+                        new
+                        {
+                            TableId = 11,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 3.0396702f,
+                            Y = 2.1638331f
+                        },
+                        new
+                        {
+                            TableId = 12,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 54.147346f,
+                            Y = 35.548687f
+                        },
+                        new
+                        {
+                            TableId = 13,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 31.478619f,
+                            Y = 36.166924f
+                        },
+                        new
+                        {
+                            TableId = 14,
+                            Rotation = 90,
+                            TableTypeId = 1,
+                            X = 40.75219f,
+                            Y = 71.92169f
+                        },
+                        new
+                        {
+                            TableId = 15,
+                            Rotation = 90,
+                            TableTypeId = 1,
+                            X = 41.267387f,
+                            Y = 0.61823803f
+                        },
+                        new
+                        {
+                            TableId = 16,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 77.43431f,
+                            Y = 35.651726f
+                        },
+                        new
+                        {
+                            TableId = 17,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 6.7490983f,
+                            Y = 36.269962f
+                        },
+                        new
+                        {
+                            TableId = 18,
+                            Rotation = 135,
+                            TableTypeId = 1,
+                            X = 6.7490983f,
+                            Y = 69.963936f
+                        },
+                        new
+                        {
+                            TableId = 19,
+                            Rotation = 45,
+                            TableTypeId = 1,
+                            X = 73.724884f,
+                            Y = 69.654816f
+                        },
+                        new
+                        {
+                            TableId = 20,
+                            Rotation = 135,
+                            TableTypeId = 1,
+                            X = 73.724884f,
+                            Y = 2.5759919f
+                        },
+                        new
+                        {
+                            TableId = 21,
+                            Rotation = 45,
+                            TableTypeId = 1,
+                            X = 4.997424f,
+                            Y = 2.5759919f
+                        },
+                        new
+                        {
+                            TableId = 22,
+                            Rotation = 90,
+                            TableTypeId = 1,
+                            X = 23.441525f,
+                            Y = 36.438354f
+                        },
+                        new
+                        {
+                            TableId = 23,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 77.53735f,
+                            Y = 72.75802f
+                        },
+                        new
+                        {
+                            TableId = 24,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 77.022156f,
+                            Y = 36.67574f
+                        },
+                        new
+                        {
+                            TableId = 25,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 77.12519f,
+                            Y = 5.459819f
+                        },
+                        new
+                        {
+                            TableId = 26,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 43.1221f,
+                            Y = 70.146805f
+                        },
+                        new
+                        {
+                            TableId = 27,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 42.916023f,
+                            Y = 35.607513f
+                        },
+                        new
+                        {
+                            TableId = 28,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 43.94642f,
+                            Y = 4.86636f
+                        },
+                        new
+                        {
+                            TableId = 29,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 4.585265f,
+                            Y = 68.485115f
+                        },
+                        new
+                        {
+                            TableId = 30,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 4.379186f,
+                            Y = 34.539288f
+                        },
+                        new
+                        {
+                            TableId = 31,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 3.5548687f,
+                            Y = 4.035518f
+                        });
+                });
+
             modelBuilder.Entity("ReservationSystem_Server.Data.Visual.ReservationStatusVisual", b =>
                 {
                     b.Property<int>("Id")
@@ -1265,6 +1718,51 @@ namespace ReservationSystem_Server.Migrations
                     b.Navigation("Area");
                 });
 
+            modelBuilder.Entity("ReservationSystem_Server.Data.Visual.Layout.RectangleVisual", b =>
+                {
+                    b.HasOne("ReservationSystem_Server.Data.Visual.Layout.TableTypeVisual", null)
+                        .WithMany("Rects")
+                        .HasForeignKey("TableTypeVisualId");
+                });
+
+            modelBuilder.Entity("ReservationSystem_Server.Data.Visual.Layout.RestaurantAreaVisual", b =>
+                {
+                    b.HasOne("ReservationSystem_Server.Data.RestaurantArea", "Area")
+                        .WithMany()
+                        .HasForeignKey("AreaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ReservationSystem_Server.Data.Visual.Layout.RectangleVisual", "Rect")
+                        .WithMany()
+                        .HasForeignKey("RectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Area");
+
+                    b.Navigation("Rect");
+                });
+
+            modelBuilder.Entity("ReservationSystem_Server.Data.Visual.Layout.TableVisual", b =>
+                {
+                    b.HasOne("ReservationSystem_Server.Data.Table", "Table")
+                        .WithMany()
+                        .HasForeignKey("TableId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ReservationSystem_Server.Data.Visual.Layout.TableTypeVisual", "TableType")
+                        .WithMany()
+                        .HasForeignKey("TableTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Table");
+
+                    b.Navigation("TableType");
+                });
+
             modelBuilder.Entity("ReservationSystem_Server.Data.Visual.ReservationStatusVisual", b =>
                 {
                     b.HasOne("ReservationSystem_Server.Data.ReservationStatus", "ReservationStatus")
@@ -1317,6 +1815,11 @@ namespace ReservationSystem_Server.Migrations
             modelBuilder.Entity("ReservationSystem_Server.Data.Sitting", b =>
                 {
                     b.Navigation("Reservations");
+                });
+
+            modelBuilder.Entity("ReservationSystem_Server.Data.Visual.Layout.TableTypeVisual", b =>
+                {
+                    b.Navigation("Rects");
                 });
 
             modelBuilder.Entity("ReservationSystem_Server.Data.Customer", b =>

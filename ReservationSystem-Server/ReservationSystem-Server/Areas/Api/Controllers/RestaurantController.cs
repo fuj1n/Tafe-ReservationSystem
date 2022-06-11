@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ReservationSystem_Server.Areas.Api.Models.Restaurant;
 using ReservationSystem_Server.Data;
 using ReservationSystem_Server.Services;
@@ -7,7 +8,7 @@ namespace ReservationSystem_Server.Areas.Api.Controllers;
 
 [ApiController]
 [Route($"{ApiInfo.Base}[controller]")]
-public class RestaurantController : ControllerBase
+public class RestaurantController : Controller
 {
     private readonly RestaurantProvider _restaurantProvider;
 
@@ -39,5 +40,12 @@ public class RestaurantController : ControllerBase
             PhoneNumber = restaurant.PhoneNumber,
             Email = restaurant.Email
         });
+    }
+
+    [HttpGet("layout")]
+    [Authorize(Roles = "Employee")]
+    public IActionResult GetLayout()
+    {
+        return PartialView("~/Areas/Admin/Views/Shared/_LayoutSvg.cshtml");
     }
 }

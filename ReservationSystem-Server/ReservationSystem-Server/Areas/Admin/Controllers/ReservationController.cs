@@ -378,7 +378,7 @@ public class ReservationController : Controller
         if (!ModelState.IsValid)
         {
             _logger.LogInformation("Validation failed for model {@Model}", model);
-            return View(model);
+            return BadRequest(ModelState);
         }
 
         Reservation? reservation = await _reservationUtility.GetReservationAsync(model.ReservationId, q => q
@@ -399,6 +399,6 @@ public class ReservationController : Controller
         await _reservationUtility.EditReservationAsync(reservation);
         
         _logger.LogTrace("Exiting POST AssignTables");
-        return RedirectToAction(nameof(Sitting), new { id = reservation.SittingId });
+        return this.CloseModalAndRefresh();
     }
 }

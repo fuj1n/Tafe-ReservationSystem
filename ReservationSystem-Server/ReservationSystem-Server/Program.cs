@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -12,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
+using NuGet.Packaging;
 using ReservationSystem_Server.Areas.Api.Models;
 using ReservationSystem_Server.Configuration;
 using ReservationSystem_Server.Data;
@@ -42,8 +44,8 @@ builder.Host.UseSerilog();
 
 string[] stringsToTry =
 {
-    "DefaultConnectionExpress",
     "DefaultConnection",
+    "DefaultConnectionExpress"
 };
 
 string? connectionString;
@@ -72,46 +74,46 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 // Adds both cookie and JWT Bearer token based authentication, so that you can still sign in using the website.
 // The policy scheme is used to determine which authentication scheme should be used so that both will work.
 builder.Services.AddAuthentication(o =>
+    {
+        o.DefaultScheme = "JWT_OR_COOKIE";
+        o.DefaultChallengeScheme = "JWT_OR_COOKIE";
+    })
+    .AddJwtBearer(options =>
+    {
+        options.RequireHttpsMetadata = false;
+        options.SaveToken = true;
+        options.TokenValidationParameters = new TokenValidationParameters
         {
-            o.DefaultScheme = "JWT_OR_COOKIE";
-            o.DefaultChallengeScheme = "JWT_OR_COOKIE";
-        })
-        .AddJwtBearer(options =>
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+
+            // Prevents tokens without an expiry from ever working, as that would be a security vulnerability.
+            RequireExpirationTime = true,
+
+            // ClockSkew generally exists to account for potential clock difference between issuer and consumer
+            // But we are both, so we don't need to account for it.
+            // For all intents and purposes, this is optional
+            ClockSkew = TimeSpan.Zero
+        };
+    })
+    .AddPolicyScheme("JWT_OR_COOKIE", null, o =>
+    {
+        o.ForwardDefaultSelector = c =>
         {
-            options.RequireHttpsMetadata = false;
-            options.SaveToken = true;
-            options.TokenValidationParameters = new TokenValidationParameters
+            string auth = c.Request.Headers[HeaderNames.Authorization];
+            if (!string.IsNullOrWhiteSpace(auth) && auth.StartsWith("Bearer "))
             {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
+                return JwtBearerDefaults.AuthenticationScheme;
+            }
 
-                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                    ValidAudience = builder.Configuration["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
-
-                    // Prevents tokens without an expiry from ever working, as that would be a security vulnerability.
-                    RequireExpirationTime = true,
-
-                    // ClockSkew generally exists to account for potential clock difference between issuer and consumer
-                    // But we are both, so we don't need to account for it.
-                    // For all intents and purposes, this is optional
-                    ClockSkew = TimeSpan.Zero
-            };
-        })
-        .AddPolicyScheme("JWT_OR_COOKIE", null, o =>
-        {
-            o.ForwardDefaultSelector = c =>
-            {
-                string auth = c.Request.Headers[HeaderNames.Authorization];
-                if (!string.IsNullOrWhiteSpace(auth) && auth.StartsWith("Bearer "))
-                {
-                    return JwtBearerDefaults.AuthenticationScheme;
-                }
-
-                return IdentityConstants.ApplicationScheme;
-            };
-        });
+            return IdentityConstants.ApplicationScheme;
+        };
+    });
 
 // Prevent redirects to the login page from API endpoints.
 builder.Services.ConfigureApplicationCookie(o =>
@@ -145,7 +147,11 @@ builder.Services.ConfigureApplicationCookie(o =>
 
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation().AddJsonOptions(o =>
 {
-    o.JsonSerializerOptions.Converters.Add(new TimeSpanConverter());
+    o.JsonSerializerOptions.Converters.AddRange(new JsonConverter[]
+    {
+        new TimeSpanConverter(),
+        new ColorConverter()
+    });
 });
 
 builder.Services.AddSwaggerGen(o =>
@@ -175,6 +181,7 @@ builder.Services.AddScoped<CustomerManager>();
 builder.Services.AddScoped<ReservationUtility>();
 builder.Services.AddScoped<SittingUtility>();
 builder.Services.AddScoped<RestaurantProvider>();
+builder.Services.AddScoped<LayoutUtility>();
 
 // Used for custom tag helpers
 builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();

@@ -22,6 +22,7 @@ import api from "./services/api";
 
 import brand from "./assets/brand.png";
 import {Button} from "./components";
+import {variants} from "./components/style";
 
 const navTheme = {
     ...DefaultTheme,
@@ -49,8 +50,8 @@ function LoginPane({navigation, state}) {
     const {loginInfo, setLoginInfo} = useContext(api.login.LoginContext);
 
     async function logout() {
-        if(Platform.OS === 'web') {
-            if(confirm('Are you sure you would like to log out?')) {
+        if (Platform.OS === 'web') {
+            if (confirm('Are you sure you would like to log out?')) {
                 api.login.logout().then(setLoginInfo);
             }
 
@@ -65,20 +66,19 @@ function LoginPane({navigation, state}) {
     }
 
     if (!loginInfo.isLoggedIn) {
-        const loginFocused = state.routes[state.index].name === 'Login';
-
         return (
-            <DrawerItem label="Log In" focused={loginFocused} onPress={() => navigation.navigate("Login")}/>
-        )
+            <DrawerItem label="Log In" focused={state.routes[state.index].name === 'Login'}
+                        onPress={() => navigation.navigate("Login")}/>
+        );
     }
 
     let userIdentity;
-    if(loginInfo.user.person) {
+    if (loginInfo.user.person) {
         const person = loginInfo.user.person;
         userIdentity = `${person.firstName} ${person.lastName}`;
     } else {
         const roles = [...loginInfo.user.roles];
-        if((roles.includes("Admin") || roles.includes("Manager")) && roles.includes("Employee")) {
+        if ((roles.includes("Admin") || roles.includes("Manager")) && roles.includes("Employee")) {
             roles.splice(roles.indexOf("Employee"), 1);
         }
 
@@ -90,28 +90,40 @@ function LoginPane({navigation, state}) {
             <Text style={appStyles.containerItem}>Hello {userIdentity}!</Text>
             <Button onPress={logout} variant="danger">Log Out</Button>
         </View>
-    )
+    );
 }
 
+// TODO: highly inefficient
 function DrawerContent(props) {
     const restaurant = useContext(api.restaurant.RestaurantContext);
 
-    // Set height to 0 for all pages that have the hidden option set to true
-    const propsWithHiddenPages = {
-        ...props,
-        descriptors: Object.entries(props.descriptors)
-            .map(([key, descriptor]) => {
-                if (descriptor.options.hidden) return [key, {
-                    ...descriptor,
-                    options: {...descriptor.options, drawerItemStyle: {height: 0}}
-                }];
-                return [key, descriptor];
-            })
-            .reduce((acc, [key, descriptor]) => {
-                acc[key] = descriptor;
-                return acc;
-            }, {})
-    };
+    function hideDescriptors(condition) {
+        return {
+            ...props,
+            descriptors: Object.entries(props.descriptors)
+                .map(([key, descriptor]) => {
+                    if (condition(descriptor)) return [key, {
+                        ...descriptor,
+                        options: {...descriptor.options, drawerItemStyle: {height: 0, opacity: 0, position: 'absolute'}}
+                    }];
+                    return [key, descriptor];
+                })
+                .reduce((acc, [key, descriptor]) => {
+                    acc[key] = descriptor;
+                    return acc;
+                }, {})
+        };
+    }
+
+    const propsWithHiddenPages = hideDescriptors(descriptor => descriptor.options.hidden || descriptor.options.groupName);
+
+    const groups = Object.values(props.descriptors)
+        .map(descriptor => descriptor.options.groupName)
+        .filter((value, index, self) => value && self.indexOf(value) === index)
+        .map(name => ({
+            name,
+            props: hideDescriptors(descriptor => descriptor.options.groupName !== name || descriptor.options.hidden)
+        }));
 
     return (
         <>
@@ -121,6 +133,21 @@ function DrawerContent(props) {
                     <Text style={{fontWeight: '700'}}>{restaurant.name}</Text>
                 </View>
                 <DrawerItemList {...propsWithHiddenPages} />
+                {groups.map(({name, props}) => (
+                    <View key={name}>
+                        <DrawerItem label={name + ":"} onPress={() => {
+                        }}/>
+                        <View style={{
+                            marginLeft: 20,
+                            paddingLeft: -10,
+                            borderLeftWidth: 1,
+                            borderColor: variants.Primary.color,
+                            borderBottomLeftRadius: 5
+                        }}>
+                            <DrawerItemList {...props} />
+                        </View>
+                    </View>
+                ))}
             </DrawerContentScrollView>
             <LoginPane {...props} style={{justifySelf: 'bottom'}}/>
         </>
@@ -189,13 +216,14 @@ export default function App() {
                                            component={ReservationPage}/>
                             {loginInfo.user?.roles.includes("Member") &&
                                 <Drawer.Group>
-                                    <Drawer.Screen name="MemberReservation" options={{title: "My Reservations"}}
+                                    <Drawer.Screen name="MemberReservation"
+                                                   options={{title: "My Reservations"}}
                                                    component={MemberReservationPage}/>
                                 </Drawer.Group>
                             }
                             {loginInfo.user?.roles.includes("Employee") &&
-                                <Drawer.Group>
-                                    <Drawer.Screen name="AdminReservation" options={{title: "Admin/Reservation"}}
+                                <Drawer.Group screenOptions={{groupName: 'Admin'}}>
+                                    <Drawer.Screen name="AdminReservation" options={{title: "Reservation"}}
                                                    component={AdminReservationPage}/>
                                     <Drawer.Screen name="Sittings" options={{title: "Sittings"}}
                                                    component={SittingsPage}/>
