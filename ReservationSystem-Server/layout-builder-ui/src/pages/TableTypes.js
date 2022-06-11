@@ -92,6 +92,14 @@ export default function TableTypesPage() {
         setTableTypes(newTableTypes);
     }
 
+    function deleteTableType(id) {
+        if (window.confirm('Are you sure you want to delete this table type? This will break all tables associated with it')) {
+            const newTableTypes = tableTypes.filter(tableType => tableType.id !== id);
+            setTableTypes(newTableTypes);
+            updateSelection('');
+        }
+    }
+
     function updateRectangle(index, changed) {
         const newRects = [...selectedTableType.rects];
         newRects[index] = {...newRects[index], ...changed};
@@ -208,8 +216,11 @@ export default function TableTypesPage() {
                                             style={{height: '40px'}}>Tool Menu
                                         </div>
                                         <div className="mx-2 d-flex flex-column gap-1">
-                                            <button className="btn btn-outline-primary" onClick={newRectangle}>New
-                                                Rectangle
+                                            <button className="btn btn-outline-danger" onClick={() => deleteTableType(selectionInt)}>
+                                                Delete Table Type
+                                            </button>
+                                            <button className="btn btn-outline-primary" onClick={newRectangle}>
+                                                New Rectangle
                                             </button>
                                         </div>
 

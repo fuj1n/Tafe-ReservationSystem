@@ -47,15 +47,40 @@ function darkenColor(color, by) {
  * @summary Transform child from parent percentage coordinate to SVG percentage coordinate
  * @param parent {Rect}
  * @param child {Rect}
+ * @param scale {boolean} Whether to scale the child
  */
-function transform(parent, child) {
-    return {
+function transform(parent, child, scale = false) {
+    const newRect = {
         x: parent.x + (child.x * parent.width / 100),
         y: parent.y + (child.y * parent.height / 100),
         width: child.width,
         height: child.height,
         color: child.color
     };
+
+    if (scale) {
+        newRect.width = newRect.width * parent.width / 100;
+        newRect.height = newRect.height * parent.height / 100;
+    }
+
+    return newRect;
+}
+
+function invTransform(parent, child, scale = false) {
+    const newRect = {
+        x: (child.x - parent.x) * 100 / parent.width,
+        y: (child.y - parent.y) * 100 / parent.height,
+        width: child.width,
+        height: child.height,
+        color: child.color
+    };
+
+    if (scale) {
+        newRect.width = newRect.width * 100 / parent.width;
+        newRect.height = newRect.height * 100 / parent.height;
+    }
+
+    return newRect;
 }
 
 function Rect({rect, extra}) {
@@ -78,10 +103,18 @@ function Label({x, y, text, color, extra}) {
     );
 }
 
-function MoveResizeHandle({rect, updateRect, canMove, canResize}) {
+function CenterLabel({within, text, color, extra}) {
+    return (
+        <text x={`${within.x + (within.width / 2)}%`} y={`${within.y + (within.height / 2)}%`}
+              fill={processColor(color)} fontWeight={700} dominantBaseline="middle"
+              textAnchor="middle" {...extra}>{text}</text>
+    );
+}
+
+function MoveResizeHandle({rect, updateRect, canMove, canResize, moveOffset}) {
     const [resizingHandle, setResizingHandle] = useState(null);
 
-    const corners = [
+    const resizeCorners = [
         {
             x: rect.x, y: rect.y, handle: 'nw-resize', updateRect: (newX, newY) => ({
                 x: newX,
@@ -115,22 +148,37 @@ function MoveResizeHandle({rect, updateRect, canMove, canResize}) {
             })
         },
         {
-            x: rect.x + rect.width / 2, y: rect.y + rect.height / 2, hide: true, handle: 'center-resize', updateRect: (newX, newY, distanceFromCenter) => ({
+            x: rect.x + rect.width / 2,
+            y: rect.y + rect.height / 2,
+            hide: true,
+            handle: 'center-resize',
+            updateRect: (newX, newY, distanceFromCenter) => ({
                 width: distanceFromCenter * 1.5,
                 height: distanceFromCenter * 1.5,
                 x: rect.x + rect.width / 2 - distanceFromCenter * 1.5 / 2,
                 y: rect.y + rect.height / 2 - distanceFromCenter * 1.5 / 2
             })
-        },
+        }
+    ];
+
+    const moveCorners = [
         {
-            x: rect.x + rect.width / 2, y: rect.y + rect.height / 2, handle: 'move', updateRect: (newX, newY) => ({
-                x: newX - rect.width / 2,
-                y: newY - rect.height / 2,
+            x: rect.x + rect.width / 2 + (moveOffset?.x ?? 0), y: rect.y + rect.height / 2 + (moveOffset?.y ?? 0), handle: 'move', updateRect: (newX, newY) => ({
+                x: newX - rect.width / 2 - moveOffset?.x ?? 0,
+                y: newY - rect.height / 2 - moveOffset?.y ?? 0,
                 width: rect.width,
                 height: rect.height
             })
         }
     ];
+
+    const corners = [];
+    if (canResize) {
+        corners.push(...resizeCorners);
+    }
+    if (canMove) {
+        corners.push(...moveCorners);
+    }
 
     function onMouseUp() {
         setResizingHandle(null);
@@ -153,11 +201,11 @@ function MoveResizeHandle({rect, updateRect, canMove, canResize}) {
             let newRect = corners.find(h => h.handle === effectiveHandle).updateRect(localXPercent, localYPercent, distanceFromCenter);
 
             // if a coordinate is out of allowed bounds or NaN, cancel out the change
-            if(newRect.x < 0 || newRect.x + newRect.width > 100 || newRect.width < 5 || isNaN(newRect.x) || isNaN(newRect.width)) {
+            if (newRect.x < 0 || newRect.x + newRect.width > 100 || newRect.width < 5 || isNaN(newRect.x) || isNaN(newRect.width)) {
                 newRect.x = rect.x;
                 newRect.width = rect.width;
             }
-            if(newRect.y < 0 || newRect.y + newRect.height > 100 || newRect.height < 5 || isNaN(newRect.y) || isNaN(newRect.height)) {
+            if (newRect.y < 0 || newRect.y + newRect.height > 100 || newRect.height < 5 || isNaN(newRect.y) || isNaN(newRect.height)) {
                 newRect.y = rect.y;
                 newRect.height = rect.height;
             }
@@ -181,11 +229,14 @@ function MoveResizeHandle({rect, updateRect, canMove, canResize}) {
         <g>
             {corners.map((c, index) => (
                 !c.hide && <Circle key={index} cx={c.x} cy={c.y} radius={0.5} color="#00AFFF"
-                        extra={{
-                            stroke: '#005780', strokeWidth: 2, style: {cursor: c.handle},
-                            onMouseDown: e => {setResizingHandle(c.handle); e.stopPropagation()},
-                            onClick: e => e.stopPropagation()
-                        }}/>
+                                   extra={{
+                                       stroke: '#005780', strokeWidth: 2, style: {cursor: c.handle},
+                                       onMouseDown: e => {
+                                           setResizingHandle(c.handle);
+                                           e.stopPropagation();
+                                       },
+                                       onClick: e => e.stopPropagation()
+                                   }}/>
             ))}
         </g>
     );
@@ -195,9 +246,11 @@ const SvgDraw = {
     processColor,
     darkenColor,
     transform,
+    invTransform,
     Rect,
     Circle,
     Label,
+    CenterLabel,
     MoveResizeHandle
 };
 

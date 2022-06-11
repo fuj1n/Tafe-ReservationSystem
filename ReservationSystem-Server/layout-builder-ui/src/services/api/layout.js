@@ -67,5 +67,17 @@ async function putTableTypes(tableTypes) {
     return await common.fetch('TableTypes', 'PUT', tableTypes);
 }
 
-const layout = {getAreaLayout, putAreaLayout, getTableTypes, putTableTypes};
+async function getAreas() {
+    return await common.fetch('Areas');
+}
+
+async function getArea(id) {
+    return await common.fetch('Area/' + id);
+}
+
+async function putArea(area) {
+    return await common.fetch('Area', 'PUT', area);
+}
+
+const layout = {getAreaLayout, putAreaLayout, getTableTypes, putTableTypes, getAreas, getArea, putArea};
 export default layout;

@@ -22,7 +22,7 @@ function Area({area, selected, select, updateArea}) {
     );
 }
 
-export default function AreasLayoutPage() {
+export default function AreasLayoutPage({incrementGeneration}) {
     const [isLoading, setIsLoading] = useState(true);
     const [areas, setAreas] = useState([]);
     const [error, setError] = useState(null);
@@ -114,6 +114,7 @@ export default function AreasLayoutPage() {
         if (response.ok) {
             setError(null);
             setGeneration(generation + 1);
+            incrementGeneration();
         } else {
             setError(await api.common.processError(response));
         }
