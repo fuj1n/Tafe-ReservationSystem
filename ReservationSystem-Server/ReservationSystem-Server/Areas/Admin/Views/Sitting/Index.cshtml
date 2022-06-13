@@ -84,11 +84,12 @@
                     <td>
                         @if (!sitting.IsClosed)
                         {
-                            <a class="btn btn-outline-danger btn-sm rounded-pill modal-for" asp-action="Close" asp-route-id="@sitting.Id">Close</a>
+                            <a class="btn btn-outline-danger btn-sm rounded-pill modal-for" style="width: 75px;" asp-action="Close" asp-route-id="@sitting.Id">Close</a>
                         }
                         else
                         {
-                            <button class="btn btn-outline-danger btn-sm rounded-pill disabled">Close</button>
+                            <a class="btn btn-outline-success btn-sm rounded-pill modal-for" style="width: 75px;" asp-action="Reopen" asp-route-id="@sitting.Id">Re-open</a>
+                            @* <button class="btn btn-outline-danger btn-sm rounded-pill disabled">Close</button> *@
                         }
                     </td>
                 </tr>

@@ -158,6 +158,24 @@ namespace ReservationSystem_Server.Areas.Admin.Controllers
             return this.CloseModalAndRefresh();
         }
 
+        public async Task<IActionResult> Reopen(int id)
+        {
+            return View(id);
+        }
+
+        [HttpPost, ActionName("Reopen")]
+        public async Task<IActionResult> DoReopen(int id)
+        {
+            var sitting = await _context.Sittings.FirstOrDefaultAsync(s => s.Id == id);
+            if (sitting == null)
+            {
+                return NotFound();
+            }
+            sitting.IsClosed = false;
+            await _context.SaveChangesAsync();
+            return this.CloseModalAndRefresh();
+        }
+        
         public async Task<IActionResult> Confirmation(int id, bool? edit)
         {
             Sitting? sitting = await _sittingUtility.GetSittingAsync(id, q => q

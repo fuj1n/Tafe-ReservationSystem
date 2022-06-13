@@ -1,0 +1,18 @@
+﻿@model int
+
+@{
+    ViewData["Title"] = "Reopen Sitting";
+    Layout = "";
+}
+
+<span class="d-none" id="modal-name">@ViewData["Title"]</span>
+<span class="d-none" id="modal-size"></span>
+<span class="d-none" id="modal-dismiss-text">Back</span>
+<span class="d-none" id="modal-button-text">Re-open Sitting</span>
+<span class="d-none" id="modal-button-class">btn btn-success</span>
+
+<div>
+    <p>Are you sure that you want to re-open this sitting?</p>
+    <form method="post" asp-action="Reopen" asp-route-id="@Model" id="modal-submit">
+    </form>
+</div>
