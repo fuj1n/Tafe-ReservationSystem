@@ -6,6 +6,7 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -22,8 +23,16 @@ using ReservationSystem_Server.Services;
 using Serilog;
 
 // Set culture to AU
-Thread.CurrentThread.CurrentUICulture =
-    Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("en-AU");
+string[] supportedCultures = { "en-AU" };
+RequestLocalizationOptions localizationOptions = new()
+{
+    DefaultRequestCulture = new RequestCulture("en-AU"),
+    SupportedCultures = supportedCultures.Select(CultureInfo.CreateSpecificCulture).ToList(),
+    SupportedUICultures = supportedCultures.Select(CultureInfo.CreateSpecificCulture).ToList()
+};
+
+// CultureInfo.CurrentUICulture =
+//     CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture("en-AU");
 
 // Configure serilog from appsettings.json and appsettings.<ENV>.json
 IConfigurationRoot loggerConfiguration = new ConfigurationBuilder()
@@ -187,6 +196,8 @@ builder.Services.AddScoped<LayoutUtility>();
 builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
 WebApplication app = builder.Build();
+
+app.UseRequestLocalization(localizationOptions);
 
 if (app.Environment.IsDevelopment())
 {
