@@ -17,7 +17,7 @@ namespace ReservationSystem_Server.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.3")
+                .HasAnnotation("ProductVersion", "6.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -52,28 +52,28 @@ namespace ReservationSystem_Server.Migrations
                         new
                         {
                             Id = "1337x01",
-                            ConcurrencyStamp = "e1fec68e-64ee-4aa8-b823-5a5a0bc0b981",
+                            ConcurrencyStamp = "1337x01",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "1337x02",
-                            ConcurrencyStamp = "daddf9b9-ca5e-4aa7-b6c1-5b628abe9854",
+                            ConcurrencyStamp = "1337x02",
                             Name = "Manager",
                             NormalizedName = "MANAGER"
                         },
                         new
                         {
                             Id = "1337x03",
-                            ConcurrencyStamp = "9ce781b0-ae68-4588-81a0-e1577c6386bd",
+                            ConcurrencyStamp = "1337x03",
                             Name = "Employee",
                             NormalizedName = "EMPLOYEE"
                         },
                         new
                         {
                             Id = "1337x04",
-                            ConcurrencyStamp = "09d8290e-d527-4796-88e3-b83956ddb170",
+                            ConcurrencyStamp = "1337x04",
                             Name = "Member",
                             NormalizedName = "MEMBER"
                         });
@@ -173,7 +173,7 @@ namespace ReservationSystem_Server.Migrations
                         {
                             Id = "13da5cd2-2c3b-475f-82a6-f79b704b4ff7",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "3e25ee09-9515-4ff2-a146-71b728fae1d2",
+                            ConcurrencyStamp = "13da5cd2-2c3b-475f-82a6-f79b704b4ff7",
                             Email = "a@e.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
@@ -189,7 +189,7 @@ namespace ReservationSystem_Server.Migrations
                         {
                             Id = "4957f11c-e346-4abf-bc30-323e92eec3e8",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "0d4ba88c-217a-49d5-8299-604b8f2134a4",
+                            ConcurrencyStamp = "4957f11c-e346-4abf-bc30-323e92eec3e8",
                             Email = "m@e.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
@@ -205,7 +205,7 @@ namespace ReservationSystem_Server.Migrations
                         {
                             Id = "6e05e0c8-5ea0-4743-8d79-4512ff4c6068",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a977365e-3432-4ec3-acfa-fae63f9a143b",
+                            ConcurrencyStamp = "6e05e0c8-5ea0-4743-8d79-4512ff4c6068",
                             Email = "e@e.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
@@ -221,7 +221,7 @@ namespace ReservationSystem_Server.Migrations
                         {
                             Id = "de52760d-3485-4a2a-b892-4e389dfe44b8",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "207f5598-4796-41a9-85a0-8e7541de98ec",
+                            ConcurrencyStamp = "de52760d-3485-4a2a-b892-4e389dfe44b8",
                             Email = "u@e.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
@@ -306,6 +306,11 @@ namespace ReservationSystem_Server.Migrations
                         },
                         new
                         {
+                            UserId = "13da5cd2-2c3b-475f-82a6-f79b704b4ff7",
+                            RoleId = "1337x03"
+                        },
+                        new
+                        {
                             UserId = "4957f11c-e346-4abf-bc30-323e92eec3e8",
                             RoleId = "1337x02"
                         },
@@ -372,7 +377,9 @@ namespace ReservationSystem_Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique()
+                        .HasFilter("[UserId] IS NOT NULL");
 
                     b.ToTable("People");
 
@@ -404,6 +411,10 @@ namespace ReservationSystem_Server.Migrations
 
                     b.Property<int>("ReservationStatusId")
                         .HasColumnType("int");
+
+                    b.Property<string>("SecurityStamp")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SittingId")
                         .HasColumnType("int");
@@ -498,7 +509,7 @@ namespace ReservationSystem_Server.Migrations
                         new
                         {
                             Id = 3,
-                            Description = "Canceled"
+                            Description = "Cancelled"
                         },
                         new
                         {
@@ -546,7 +557,7 @@ namespace ReservationSystem_Server.Migrations
                             Id = 1,
                             Address = "123 Main Street",
                             Email = "email@example.com",
-                            Name = "Carefront",
+                            Name = "Bean Scene Café",
                             PhoneNumber = "0412345678"
                         });
                 });
@@ -604,6 +615,9 @@ namespace ReservationSystem_Server.Migrations
                     b.Property<int>("Capacity")
                         .HasColumnType("int");
 
+                    b.Property<TimeSpan>("DefaultDuration")
+                        .HasColumnType("time");
+
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime2");
 
@@ -632,6 +646,7 @@ namespace ReservationSystem_Server.Migrations
                         {
                             Id = 1,
                             Capacity = 0,
+                            DefaultDuration = new TimeSpan(0, 0, 30, 0, 0),
                             EndTime = new DateTime(2022, 3, 31, 9, 0, 0, 0, DateTimeKind.Local),
                             IsClosed = false,
                             RestaurantId = 1,
@@ -642,6 +657,7 @@ namespace ReservationSystem_Server.Migrations
                         {
                             Id = 2,
                             Capacity = 0,
+                            DefaultDuration = new TimeSpan(0, 0, 30, 0, 0),
                             EndTime = new DateTime(2022, 3, 31, 14, 0, 0, 0, DateTimeKind.Local),
                             IsClosed = false,
                             RestaurantId = 1,
@@ -652,6 +668,7 @@ namespace ReservationSystem_Server.Migrations
                         {
                             Id = 3,
                             Capacity = 0,
+                            DefaultDuration = new TimeSpan(0, 0, 30, 0, 0),
                             EndTime = new DateTime(2022, 3, 31, 21, 0, 0, 0, DateTimeKind.Local),
                             IsClosed = false,
                             RestaurantId = 1,
@@ -931,6 +948,600 @@ namespace ReservationSystem_Server.Migrations
                         });
                 });
 
+            modelBuilder.Entity("ReservationSystem_Server.Data.Visual.Layout.RectangleVisual", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<byte>("A")
+                        .HasColumnType("tinyint");
+
+                    b.Property<byte>("B")
+                        .HasColumnType("tinyint");
+
+                    b.Property<byte>("G")
+                        .HasColumnType("tinyint");
+
+                    b.Property<float>("Height")
+                        .HasColumnType("real");
+
+                    b.Property<byte>("R")
+                        .HasColumnType("tinyint");
+
+                    b.Property<int?>("TableTypeVisualId")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Width")
+                        .HasColumnType("real");
+
+                    b.Property<float>("X")
+                        .HasColumnType("real");
+
+                    b.Property<float>("Y")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TableTypeVisualId");
+
+                    b.ToTable("RectangleVisuals");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            A = (byte)255,
+                            B = (byte)254,
+                            G = (byte)19,
+                            Height = 25f,
+                            R = (byte)144,
+                            Width = 25f,
+                            X = 48.241886f,
+                            Y = 34.69217f
+                        },
+                        new
+                        {
+                            Id = 2,
+                            A = (byte)255,
+                            B = (byte)33,
+                            G = (byte)211,
+                            Height = 25f,
+                            R = (byte)126,
+                            Width = 25f,
+                            X = 48.138847f,
+                            Y = 9.550489f
+                        },
+                        new
+                        {
+                            Id = 3,
+                            A = (byte)255,
+                            B = (byte)194,
+                            G = (byte)227,
+                            Height = 37.986217f,
+                            R = (byte)80,
+                            Width = 43.75644f,
+                            X = 4.620685f,
+                            Y = 9.3089905f
+                        },
+                        new
+                        {
+                            Id = 4,
+                            A = (byte)255,
+                            B = (byte)42,
+                            G = (byte)87,
+                            Height = 89.64534f,
+                            R = (byte)139,
+                            TableTypeVisualId = 1,
+                            Width = 99.94848f,
+                            X = 0.051519834f,
+                            Y = 5.225631f
+                        },
+                        new
+                        {
+                            Id = 5,
+                            A = (byte)255,
+                            B = (byte)27,
+                            G = (byte)2,
+                            Height = 9.997585f,
+                            R = (byte)208,
+                            TableTypeVisualId = 1,
+                            Width = 86.17336f,
+                            X = 6.7168984f,
+                            Y = 0.012075072f
+                        },
+                        new
+                        {
+                            Id = 6,
+                            A = (byte)255,
+                            B = (byte)27,
+                            G = (byte)2,
+                            Height = 10.218387f,
+                            R = (byte)208,
+                            TableTypeVisualId = 1,
+                            Width = 86.37944f,
+                            X = 7.9694743f,
+                            Y = 89.76178f
+                        });
+                });
+
+            modelBuilder.Entity("ReservationSystem_Server.Data.Visual.Layout.RestaurantAreaVisual", b =>
+                {
+                    b.Property<int>("AreaId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RectId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AreaId");
+
+                    b.HasIndex("RectId");
+
+                    b.ToTable("RestaurantAreaVisuals");
+
+                    b.HasData(
+                        new
+                        {
+                            AreaId = 1,
+                            RectId = 1
+                        },
+                        new
+                        {
+                            AreaId = 2,
+                            RectId = 2
+                        },
+                        new
+                        {
+                            AreaId = 3,
+                            RectId = 3
+                        });
+                });
+
+            modelBuilder.Entity("ReservationSystem_Server.Data.Visual.Layout.TableTypeVisual", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<float>("Height")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Seats")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Width")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TableTypeVisuals");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Height = 7f,
+                            Name = "2-seater",
+                            Seats = 2,
+                            Width = 5f
+                        });
+                });
+
+            modelBuilder.Entity("ReservationSystem_Server.Data.Visual.Layout.TableVisual", b =>
+                {
+                    b.Property<int>("TableId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rotation")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TableTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<float>("X")
+                        .HasColumnType("real");
+
+                    b.Property<float>("Y")
+                        .HasColumnType("real");
+
+                    b.HasKey("TableId");
+
+                    b.HasIndex("TableTypeId");
+
+                    b.ToTable("TableVisuals");
+
+                    b.HasData(
+                        new
+                        {
+                            TableId = 2,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 47.552807f,
+                            Y = 39.464195f
+                        },
+                        new
+                        {
+                            TableId = 3,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 73.20969f,
+                            Y = 69.44874f
+                        },
+                        new
+                        {
+                            TableId = 4,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 39.92787f,
+                            Y = 70.47913f
+                        },
+                        new
+                        {
+                            TableId = 5,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 3.5548687f,
+                            Y = 70.47913f
+                        },
+                        new
+                        {
+                            TableId = 6,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 71.04585f,
+                            Y = 38.12468f
+                        },
+                        new
+                        {
+                            TableId = 7,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 26.120556f,
+                            Y = 39.567234f
+                        },
+                        new
+                        {
+                            TableId = 8,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 2.833591f,
+                            Y = 38.22772f
+                        },
+                        new
+                        {
+                            TableId = 9,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 70.32458f,
+                            Y = 1.7516744f
+                        },
+                        new
+                        {
+                            TableId = 10,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 38.691395f,
+                            Y = 1.9577538f
+                        },
+                        new
+                        {
+                            TableId = 11,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 3.0396702f,
+                            Y = 2.1638331f
+                        },
+                        new
+                        {
+                            TableId = 12,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 54.147346f,
+                            Y = 35.548687f
+                        },
+                        new
+                        {
+                            TableId = 13,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 31.478619f,
+                            Y = 36.166924f
+                        },
+                        new
+                        {
+                            TableId = 14,
+                            Rotation = 90,
+                            TableTypeId = 1,
+                            X = 40.75219f,
+                            Y = 71.92169f
+                        },
+                        new
+                        {
+                            TableId = 15,
+                            Rotation = 90,
+                            TableTypeId = 1,
+                            X = 41.267387f,
+                            Y = 0.61823803f
+                        },
+                        new
+                        {
+                            TableId = 16,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 77.43431f,
+                            Y = 35.651726f
+                        },
+                        new
+                        {
+                            TableId = 17,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 6.7490983f,
+                            Y = 36.269962f
+                        },
+                        new
+                        {
+                            TableId = 18,
+                            Rotation = 135,
+                            TableTypeId = 1,
+                            X = 6.7490983f,
+                            Y = 69.963936f
+                        },
+                        new
+                        {
+                            TableId = 19,
+                            Rotation = 45,
+                            TableTypeId = 1,
+                            X = 73.724884f,
+                            Y = 69.654816f
+                        },
+                        new
+                        {
+                            TableId = 20,
+                            Rotation = 135,
+                            TableTypeId = 1,
+                            X = 73.724884f,
+                            Y = 2.5759919f
+                        },
+                        new
+                        {
+                            TableId = 21,
+                            Rotation = 45,
+                            TableTypeId = 1,
+                            X = 4.997424f,
+                            Y = 2.5759919f
+                        },
+                        new
+                        {
+                            TableId = 22,
+                            Rotation = 90,
+                            TableTypeId = 1,
+                            X = 23.441525f,
+                            Y = 36.438354f
+                        },
+                        new
+                        {
+                            TableId = 23,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 77.53735f,
+                            Y = 72.75802f
+                        },
+                        new
+                        {
+                            TableId = 24,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 77.022156f,
+                            Y = 36.67574f
+                        },
+                        new
+                        {
+                            TableId = 25,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 77.12519f,
+                            Y = 5.459819f
+                        },
+                        new
+                        {
+                            TableId = 26,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 43.1221f,
+                            Y = 70.146805f
+                        },
+                        new
+                        {
+                            TableId = 27,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 42.916023f,
+                            Y = 35.607513f
+                        },
+                        new
+                        {
+                            TableId = 28,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 43.94642f,
+                            Y = 4.86636f
+                        },
+                        new
+                        {
+                            TableId = 29,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 4.585265f,
+                            Y = 68.485115f
+                        },
+                        new
+                        {
+                            TableId = 30,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 4.379186f,
+                            Y = 34.539288f
+                        },
+                        new
+                        {
+                            TableId = 31,
+                            Rotation = 0,
+                            TableTypeId = 1,
+                            X = 3.5548687f,
+                            Y = 4.035518f
+                        });
+                });
+
+            modelBuilder.Entity("ReservationSystem_Server.Data.Visual.ReservationStatusVisual", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("HtmlBadgeClass")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReactBadgeVariant")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ReservationStatusVisuals");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            HtmlBadgeClass = "bg-warning",
+                            ReactBadgeVariant = "warning"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            HtmlBadgeClass = "bg-success",
+                            ReactBadgeVariant = "success"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            HtmlBadgeClass = "bg-danger",
+                            ReactBadgeVariant = "danger"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            HtmlBadgeClass = "bg-info",
+                            ReactBadgeVariant = "info"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            HtmlBadgeClass = "bg-dark",
+                            ReactBadgeVariant = "dark"
+                        });
+                });
+
+            modelBuilder.Entity("ReservationSystem_Server.Data.Visual.RestaurantCarouselItemVisual", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RestaurantId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RestaurantId");
+
+                    b.ToTable("RestaurantCarouselItemVisuals");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ImageUrl = "~/images/home-carousel/ArabicaBeans.webp",
+                            RestaurantId = 1,
+                            Text = "We use only the finest Arabica beans"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ImageUrl = "~/images/home-carousel/BlueberryMuffin.webp",
+                            RestaurantId = 1,
+                            Text = "Freshly baked muffins everyday"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ImageUrl = "~/images/home-carousel/Cakes.webp",
+                            RestaurantId = 1,
+                            Text = "Scrumptous cakes freshly baked"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ImageUrl = "~/images/home-carousel/Cappuccino.webp",
+                            RestaurantId = 1,
+                            Text = "Fancy a cappuccino?"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            ImageUrl = "~/images/home-carousel/Counter.webp",
+                            RestaurantId = 1,
+                            Text = "Our friendly baristas are ready to serve you"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            ImageUrl = "~/images/home-carousel/FunctionArea.webp",
+                            RestaurantId = 1,
+                            Text = "We cater for large groups and functions"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            ImageUrl = "~/images/home-carousel/MainArea.webp",
+                            RestaurantId = 1,
+                            Text = "Our café is ready to brighten up your morning"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            ImageUrl = "~/images/home-carousel/OutdoorGarden.webp",
+                            RestaurantId = 1,
+                            Text = "Enjoy the fresh air in our outdoor garden"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            ImageUrl = "~/images/home-carousel/ToastedSandwich2.webp",
+                            RestaurantId = 1,
+                            Text = "Try one of our famous grilled sandwiches"
+                        });
+                });
+
             modelBuilder.Entity("ReservationTable", b =>
                 {
                     b.Property<int>("ReservationsId")
@@ -957,6 +1568,17 @@ namespace ReservationSystem_Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("Customer");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            FirstName = "John",
+                            LastName = "Doe",
+                            UserId = "de52760d-3485-4a2a-b892-4e389dfe44b8",
+                            Email = "U@E.COM",
+                            PhoneNumber = "0412345678"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1013,8 +1635,9 @@ namespace ReservationSystem_Server.Migrations
             modelBuilder.Entity("ReservationSystem_Server.Data.Person", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
+                        .WithOne()
+                        .HasForeignKey("ReservationSystem_Server.Data.Person", "UserId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("User");
                 });
@@ -1095,6 +1718,73 @@ namespace ReservationSystem_Server.Migrations
                     b.Navigation("Area");
                 });
 
+            modelBuilder.Entity("ReservationSystem_Server.Data.Visual.Layout.RectangleVisual", b =>
+                {
+                    b.HasOne("ReservationSystem_Server.Data.Visual.Layout.TableTypeVisual", null)
+                        .WithMany("Rects")
+                        .HasForeignKey("TableTypeVisualId");
+                });
+
+            modelBuilder.Entity("ReservationSystem_Server.Data.Visual.Layout.RestaurantAreaVisual", b =>
+                {
+                    b.HasOne("ReservationSystem_Server.Data.RestaurantArea", "Area")
+                        .WithMany()
+                        .HasForeignKey("AreaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ReservationSystem_Server.Data.Visual.Layout.RectangleVisual", "Rect")
+                        .WithMany()
+                        .HasForeignKey("RectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Area");
+
+                    b.Navigation("Rect");
+                });
+
+            modelBuilder.Entity("ReservationSystem_Server.Data.Visual.Layout.TableVisual", b =>
+                {
+                    b.HasOne("ReservationSystem_Server.Data.Table", "Table")
+                        .WithMany()
+                        .HasForeignKey("TableId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ReservationSystem_Server.Data.Visual.Layout.TableTypeVisual", "TableType")
+                        .WithMany()
+                        .HasForeignKey("TableTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Table");
+
+                    b.Navigation("TableType");
+                });
+
+            modelBuilder.Entity("ReservationSystem_Server.Data.Visual.ReservationStatusVisual", b =>
+                {
+                    b.HasOne("ReservationSystem_Server.Data.ReservationStatus", "ReservationStatus")
+                        .WithMany()
+                        .HasForeignKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ReservationStatus");
+                });
+
+            modelBuilder.Entity("ReservationSystem_Server.Data.Visual.RestaurantCarouselItemVisual", b =>
+                {
+                    b.HasOne("ReservationSystem_Server.Data.Restaurant", "Restaurant")
+                        .WithMany()
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Restaurant");
+                });
+
             modelBuilder.Entity("ReservationTable", b =>
                 {
                     b.HasOne("ReservationSystem_Server.Data.Reservation", null)
@@ -1125,6 +1815,11 @@ namespace ReservationSystem_Server.Migrations
             modelBuilder.Entity("ReservationSystem_Server.Data.Sitting", b =>
                 {
                     b.Navigation("Reservations");
+                });
+
+            modelBuilder.Entity("ReservationSystem_Server.Data.Visual.Layout.TableTypeVisual", b =>
+                {
+                    b.Navigation("Rects");
                 });
 
             modelBuilder.Entity("ReservationSystem_Server.Data.Customer", b =>

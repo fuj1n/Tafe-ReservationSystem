@@ -1,0 +1,81 @@
+﻿@using ReservationSystem_Server.Data
+@using ReservationSystem_Server.Services
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using ReservationSystem_Server.Data.Visual
+@model ReservationSystem_Server.Data.Reservation
+@inject ReservationUtility ReservationUtility
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "";
+    Dictionary<int, ReservationStatusVisual> statusVisuals = await ReservationUtility.GetReservationStatusVisualsAsync();
+}
+
+<span class="d-none" id="modal-name">Reservation Details</span>
+
+<dl>
+    <dt>Sitting</dt>
+    <dd>@Model.Sitting.SittingType.Description on @Model.Sitting.StartTime.ToShortDateString() 
+        from @Model.Sitting.StartTime.ToShortTimeString() 
+        to @Model.Sitting.EndTime.ToShortTimeString()</dd>
+
+    <dt>Reservation Time</dt>
+    <dd>@Model.StartTime.ToShortTimeString()</dd>
+
+    <dt>Covers</dt>
+    <dd>@Model.NumberOfPeople</dd>
+
+    @{
+        string badgeClass = statusVisuals.GetValueOrDefault(Model.ReservationStatusId)?.HtmlBadgeClass ?? "bg-primary";
+    }
+    <dt>Reservation Status</dt>
+    <dd class="badge @badgeClass rounded-pill">@Model.ReservationStatus.Description</dd>
+
+    <dt>Reservation Origin</dt>
+    <dd>@Model.ReservationOrigin.Description</dd>
+
+    <hr/>
+
+    <dt>Customer</dt>
+    <dd>@Model.Customer.FirstName @Model.Customer.LastName</dd>
+    @if (!string.IsNullOrWhiteSpace(Model.Customer.PhoneNumber))
+    {
+        <dd>Ph: @Model.Customer.PhoneNumber</dd>
+    }
+    @if (!string.IsNullOrWhiteSpace(Model.Customer.Email))
+    {
+        <dd>Email: @Model.Customer.Email</dd>
+    }
+
+    <dt>Notes</dt>
+    @if (!string.IsNullOrWhiteSpace(Model.Notes))
+    {
+        <dd>@Model.Notes</dd>
+    }
+    else
+    {
+        <dd class="text-danger">No notes</dd>
+    }
+
+    <hr/>
+
+    <dt>Assigned Tables</dt>
+    @if (Model.Tables.Count > 0)
+    {
+        <dd>
+            <ul class="list-group list-group-horizontal-lg text-center flex-wrap">
+                @foreach (Table table in Model.Tables)
+                {
+                    <li class="list-group-item border-start" style="flex: 1 0 33%">@table.Name</li>
+                }
+            </ul>
+        </dd>
+    }
+    else
+    {
+        <dd class="text-danger">No tables assigned</dd>
+    }
+    
+    <a asp-action="AssignTables" asp-route-id="@Model.Id" 
+       class="btn btn-info w-100 modal-for">Assign Tables</a>
+</dl>

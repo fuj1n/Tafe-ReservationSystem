@@ -1,0 +1,33 @@
+﻿@{
+    ViewBag.Title = "Admin Home";
+}
+
+@section Styles
+{
+    <style>
+        svg {
+            width: 100%;
+            height: 100%;
+            border-radius: 0.375rem;
+        }
+    </style>
+}
+
+<h2>Admin Area</h2>
+<p>Please select a section</p>
+
+<div class="w-25 m-auto">
+    <div class="row mb-2 gap-2">
+        <a class="col btn btn-outline-primary" asp-controller="Sitting" asp-action="Index" asp-route-modal="@Url.Action("Create", "Sitting")">Create a Sitting</a>
+        <a class="col btn btn-outline-primary" asp-controller="Sitting" asp-action="Index">Manage Sittings</a>
+    </div>
+    <div class="row mb-2">
+        <a class="col btn btn-outline-primary" asp-controller="Reservation" asp-action="Index">Create/Manage Reservations</a>
+    </div>
+</div>
+<div class="w-75 ratio ratio-1x1 mx-auto">
+    <partial name="_LayoutSvg"/>
+</div>
+@* <div class="row justify-content-center border-1 border-primary"> *@
+@*     <img src="https://picsum.photos/1200" class="col w-75" alt=""/> *@
+@* </div> *@

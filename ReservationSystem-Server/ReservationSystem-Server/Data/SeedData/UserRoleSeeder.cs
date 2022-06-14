@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using ReservationSystem_Server.Utility.DataSeed;
+using ReservationSystem_Server.Helper.DataSeed;
 
 namespace ReservationSystem_Server.Data.SeedData;
 
@@ -12,6 +12,11 @@ public static class UserRoleSeeder
         {
                 UserId = "13da5cd2-2c3b-475f-82a6-f79b704b4ff7", // a@e.com
                 RoleId = "1337x01" // Admin
+        });
+        userRoles.Add(new IdentityUserRole<string>
+        {
+                UserId = "13da5cd2-2c3b-475f-82a6-f79b704b4ff7", // a@e.com
+                RoleId = "1337x03" // Employee
         });
         userRoles.Add(new IdentityUserRole<string>
         {

@@ -1,0 +1,102 @@
+﻿@model List<ReservationSystem_Server.Data.Sitting>
+
+@{
+    ViewData["Title"] = "Sittings";
+    bool pastSittings = ViewBag.pastSittings;
+}
+
+@*Switch*@
+<div class="d-flex justify-content-between align-items-center mb-2">
+<a class="btn btn-outline-success modal-for" asp-action="Create">Create</a>
+<form method="get">
+    <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" asp-for="@pastSittings"
+               onchange="setTimeout(() => this.form.submit(), 250)" />
+        <label class="form-check-label" for="pastSittings">Show Past Sittings</label>
+    </div>
+</form>
+</div>
+
+@*Button*@
+@*@if (ViewBag.pastSittings)
+    {
+    <a class="btn btn-outline-info mb-2" asp-action="Index" asp-route-pastSittings="false">Hide past Sittings</a>
+    }
+    else
+    {
+    <a class="btn btn-outline-info mb-2" asp-action="Index" asp-route-pastSittings="true">Show past Sittings</a>
+    }*@
+
+
+<div class="text-center">
+    <table class="table">
+        <thead class="table-dark">
+            <tr>
+                <th>Type</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Default Duration</th>
+                <th>Capacity</th>
+                <th>Status</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                DateOnly lastDate = new();
+            }
+            @foreach (var sitting in Model!)
+            {
+                DateOnly thisDate = DateOnly.FromDateTime(sitting.StartTime);
+                string status;
+                @if (sitting.IsClosed)
+                {
+                    status = "Closed";
+                }
+                else
+                {
+                    status = "Open";
+                }
+
+                @if (lastDate != thisDate)
+                {
+                    lastDate = thisDate;
+                    <tr class="fw-bold list-group-item-primary">
+                        <td colspan="8" class="text-center">
+                            @thisDate.ToShortDateString()
+                        </td>
+                    </tr>
+                }
+
+                <tr>
+                    <td>@sitting.SittingType.Description </td>
+                    <td>@sitting.StartTime.ToShortTimeString()</td>
+                    <td>@sitting.EndTime.ToShortTimeString()</td>
+                    <td>@sitting.DefaultDuration</td>
+                    <td>@sitting.Capacity</td>
+                    <td>
+                        @status
+                    </td>
+                    <td>
+                        <a class="btn btn-outline-primary btn-sm rounded-pill modal-for" asp-action="Edit" asp-route-id="@sitting.Id">Edit</a>
+                    </td>
+                    <td>
+                        @if (!sitting.IsClosed)
+                        {
+                            <a class="btn btn-outline-danger btn-sm rounded-pill modal-for" style="width: 75px;" asp-action="Close" asp-route-id="@sitting.Id">Close</a>
+                        }
+                        else
+                        {
+                            <a class="btn btn-outline-success btn-sm rounded-pill modal-for" style="width: 75px;" asp-action="Reopen" asp-route-id="@sitting.Id">Re-open</a>
+                            @* <button class="btn btn-outline-danger btn-sm rounded-pill disabled">Close</button> *@
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+
+<partial name="_ModalSystem" />

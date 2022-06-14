@@ -1,0 +1,65 @@
+﻿@using ReservationSystem_Server.Data
+@using ReservationSystem_Server.Data.Visual
+@using ReservationSystem_Server.Services
+@model Sitting
+@inject ReservationUtility ReservationUtility
+
+@{
+    ViewBag.Title = "Reservations";
+    Dictionary<int, ReservationStatusVisual> statusVisuals = await ReservationUtility.GetReservationStatusVisualsAsync();
+}
+
+<h2>Reservations</h2>
+<b>For @Model!.SittingType.Description sitting on @Model.StartTime.ToShortDateString()</b>
+<b>From @Model.StartTime.ToShortTimeString() to @Model.EndTime.ToShortTimeString()</b>
+
+<hr/>
+
+<div class="mb-2">
+    <a asp-action="Create" asp-route-sittingId="@Model.Id" class="btn btn-outline-success modal-for">Create Reservation</a>
+    <a asp-action="Index" class="btn btn-outline-primary">Back to Sittings</a>
+</div>
+
+<ul class="list-group">
+    @if (Model.Reservations.Count == 0)
+    {
+        <li class="list-group-item list-group-item-danger">No reservations</li>
+    }
+    else
+    {
+        @foreach (Reservation reservation in Model.Reservations)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>
+                    <a asp-action="Details" asp-route-id="@reservation.Id" 
+                       class="list-group-item-action reservation-title modal-for" style="cursor: pointer">
+                        @reservation.Customer.FirstName @reservation.Customer.LastName - 
+                        @reservation.StartTime.ToShortTimeString() to 
+                        @reservation.EndTime.ToShortTimeString()
+                    </a>
+                    <span class="badge rounded-pill bg-primary">
+                        @reservation.Tables.Count table(s)
+                    </span>
+                    <span class="badge rounded-pill bg-primary">
+                        @reservation.ReservationOrigin.Description
+                    </span>
+                </span>
+                @{
+                    string badgeClass = statusVisuals.GetValueOrDefault(reservation.ReservationStatusId)?.HtmlBadgeClass ?? "bg-primary";
+                }
+                <span>
+                    <a asp-action="UpdateStatus" asp-route-id="@reservation.Id" 
+                       class="badge @badgeClass rounded-pill user-select-none modal-for nav-link text-light" style="width: 100px; cursor: pointer;">
+                        @reservation.ReservationStatus.Description &gt;
+                    </a>
+                    <a asp-action="Edit" asp-route-id="@reservation.Id"
+                       class="btn btn-sm btn-outline-primary rounded-pill modal-for">Edit</a>
+                    <a asp-action="AssignTables" asp-route-id="@reservation.Id"
+                       class="btn btn-sm btn-outline-info rounded-pill modal-for">Assign</a>
+                </span>
+            </li>
+        }
+    }
+</ul>
+
+<partial name="_ModalSystem" />

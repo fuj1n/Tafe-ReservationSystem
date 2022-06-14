@@ -10,6 +10,7 @@ public class Sitting
     public bool IsClosed { get; set; }
     
     public int Capacity { get; set; }
+    public TimeSpan DefaultDuration { get; set; } = TimeSpan.FromMinutes(30);
     
     public int SittingTypeId { get; set; }
     public SittingType SittingType { get; set; } = null!;

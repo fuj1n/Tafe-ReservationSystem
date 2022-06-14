@@ -1,13 +1,51 @@
-﻿@{
+﻿@using ReservationSystem_Server.Data.Visual
+@model ReservationSystem_Server.Data.Visual.RestaurantCarouselItemVisual[]
+@inject ReservationSystem_Server.Services.RestaurantProvider RestaurantProvider
+@{
     ViewData["Title"] = "Home Page";
+    
+    ReservationSystem_Server.Data.Restaurant restaurant =
+        await RestaurantProvider.GetRestaurantDataAsync() ?? new ReservationSystem_Server.Data.Restaurant
+        {
+            Name = "No restaurant data found"
+        };
 }
 
-<p>Admin: a@e.com Abc123!@@#</p>
-<p>Manager: m@e.com Abc123!@@#</p>
-<p>Employee: e@e.com Abc123!@@#</p>
-<p>Member: u@e.com Abc123!@@#</p>
+<div class="d-flex flex-column align-items-center justify-content-center mb-3">
+    <img src="images/Brand.webp" alt="Logo of a coffee bean above a coffee cup" width="256" height="256" style="width: 48px; height: auto;"/>
+    <span class="display-6 text-center">@restaurant.Name</span>
+</div>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="d-flex justify-content-center">
+    <div class="carousel slide w-75" id="main-carousel" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            @for (int i = 0; i < Model.Length; i++)
+            {
+                string activeClass = i == 0 ? "active" : "";
+                <button type="button" data-bs-target="#main-carousel" data-bs-slide-to="@i" class="@activeClass" aria-label="Move to slide @i"></button>
+            }
+        </div>
+        <div class="carousel-inner">
+            @{ bool first = true; }
+            @foreach (RestaurantCarouselItemVisual item in Model)
+            {
+                string activeClass = first ? "active" : "";
+                first = false;
+                <div class="carousel-item @activeClass">
+                    <img class="d-block w-100 h-auto rounded" src="@Url.Content(item.ImageUrl)" alt="" width="980" height="550"> @*Provide sample size for better loading experience*@
+                    <div class="carousel-caption d-none d-md-block">
+                        <p>@item.Text</p>
+                    </div>
+                </div>
+            }
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#main-carousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#main-carousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
 </div>

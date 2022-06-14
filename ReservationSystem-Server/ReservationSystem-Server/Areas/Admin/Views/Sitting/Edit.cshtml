@@ -1,0 +1,61 @@
+﻿@model ReservationSystem_Server.Areas.Admin.Models.Sitting.EditVM
+
+@{
+    ViewData["Title"] = "Edit Sitting";
+    bool reservations = ViewBag.reservations;
+    Layout = "";
+}
+
+<span class="d-none" id="modal-name">@ViewData["Title"]</span>
+<span class="d-none" id="modal-size"></span>
+
+<form asp-action="Edit" method="post" id="modal-submit">
+    <div asp-validation-summary="All" class="alert alert-danger"></div>
+    <div class="form-group">
+        <label asp-for="StartTime" class="form-label">Start Time</label>
+        @if (reservations)
+        {
+            <input asp-for="StartTime" class="form-control" disabled />
+        }
+        else
+        {
+            <input asp-for="StartTime" class="form-control" />
+        }
+
+        <span asp-validation-for="StartTime" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="EndTime" class="form-label">End Time</label>
+        @if (reservations)
+        {
+            <input asp-for="EndTime" class="form-control" disabled/>
+            <div class="alert alert-warning" >Cannot edit Start Time and End Time, 
+                since there are reservations for this sitting</div>
+        }
+        else
+        {
+            <input asp-for="EndTime" class="form-control" />
+        }
+
+        <span asp-validation-for="EndTime" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="DefaultDuration" class="form-label">Default Duration</label>
+        <input asp-for="DefaultDuration" class="form-control" />
+        <span asp-validation-for="DefaultDuration" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Capacity" class="form-label"></label>
+        <input asp-for="Capacity" class="form-control" min="0"/>
+        <span asp-validation-for="Capacity" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="SittingTypeId" class="form-label">Sitting Type</label>
+        <select asp-for="SittingTypeId" asp-items="Model!.SittingTypes" class="form-select">
+            <option value="">--- Please Select ---</option>
+        </select>
+        <span asp-validation-for="SittingTypeId" class="text-danger"></span>
+    </div>
+@*    <input class="btn btn-outline-success mt-2" type="submit" value="Confirm" />
+    <a class="btn btn-outline-primary mt-2" asp-action="Index">Back</a>*@
+</form>

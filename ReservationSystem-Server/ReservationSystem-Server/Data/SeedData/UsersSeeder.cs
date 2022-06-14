@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using ReservationSystem_Server.Utility.DataSeed;
+using ReservationSystem_Server.Helper.DataSeed;
 
 namespace ReservationSystem_Server.Data.SeedData;
 
@@ -16,7 +16,8 @@ public static class UsersSeeder
                 NormalizedEmail = userName.ToUpper(),
                 PasswordHash = pass,
                 SecurityStamp = sec,
-                EmailConfirmed = true
+                EmailConfirmed = true,
+                ConcurrencyStamp = id
         };
     }
 

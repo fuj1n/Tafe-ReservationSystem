@@ -1,0 +1,10 @@
+﻿<span class="d-flex flex-nowrap" style="flex: 1">
+    @if (User.IsInRole("Employee"))
+    {
+        <a class="nav-item nav-link" style="color: #941925" asp-area="Admin" asp-controller="Home" asp-action="Index" cth-active>Admin</a>
+    }
+    <a class="nav-item nav-link" asp-area="" asp-controller="Home" asp-action="Contact" cth-active>Contact Us</a>
+</span>
+<span class="d-flex nav-item justify-content-center position-relative" style="flex: 1; left: -25px">
+    <a class="bg-primary text-light nav-item-impact nav-link flex-lg-grow-0" asp-area="" asp-controller="Reservation" asp-action="Index" cth-active>Book Online</a>
+</span>

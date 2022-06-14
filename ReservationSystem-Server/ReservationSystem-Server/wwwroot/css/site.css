@@ -16,3 +16,78 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.validation-summary-valid {
+  display: none;
+}
+
+.nav-item-impact {
+  padding: 22px 24px 22px !important;
+  margin-top: -12px;
+  margin-bottom: -12px;
+}
+
+.nav-item-impact:hover {
+  filter: brightness(85%);
+}
+
+.carousel-caption {
+  padding: 0;
+  left: 0;
+  width: 100%;
+  bottom: 0.05rem;
+  text-shadow: 2px 2px #000;
+}
+
+.carousel-indicators {
+  bottom: 1.25rem;
+}
+
+.navbar {
+  box-shadow: #D4C7B4 -1px 5px 15px -3px;
+}
+
+.modal-dialog {
+  transition: max-width 0.3s ease-in-out;
+}
+
+/* Loading spinner */
+.lds-dual-ring {
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+}
+.lds-dual-ring:after {
+  content: " ";
+  display: block;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border-radius: 50%;
+  border: 6px solid;
+  border-color: var(--bs-primary) transparent var(--bs-primary) transparent;
+  animation: lds-dual-ring 1.2s linear infinite;
+}
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.marchingAnts {
+  animation-name: march-up;
+  animation-duration: 100s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+@keyframes march-up {
+  from {
+    stroke-dashoffset: 0
+  }
+  to {
+    stroke-dashoffset: 100%
+  }
+}

@@ -1,3 +1,11 @@
+# Custom
+# Logs
+**/Logs/*
+
+# Generated files
+*.gen.*
+*.gen
+
 # Common IntelliJ Platform excludes
 
 # User specific

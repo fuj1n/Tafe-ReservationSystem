@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-using ReservationSystem_Server.Utility.DataSeed;
+﻿using Microsoft.EntityFrameworkCore;
+using ReservationSystem_Server.Data.Visual;
+using ReservationSystem_Server.Helper.DataSeed;
 
 namespace ReservationSystem_Server.Data;
 
-public class ApplicationDbContext : IdentityDbContext
+public class ApplicationDbContext : VisualDbContext
 {
     public DbSet<Person> People => Set<Person>();
     public DbSet<Customer> Customers => Set<Customer>();
@@ -39,7 +39,9 @@ public class ApplicationDbContext : IdentityDbContext
         builder.Entity<Reservation>().HasOne(r => r.ReservationStatus)
             .WithMany().OnDelete(DeleteBehavior.Restrict);
 
-
+        builder.Entity<Customer>().HasOne(c => c.User)
+            .WithOne().OnDelete(DeleteBehavior.SetNull);
+        
         builder.Entity<RestaurantArea>().HasOne(r => r.Restaurant)
             .WithMany(r => r.Areas).OnDelete(DeleteBehavior.Restrict);
 

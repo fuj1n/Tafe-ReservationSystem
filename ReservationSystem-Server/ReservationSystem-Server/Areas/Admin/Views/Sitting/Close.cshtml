@@ -1,0 +1,18 @@
+﻿@model int
+
+@{
+    ViewData["Title"] = "Close Sitting";
+    Layout = "";
+}
+
+<span class="d-none" id="modal-name">@ViewData["Title"]</span>
+<span class="d-none" id="modal-size"></span>
+<span class="d-none" id="modal-dismiss-text">Back</span>
+<span class="d-none" id="modal-button-text">Close Sitting</span>
+<span class="d-none" id="modal-button-class">btn btn-danger</span>
+
+<div>
+    <p>Are you sure that you want to close this sitting?</p>
+    <form method="post" asp-action="Close" asp-route-id="@Model" id="modal-submit">
+    </form>
+</div>

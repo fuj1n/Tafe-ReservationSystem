@@ -1,0 +1,39 @@
+﻿@model ReservationSystem_Server.Data.Sitting
+
+@{
+    ViewBag.Title = "Confirmation";
+    Layout = "";
+}
+
+<span class="d-none" id="modal-name">Confirmation</span>
+<modal-refresh-on-close></modal-refresh-on-close>
+
+@{
+    string verb = "created";
+    if (ViewBag.IsEdit)
+    {
+        verb = "updated";
+    }
+}
+<b>Successfully @verb a sitting</b>
+<hr/>
+@* <a asp-action="Sitting" asp-route-id="@Model!.SittingId" class="btn btn-outline-primary mb-2">Back to Sitting</a> *@
+<dl>
+    <dt>Date</dt>
+    <dd>@Model?.StartTime.ToShortDateString()</dd>
+
+    <dt>Start Time</dt>
+    <dd>@Model?.StartTime.ToShortTimeString()</dd>
+    
+    <dt>End Time</dt>
+    <dd>@Model?.EndTime.ToShortTimeString()</dd>
+    
+    <dt>Default Duration</dt>
+    <dd>@Model?.DefaultDuration</dd>
+    
+    <dt>Capacity</dt>
+    <dd>@Model?.Capacity</dd>
+    
+    <dt>Sitting Type</dt>
+    <dd>@Model?.SittingType.Description</dd>
+</dl>

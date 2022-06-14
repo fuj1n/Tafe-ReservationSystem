@@ -1,0 +1,35 @@
+﻿@{
+    ViewBag.Title = "Test Palette";
+    Layout = "_Layout";
+
+    string[] variants =
+    {
+        "no variant",
+        "primary",
+        "secondary",
+        "success",
+        "info",
+        "warning",
+        "danger",
+        "light",
+        "dark",
+    };
+
+    string[] components =
+    {
+        "<a class=\"btn btn-outline-{var}\" href=\"#\">Button ({var})</a>",
+        "<span class=\"text-{var}\">Text ({var})</span>",
+    };
+}
+
+<p class="display-5">Test Palette</p>
+
+@foreach (string component in components)
+{
+    <div class="d-flex gap-1 mb-3">
+        @foreach (string variant in variants)
+        {
+            @Html.Raw(component.Replace("{var}", variant))
+        }
+    </div>
+}

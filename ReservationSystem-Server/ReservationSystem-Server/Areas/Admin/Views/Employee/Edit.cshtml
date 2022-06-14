@@ -1,0 +1,25 @@
+﻿@model ReservationSystem_Server.Areas.Admin.Models.Employee.EditViewModel
+
+@{
+    ViewBag.Title = "Create Employee";
+}
+
+<h2>Create Employee</h2>
+
+<form method="post">
+    <div asp-validation-summary="All" class="alert alert-danger"></div>
+    <div>
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control"/>
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div>
+        <label asp-for="PhoneNumber"></label>
+        <input asp-for="PhoneNumber" class="form-control"/>
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Submit</button>
+    
+    <input hidden asp-for="Id" />
+</form>

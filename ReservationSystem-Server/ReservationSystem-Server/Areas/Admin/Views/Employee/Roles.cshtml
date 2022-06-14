@@ -1,0 +1,40 @@
+﻿@using ReservationSystem_Server.Areas.Admin.Models.Employee
+@model ReservationSystem_Server.Areas.Admin.Models.Employee.RolesViewModel
+
+@{
+    ViewBag.Title = "Set Roles";
+}
+
+<h2>Set Roles</h2>
+
+<form method="post">
+    <div class="form-group">
+        <label class="form-label" asp-for="Email">Email</label>
+        <input class="form-control" asp-for="Email" readonly/>
+    </div>
+    <div class="list-group list-group-horizontal-lg flex-wrap">
+        <label class="list-group-item border-start" style="width: 100px;">
+            <input class="form-check-input me-1 disabled" type="checkbox" checked disabled/>
+            Employee
+        </label>
+        @for (int i = 0; i < Model!.Roles.Length; i++)
+        {
+            RolesViewModel.RoleModel role = Model.Roles[i];
+            <label class="list-group-item border-start" style="width: 100px;">
+                <input class="form-check-input me-1" type="checkbox" asp-for="Roles[i].IsSelected"/>
+                @role.Name
+            </label>
+        }
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+
+    <div class="visually-hidden invisible" aria-hidden="true">
+        <input type="hidden" asp-for="Id"/>
+
+        @for (int i = 0; i < Model.Roles.Length; i++)
+        {
+            <input type="hidden" asp-for="Roles[i].Id"/>
+            <input type="hidden" asp-for="Roles[i].Name"/>
+        }
+    </div>
+</form>

@@ -1,0 +1,12 @@
+﻿@model StatusCodeErrorViewModel
+
+@{
+    ViewBag.Title = $"Error - {Model!.StatusCode} {Model.ErrorMessage}";
+}
+
+<div class="text-center">
+    <h1 class="display-4">@Model.StatusCode - @Model.ErrorMessage</h1>
+    <p class="display-6">Your request could not be processed due to an error.</p>
+    
+    <partial name="_Donut" />
+</div>
