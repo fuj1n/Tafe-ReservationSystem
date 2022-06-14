@@ -134,6 +134,9 @@ public class SittingUiTest : UiTestBase
         Driver.FindElement(By.Id("btn-save")).Click();
         Thread.Sleep(500);
         wait.Until(IsModalLoaded);
+        Driver.FindElement(By.Id("btn-dismiss")).Click();
+        Thread.Sleep(500);
+        wait.Until(IsModalLoaded);
         
         Assert.That(() => Driver.FindElement(By.ClassName("validation-summary-errors")), Throws.TypeOf<NoSuchElementException>());
         Assert.That(Driver.Url, Does.Not.Contain("/Admin/Sitting/Create"));
